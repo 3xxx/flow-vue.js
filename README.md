@@ -59,3 +59,12 @@ I use "vue.js element vue-element-extends beego and flow" to make a very simple 
 15. documentdetails
 
 ![snap18](https://user-images.githubusercontent.com/10678867/53173294-5850f780-3622-11e9-9437-87e50eaabca2.png)
+
+# How to use
+## flowtest
+1.clone到一个单独文件夹，然后在golang环境下build
+2.依赖https://github.com/js-ojus/flow
+3.依赖beego框架https://github.com/astaxie/beego
+## vue-demo
+1.clone到一个单独文件夹，然后cnpm install
+2.cnpm run dev
