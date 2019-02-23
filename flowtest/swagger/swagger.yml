@@ -1,0 +1,803 @@
+swagger: "2.0"
+info:
+  title: flowtest API
+  description: flow has every tool to get any job done, so codename for the new flowtest
+    APIs.
+  version: 1.0.0
+  contact:
+    email: 504284@qq.com
+basePath: /v1
+paths:
+  /admin/flowaccesscontext:
+    post:
+      tags:
+      - admin
+      description: post AccessContext..
+      operationId: MainController.post wf AccessContext...
+      parameters:
+      - in: query
+        name: name
+        description: The name of AccessContext
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowaccesscontextlist:
+    get:
+      tags:
+      - admin
+      description: post AccessContext..
+      operationId: MainController.get wf AccessContext...
+      parameters:
+      - in: query
+        name: page
+        description: The page of AccessContext
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowaction:
+    post:
+      tags:
+      - admin
+      description: post workflowdocaction..
+      operationId: MainController.post wf docaction...
+      parameters:
+      - in: query
+        name: name
+        description: The name of docaction
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowactionlist:
+    get:
+      tags:
+      - admin
+      description: get workflowdocaction..
+      operationId: MainController.get wf docaction...
+      parameters:
+      - in: query
+        name: page
+        description: The page of docaction
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowdoc:
+    post:
+      tags:
+      - admin
+      description: post document
+      operationId: MainController.post wf document
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowdocevent:
+    post:
+      tags:
+      - admin
+      description: get docevent
+      operationId: MainController.post wf event
+      parameters:
+      - in: query
+        name: name
+        description: The name of event
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowdoceventlist:
+    get:
+      tags:
+      - admin
+      description: get doceventlist
+      operationId: MainController.get wf eventlist
+      parameters:
+      - in: query
+        name: page
+        description: The page of event
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowdoclist:
+    get:
+      tags:
+      - admin
+      description: get workflow doclist
+      operationId: MainController.get wf doclist
+      parameters:
+      - in: query
+        name: dtid
+        description: The id of doctype
+        required: true
+        type: string
+      - in: query
+        name: page
+        description: The page of doc
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowdocumentdetail:
+    get:
+      tags:
+      - admin
+      description: get documentdetail
+      operationId: MainController.get wf document details
+      parameters:
+      - in: query
+        name: dtid
+        description: The id of doctype
+        required: true
+        type: string
+      - in: query
+        name: docid
+        description: The id of doc
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowdocumentlist:
+    get:
+      tags:
+      - admin
+      description: get document
+      operationId: MainController.get wf document
+      parameters:
+      - in: query
+        name: dtid
+        description: The id of doctype
+        required: true
+        type: string
+      - in: query
+        name: acid
+        description: The id of accesscontext
+        required: true
+        type: string
+      - in: query
+        name: gid
+        description: The id of group
+        type: string
+      - in: query
+        name: dsid
+        description: The id of docstate
+        type: string
+      - in: query
+        name: page
+        description: The page of doc
+        required: true
+        type: string
+      - in: query
+        name: limit
+        description: The limit page of doc
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowgroup:
+    post:
+      tags:
+      - admin
+      description: post Group..
+      operationId: MainController.post wf Group...
+      parameters:
+      - in: query
+        name: name
+        description: The name of Group
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowgrouplist:
+    get:
+      tags:
+      - admin
+      description: post Group..
+      operationId: MainController.get wf Group...
+      parameters:
+      - in: query
+        name: page
+        description: The page of Group
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowgrouprole:
+    post:
+      tags:
+      - admin
+      description: post GroupRole..
+      operationId: MainController.post wf GroupRole...
+      parameters:
+      - in: query
+        name: name
+        description: The name of GroupRole
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowgrouprolelist:
+    get:
+      tags:
+      - admin
+      description: get GroupRole..
+      operationId: MainController.get wf GroupRole...
+      parameters:
+      - in: query
+        name: page
+        description: The page of GroupRole
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowgroupuserslist:
+    get:
+      tags:
+      - admin
+      description: post Group..
+      operationId: MainController.get wf GroupUsers...
+      parameters:
+      - in: query
+        name: name
+        description: The name of GroupUser
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flownext:
+    post:
+      tags:
+      - admin
+      description: post workflow next
+      operationId: MainController.post wf next
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flownode:
+    post:
+      tags:
+      - admin
+      description: post Node..
+      operationId: MainController.post wf Node...
+      parameters:
+      - in: query
+        name: name
+        description: The name of Node
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flownodelist:
+    get:
+      tags:
+      - admin
+      description: post Node..
+      operationId: MainController.get wf Node...
+      parameters:
+      - in: query
+        name: page
+        description: The page of Node
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowpermission:
+    post:
+      tags:
+      - admin
+      description: post Permission..
+      operationId: MainController.post wf Permission...
+      parameters:
+      - in: query
+        name: name
+        description: The name of Permission
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowrole:
+    post:
+      tags:
+      - admin
+      description: post Role..
+      operationId: MainController.post wf Role...
+      parameters:
+      - in: query
+        name: name
+        description: The name of Role
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowrolelist:
+    get:
+      tags:
+      - admin
+      description: post Role..
+      operationId: MainController.get wf Role...
+      parameters:
+      - in: query
+        name: page
+        description: The page of Role
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowrolepermissionlist:
+    get:
+      tags:
+      - admin
+      description: post Permission..
+      operationId: MainController.get wf Permission...
+      parameters:
+      - in: query
+        name: page
+        description: The page of Permission
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowstate:
+    post:
+      tags:
+      - admin
+      description: post workflowdocstate..
+      operationId: MainController.post wf docstate...
+      parameters:
+      - in: query
+        name: name
+        description: The name of docstate
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowstatelist:
+    get:
+      tags:
+      - admin
+      description: post workflowdocstate..
+      operationId: MainController.post wf docstate...
+      parameters:
+      - in: query
+        name: page
+        description: The page of docstate
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowtransition:
+    post:
+      tags:
+      - admin
+      description: post transition..
+      operationId: MainController.post wf transition...
+      parameters:
+      - in: query
+        name: name
+        description: The name of transition
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowtransitionlist:
+    get:
+      tags:
+      - admin
+      description: post transition..
+      operationId: MainController.get wf transition...
+      parameters:
+      - in: query
+        name: page
+        description: The page of transition
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowtype:
+    post:
+      tags:
+      - admin
+      description: post workflowdoctype..
+      operationId: MainController.post wf doctype...
+      parameters:
+      - in: query
+        name: name
+        description: The name of doctype
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowtypedelete:
+    post:
+      tags:
+      - admin
+      description: post workflowdoctype..
+      operationId: MainController.post wf doctype...
+      parameters:
+      - in: query
+        name: name
+        description: The name of doctype
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowtypelist:
+    get:
+      tags:
+      - admin
+      description: post workflowdoctype..
+      operationId: MainController.post wf doctype...
+      parameters:
+      - in: query
+        name: page
+        description: The page of doctype
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowtypeupdate:
+    post:
+      tags:
+      - admin
+      description: post workflowdoctype..
+      operationId: MainController.post wf doctype...
+      parameters:
+      - in: query
+        name: name
+        description: The name of doctype
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowuser:
+    post:
+      tags:
+      - admin
+      description: post user..
+      operationId: MainController.post wf user...
+      parameters:
+      - in: query
+        name: firstname
+        description: The firstname of user
+        required: true
+        type: string
+      - in: query
+        name: lastname
+        description: The lastname of user
+        required: true
+        type: string
+      - in: query
+        name: email
+        description: The email of user
+        required: true
+        type: string
+      - in: query
+        name: active
+        description: The active of user
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowusergroup:
+    post:
+      tags:
+      - admin
+      description: post Group..
+      operationId: MainController.post wf GroupUser...
+      parameters:
+      - in: query
+        name: name
+        description: The name of GroupUser
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowuserlist:
+    get:
+      tags:
+      - admin
+      description: post user..
+      operationId: MainController.get wf user...
+      parameters:
+      - in: query
+        name: page
+        description: The page of user
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowworkflow:
+    post:
+      tags:
+      - admin
+      description: post Workflow..
+      operationId: MainController.post wf Workflow...
+      parameters:
+      - in: query
+        name: name
+        description: The name of Workflow
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowworkflowlist:
+    get:
+      tags:
+      - admin
+      description: post Workflow..
+      operationId: MainController.post wf Workflow...
+      parameters:
+      - in: query
+        name: page
+        description: The page of Workflow
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/workflow:
+    get:
+      tags:
+      - admin
+      description: show workflow page
+      operationId: MainController.show wf page
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: articls not found
+definitions:
+  models.GetProductsPage:
+    title: GetProductsPage
+    type: object
+tags:
+- name: admin
+  description: |
+    Flowtest API
