@@ -16,11 +16,11 @@
       </el-button-group>
     </el-col>
 
-    <el-table
+    <el-editable ref="editable"
       :data="permissiondata" border style="width: 100%" stripe>
-      <!-- <el-table-column label="RoleID" prop="RoleID" align="center"></el-table-column> -->
-      <el-table-column prop="RoleID" label="RoleID">
-        <template slot-scope="scope">
+      <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
+      <el-editable-column prop="RoleID" label="RoleName" :editRender="{type: 'default'}" align="center">
+        <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.RoleID" clearable>
             <el-option
               v-for="item in roledata"
@@ -30,9 +30,10 @@
             </el-option>
           </el-select>
         </template>
-      </el-table-column>
-      <el-table-column prop="TypeAction.DocTypeID" label="Doctype">
-        <template slot-scope="scope">
+        <template slot-scope="scope">{{ getColumnLabel(scope.row.RoleID) }}</template>
+      </el-editable-column>
+      <el-editable-column prop="TypeAction.DocTypeID" label="Doctype" :editRender="{type: 'default'}" align="center">
+        <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.TypeAction.DocTypeID" clearable>
             <el-option
               v-for="item in doctypedata"
@@ -42,9 +43,10 @@
             </el-option>
           </el-select>
         </template>
-      </el-table-column>
-      <el-table-column prop="TypeAction.Actions" label="Action" :formatter="formatter">
-        <template slot-scope="scope">
+        <template slot-scope="scope">{{ getColumnLabel2(scope.row.TypeAction.DocTypeID) }}</template>
+      </el-editable-column>
+      <el-editable-column prop="TypeAction.Actions" label="Action" :formatter="formatter" :editRender="{type: 'default'}" align="center">
+        <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.TypeAction.Actions[0].ID" clearable>
             <el-option
               v-for="item in scope.row.TypeAction.Actions"
@@ -54,15 +56,15 @@
             </el-option>
           </el-select>
         </template>
-      </el-table-column>
-
-      <el-table-column  label="操作" align="center">
+        <!-- <template slot-scope="scope">{{ getColumnLabel3(scope.row.TypeAction.Actions[0].ID) }}</template> -->
+      </el-editable-column>
+      <el-editable-column  label="操作" align="center">
         <template slot-scope="scope">
           <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
           <el-button size="mini" type="danger" @click="deleteRow(scope.$index, permissiondata)">Delete</el-button>
         </template>
-      </el-table-column>
-    </el-table>
+      </el-editable-column>
+    </el-editable>
     <el-pagination background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -472,7 +474,19 @@
         },
         formatter(row, column) {
           // return row.address;
-        }
+        },
+        getColumnLabel (value) {
+          let selectItem = this.roledata.find(item => item.ID === value)
+          return selectItem ? selectItem.Name : null
+        },
+        getColumnLabel2 (value) {
+          let selectItem = this.doctypedata.find(item => item.ID === value)
+          return selectItem ? selectItem.Name : null
+        },
+        getColumnLabel3 (value) {
+          let selectItem = this.accesscontextdata.find(item => item.ID === value)
+          return selectItem ? selectItem.Name : null
+        },
       }
   };
 </script>

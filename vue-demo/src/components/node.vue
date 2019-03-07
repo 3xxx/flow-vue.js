@@ -1,6 +1,3 @@
-<!-- <template>
-  <div id="vue">Hello Vue.js! {{ message }}</div>
-</template> -->
 <template>
   <div>
     <el-col :span="24" class="breadcrumb-container">
@@ -21,16 +18,30 @@
       </el-button-group>
     </el-col>
 
-    <el-table
+    <el-col>
+      <el-button-group style="float: left; margin:10px">
+        <!-- <template> -->
+          <el-select v-model="value" placeholder="请选择" @change="changeValue" clearable>
+            <el-option
+              v-for="item in workflowdata"
+              :key="item.ID"
+              :label="item.Name"
+              :value="item.ID">
+            </el-option>
+          </el-select>
+        <!-- </template> -->
+      </el-button-group>
+    </el-col>
+
+    <el-editable ref="editable"
       :data="nodedata" border style="width: 100%" stripe>
-      <el-table-column label="ID" prop="ID" align="center"></el-table-column>
-      <el-table-column label="NAME" prop="Name" align="center">
-        <template slot-scope="scope">
-          <el-input size="mini" v-model="scope.row.Name"></el-input>
-        </template>
-      </el-table-column> 
-      <el-table-column prop="DocType" label="DOCTYPE">
-        <template slot-scope="scope">
+      <!-- <el-table-column label="ID" prop="ID" align="center"></el-table-column> -->
+      <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center">
+      </el-editable-column>
+      <el-editable-column label="NAME" prop="Name" :editRender="{Name: 'ElInput'}" align="center">
+      </el-editable-column> 
+      <el-editable-column prop="DocType" label="DOCTYPE" :editRender="{type: 'default'}" align="center">
+        <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.DocType" clearable>
             <el-option
               v-for="item in doctypedata"
@@ -40,9 +51,10 @@
             </el-option>
           </el-select>
         </template>
-      </el-table-column>
-      <el-table-column prop="DocState" label="DOCSTATE">
-        <template slot-scope="scope">
+        <template slot-scope="scope">{{ getColumnLabel(scope.row.DocType) }}</template>
+      </el-editable-column>
+      <el-editable-column prop="DocState" label="DOCSTATE" :editRender="{type: 'default'}" align="center">
+        <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.DocState" clearable>
             <el-option
               v-for="item in docstatedata"
@@ -52,10 +64,11 @@
             </el-option>
           </el-select>
         </template>
-      </el-table-column>
-      <el-table-column  prop="AcessContext" label="ACCESSCONTENXT">
-        <template slot-scope="scope">
-          <el-select v-model="scope.row.AccessContext" clearable>
+        <template slot-scope="scope">{{ getColumnLabel2(scope.row.DocState) }}</template>
+      </el-editable-column>
+      <!-- <el-editable-column  prop="AccCtx" label="ACCESSCONTEXT" :editRender="{type: 'default'}" align="center">
+        <template slot="edit" slot-scope="scope">
+          <el-select v-model="scope.row.AccCtx" clearable>
             <el-option
               v-for="item in accesscontextdata"
               :key="item.ID"
@@ -64,9 +77,10 @@
             </el-option>
           </el-select>
         </template>
-      </el-table-column>
-      <el-table-column prop="NodeType" label="NODETYPE">
-        <template slot-scope="scope">
+        <template slot-scope="scope">{{ getColumnLabel3(scope.row.AccCtx) }}</template>
+      </el-editable-column> -->
+      <el-editable-column prop="NodeType" label="NODETYPE" :editRender="{type: 'default'}" align="center">
+        <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.NodeType" clearable>
             <el-option
               v-for="item in nodetypedata"
@@ -76,21 +90,16 @@
             </el-option>
           </el-select>
         </template>
-      </el-table-column>
-      <!-- <el-table-column label="Address" prop="address" align="center"></el-table-column> -->
-      <el-table-column label="操作" align="center">
-        <!-- <template slot="header" slot-scope="scope">
-        <el-input v-model="search" size="mini" placeholder="输入关键字搜索"/>
-        </template> handleDelete(scope.$index, scope.row)-->
+      </el-editable-column>
+      <el-editable-column label="操作" align="center">
         <template slot-scope="scope">
           <el-button-group>
-          <!-- <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">Edit</el-button> -->
           <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
           <el-button size="mini" type="danger" @click="deleteRow(scope.$index, nodedata)">Delete</el-button>
           </el-button-group>
         </template>
-      </el-table-column>
-    </el-table>
+      </el-editable-column>
+    </el-editable>
     <el-pagination background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -101,11 +110,51 @@
       :total="total" style="float: right; margin:10px">
     </el-pagination>
 
-    <el-dialog title="定义doctype" :visible.sync="dialogFormVisible" center>
+    <el-dialog title="定义work_node" :visible.sync="dialogFormVisible" center>
     <!-- 插入测试 -->
       <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="名称" prop="typename">
-          <el-input v-model.number="ruleForm2.typename" auto-complete="off" placeholder="输入名称"></el-input>
+        <el-form-item label="名称" prop="nodename">
+          <el-input v-model.number="ruleForm2.nodename" auto-complete="off" placeholder="输入名称"></el-input>
+        </el-form-item>
+        <el-form-item label="DocType" prop="dtid">
+          <el-select v-model.number="ruleForm2.dtid" clearable>
+            <el-option
+              v-for="item in doctypedata"
+              :key="item.ID"
+              :label="item.Name"
+              :value="item.ID">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="DocState" prop="dsid">
+          <el-select v-model.number="ruleForm2.dsid" clearable>
+            <el-option
+              v-for="item in docstatedata"
+              :key="item.ID"
+              :label="item.Name"
+              :value="item.ID">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="AccCtx" prop="acid">
+          <el-select v-model.number="ruleForm2.acid" clearable>
+            <el-option
+              v-for="item in accesscontextdata"
+              :key="item.ID"
+              :label="item.Name"
+              :value="item.ID">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="NodeType" prop="nodetype">
+          <el-select v-model.number="ruleForm2.nodetype" clearable>
+            <el-option
+              v-for="item in nodetypedata"
+              :key="item.ID"
+              :label="item.Name"
+              :value="item.Name">
+            </el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <!-- 插入测试 -->
@@ -211,17 +260,24 @@
             desc: ''
           },
           formLabelWidth: '120px',
+          workflowdata: [
+            {
+              ID:1,
+              Name:'测试数据'
+            }
+          ],
           tableData: [
             {ID:1,Name:"图纸"},
             {ID:2,Name:"合同"}
-          ],
+          ],      
           nodedata: [
             {
-              Id:1,
+              ID:1,
+              DocType:2,
+              DocState:3,
+              // AccCtx:4,
+              // Wflow:1,
               Name:'我是node',
-              DoctypeId:2,
-              FromStateId:3,
-              AccesscontextId:4,
               NodeType:'begin'
             }
           ],
@@ -274,10 +330,13 @@
             },
           ],
           search: '',
+          value:'',
+          workflowid:1
         };
       },
       mounted:function () {
-        this.node(this.currentPage);
+        this.workflow(this.currentPage);
+        // this.node(this.currentPage);
         this.doctype(this.currentPage);
         this.docstate(this.currentPage);
         this.accesscontext(this.currentPage);
@@ -293,9 +352,13 @@
                 //   'Access-Control-Allow-Origin': '*'
                 // },//设置跨域请求头
                 method: "POST",//请求方式
-                url: "http://127.0.0.1:8081/v1/admin/flowtype",//请求地址
+                url: "http://127.0.0.1:8081/v1/admin/flownode",//请求地址
                 params:{
-                  name:this.ruleForm2.typename,
+                  name:this.ruleForm2.nodename,
+                  dtid:this.ruleForm2.dtid,
+                  dsid:this.ruleForm2.dsid,
+                  acid:this.ruleForm2.acid,
+                  nodetype:this.ruleForm2.nodetype,
                 },
                 data: {
                   name:this.ruleForm2.typename,
@@ -344,15 +407,34 @@
         handleClose(key, keyPath) {
           console.log(key, keyPath);
         },
+        workflow(currentPage){
+          axios({
+            method: 'get',
+            url: 'http://127.0.0.1:8081/v1/admin/flowworkflowlist',//2.get通过params选项
+            params:{
+              page:currentPage
+            }
+          })
+          .then(response => (this.workflowdata = response.data))
+          .catch(function (error) {
+            console.log(error);
+          });
+        },
         node(currentPage){
           axios({
             method: 'get',
             url: 'http://127.0.0.1:8081/v1/admin/flownodelist',//2.get通过params选项
             params:{
-              page:currentPage
+              page:currentPage,
+              workflowid:this.workflowid
             }
           })
           .then(response => (this.nodedata = response.data))
+          // .then(function(response){
+          //   console.log(response.data)
+          //   this.nodedata = response.data;
+          //   console.log(this.nodedata)
+          // })
           .catch(function (error) {
             console.log(error);
           });
@@ -542,6 +624,28 @@
         handleCurrentChange: function(currentPage){
           this.currentPage = currentPage;
           this.node(currentPage);
+        },
+        getColumnLabel (value) {
+          let selectItem = this.doctypedata.find(item => item.ID === value)
+          return selectItem ? selectItem.Name : null
+        },
+        getColumnLabel2 (value) {
+          let selectItem = this.docstatedata.find(item => item.ID === value)
+          return selectItem ? selectItem.Name : null
+        },
+        getColumnLabel3 (value) {
+          let selectItem = this.accesscontextdata.find(item => item.ID === value)
+          return selectItem ? selectItem.Name : null
+        },
+        changeValue(value) {
+          console.log(value);
+          this.workflowid = value; 
+          this.node(this.currentPage);
+          // let obj = {};
+          // obj = this.options.find((item)=>{
+          //     return item.value === value;
+          // });
+          // console.log(obj.label);
         }
       }
   };

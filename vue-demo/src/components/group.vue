@@ -12,26 +12,17 @@
       </el-button-group>
       <el-button-group  style="float: right; margin:10px">
         <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
-        <!-- <el-input placeholder="请输入内容" v-model="input5" class="input-with-select" size="small" type="primary"> -->
-        <!-- <el-button type="primary" slot="append" icon="el-icon-search" size="small"></el-button> -->
-        <!-- </el-input> -->
-        <!-- <el-input v-model="search" size="mini" placeholder="输入关键字搜索"/> -->
       <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
-        <!-- <el-button type="primary" icon="el-icon-delete" size="small">导出</el-button> .slice((currentPage-1)*pageSize,currentPage*pageSize)-->
       </el-button-group>
     </el-col>
 
-    <el-table
+    <el-editable ref="editable"
       :data="groupdata" border style="width: 100%" stripe>
-      <el-table-column label="ID" prop="ID" align="center"></el-table-column>
-      <el-table-column label="Name" prop="Name" align="center">
-        <template slot-scope="scope">
-          <el-input size="mini" v-model="scope.row.Name"></el-input>
-        </template>
-      </el-table-column>
+      <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
+      <el-editable-column label="Name" prop="Name" :editRender="{Name: 'ElInput'}" align="cente"></el-editable-column>
       <!-- Each group in the system can have one or more roles assigned. -->
-      <el-table-column prop="GroupType" label="GroupType">
-        <template slot-scope="scope">
+      <el-editable-column prop="GroupType" label="GroupType" :editRender="{type: 'default'}" align="center">
+        <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.GroupType" clearable>
             <el-option
               v-for="item in grouptypedata"
@@ -41,15 +32,16 @@
             </el-option>
           </el-select>
         </template>
-      </el-table-column>
+        <template slot-scope="scope">{{ getColumnLabel(scope.row.GroupType) }}</template>
+      </el-editable-column>
 
-      <el-table-column  label="操作" align="center">
+      <el-editable-column label="操作" align="center">
         <template slot-scope="scope">
           <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
           <el-button size="mini" type="danger" @click="deleteRow(scope.$index, groupdata)">Delete</el-button>
         </template>
-      </el-table-column>
-    </el-table>
+      </el-editable-column>
+    </el-editable>
     <el-pagination background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -345,7 +337,11 @@
         handleCurrentChange: function(currentPage){
           this.currentPage = currentPage;
           this.group(currentPage);
-        }
+        },
+        getColumnLabel (value) {
+          let selectItem = this.grouptypedata.find(item => item.Name === value)
+          return selectItem ? selectItem.Name : null
+        },
       }
   };
 </script>

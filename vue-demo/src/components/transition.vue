@@ -12,21 +12,15 @@
       </el-button-group>
       <el-button-group  style="float: right; margin:10px">
         <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
-        <!-- <el-input placeholder="请输入内容" v-model="input5" class="input-with-select" size="small" type="primary"> -->
-        <!-- <el-button type="primary" slot="append" icon="el-icon-search" size="small"></el-button> -->
-        <!-- </el-input> -->
-        <!-- <el-input v-model="search" size="mini" placeholder="输入关键字搜索"/> -->
       <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
-        <!-- <el-button type="primary" icon="el-icon-delete" size="small">导出</el-button> .slice((currentPage-1)*pageSize,currentPage*pageSize)-->
       </el-button-group>
     </el-col>
 
-    <el-table
+    <el-editable ref="editable"
       :data="transitiondata" border style="width: 100%" stripe>
-      <el-table-column label="ID" prop="Id" align="center"></el-table-column>
-
-      <el-table-column prop="DoctypeId" label="DOCTYPE">
-        <template slot-scope="scope">
+      <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
+      <el-editable-column prop="DoctypeId" label="DOCTYPE" :editRender="{type: 'default'}" align="center">
+        <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.DoctypeId" clearable>
             <el-option
               v-for="item in doctypedata"
@@ -36,9 +30,10 @@
             </el-option>
           </el-select>
         </template>
-      </el-table-column>
-      <el-table-column prop="FromStateId" label="DOCSTATE1">
-        <template slot-scope="scope">
+        <template slot-scope="scope">{{ getColumnLabel(scope.row.DoctypeId) }}</template>
+      </el-editable-column>
+      <el-editable-column prop="FromStateId" label="FromState" :editRender="{type: 'default'}" align="center">
+        <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.FromStateId" clearable>
             <el-option
               v-for="item in docstatedata"
@@ -48,9 +43,10 @@
             </el-option>
           </el-select>
         </template>
-      </el-table-column>
-      <el-table-column  prop="DocactionId" label="DOCACTION">
-        <template slot-scope="scope">
+        <template slot-scope="scope">{{ getColumnLabel2(scope.row.FromStateId) }}</template>
+      </el-editable-column>
+      <el-editable-column  prop="DocactionId" label="DOCACTION" :editRender="{type: 'default'}" align="center">
+        <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.DocactionId" clearable>
             <el-option
               v-for="item in docactiondata"
@@ -60,9 +56,10 @@
             </el-option>
           </el-select>
         </template>
-      </el-table-column>
-      <el-table-column prop="ToStateId" label="DOCSTATE2">
-        <template slot-scope="scope">
+        <template slot-scope="scope">{{ getColumnLabel3(scope.row.DocactionId) }}</template>
+      </el-editable-column>
+      <el-editable-column prop="ToStateId" label="ToState" :editRender="{type: 'default'}" align="center">
+        <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.ToStateId" clearable>
             <el-option
               v-for="item in docstatedata"
@@ -72,21 +69,17 @@
             </el-option>
           </el-select>
         </template>
-      </el-table-column>
-      <!-- <el-table-column label="Address" prop="address" align="center"></el-table-column> -->
-      <el-table-column label="操作" align="center">
-        <!-- <template slot="header" slot-scope="scope">
-        <el-input v-model="search" size="mini" placeholder="输入关键字搜索"/>
-        </template> handleDelete(scope.$index, scope.row)-->
+        <template slot-scope="scope">{{ getColumnLabel4(scope.row.ToStateId) }}</template>
+      </el-editable-column>
+      <el-editable-column label="操作" align="center">
         <template slot-scope="scope">
           <el-button-group>
-          <!-- <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">Edit</el-button> -->
           <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
           <el-button size="mini" type="danger" @click="deleteRow(scope.$index, transitiondata)">Delete</el-button>
           </el-button-group>
         </template>
-      </el-table-column>
-    </el-table>
+      </el-editable-column>
+    </el-editable>
     <el-pagination background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -455,7 +448,24 @@
         handleCurrentChange: function(currentPage){
           this.currentPage = currentPage;
           this.transition(currentPage);
-        }
+        },
+        getColumnLabel (value) {
+          let selectItem = this.doctypedata.find(item => item.ID === value)
+          return selectItem ? selectItem.Name : null
+        },
+        getColumnLabel2 (value) {
+          let selectItem = this.docstatedata.find(item => item.ID === value)
+          return selectItem ? selectItem.Name : null
+        },
+        getColumnLabel3 (value) {
+          let selectItem = this.docactiondata.find(item => item.ID === value)
+          return selectItem ? selectItem.Name : null
+        },
+        
+        getColumnLabel4 (value) {
+          let selectItem = this.docstatedata.find(item => item.ID === value)
+          return selectItem ? selectItem.Name : null
+        },
       }
   };
 </script>

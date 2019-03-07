@@ -729,20 +729,26 @@ func (c *MainController) FlowNode() {
 // @router /flownodelist [get]
 // 管理员定义流程Node
 func (c *MainController) FlowNodeList() {
-	var offset, limit int64
-	limit = 5
-	page := c.Input().Get("page")
-	page1, err := strconv.ParseInt(page, 10, 64)
+	// var offset, limit int64
+	// limit = 5
+	// page := c.Input().Get("page")
+	// page1, err := strconv.ParseInt(page, 10, 64)
+	// if err != nil {
+	// 	beego.Error(err)
+	// }
+	workflowid := c.Input().Get("workflowid")
+	workflowid1, err := strconv.ParseInt(workflowid, 10, 64)
 	if err != nil {
 		beego.Error(err)
 	}
 
-	if page1 <= 1 {
-		offset = 0
-	} else {
-		offset = (page1 - 1) * limit
-	}
-	nodes, err := flow.Nodes.NodeList(offset, limit)
+	// if page1 <= 1 {
+	// 	offset = 0
+	// } else {
+	// 	offset = (page1 - 1) * limit
+	// }
+	// nodes, err := flow.Nodes.NodeList(offset, limit)
+	nodes, err := flow.Nodes.List(flow.WorkflowID(workflowid1))
 	c.Data["json"] = nodes
 	c.ServeJSON()
 }

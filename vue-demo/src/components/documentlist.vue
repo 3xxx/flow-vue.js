@@ -304,7 +304,7 @@
         };
       },
       mounted:function () {
-        this.documents(4,this.currentPage);
+        this.documents(3,this.currentPage);
         this.accesscontext(this.currentPage);
         this.group(this.currentPage);
         this.docstate(this.currentPage);

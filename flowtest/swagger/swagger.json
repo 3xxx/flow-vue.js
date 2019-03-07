@@ -30,7 +30,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -62,7 +62,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -94,7 +94,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -126,7 +126,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -149,7 +149,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -181,7 +181,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -213,7 +213,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -252,7 +252,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -291,7 +291,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -355,7 +355,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -387,7 +387,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -419,7 +419,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -451,7 +451,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -483,7 +483,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -515,7 +515,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -538,7 +538,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -570,7 +570,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -602,7 +602,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -634,7 +634,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -666,7 +666,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -698,7 +698,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -730,7 +730,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -762,7 +762,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -794,7 +794,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -826,7 +826,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -858,7 +858,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -890,7 +890,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -922,7 +922,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -954,7 +954,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -986,7 +986,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -1039,7 +1039,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -1071,7 +1071,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -1103,7 +1103,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -1135,7 +1135,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -1167,7 +1167,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -1190,7 +1190,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.GetProductsPage"
+                            "$ref": "#/definitions/.GetProductsPage"
                         }
                     },
                     "400": {
@@ -1204,8 +1204,7 @@
         }
     },
     "definitions": {
-        "models.GetProductsPage": {
-            "title": "GetProductsPage",
+        ".GetProductsPage": {
             "type": "object"
         }
     },

@@ -12,35 +12,18 @@
       </el-button-group>
       <el-button-group  style="float: right; margin:10px">
         <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
-        <!-- <el-input placeholder="请输入内容" v-model="input5" class="input-with-select" size="small" type="primary"> -->
-        <!-- <el-button type="primary" slot="append" icon="el-icon-search" size="small"></el-button> -->
-        <!-- </el-input> -->
-        <!-- <el-input v-model="search" size="mini" placeholder="输入关键字搜索"/> -->
       <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
-        <!-- <el-button type="primary" icon="el-icon-delete" size="small">导出</el-button> .slice((currentPage-1)*pageSize,currentPage*pageSize)-->
       </el-button-group>
     </el-col>
 
-    <el-table
+    <el-editable ref="editable"
       :data="userdata" border style="width: 100%" stripe>
-      <el-table-column label="ID" prop="ID" align="center"></el-table-column>
-      <el-table-column label="Name" prop="FirstName" align="center">
-        <template slot-scope="scope">
-          <el-input size="mini" v-model="scope.row.FirstName"></el-input>
-        </template>
-      </el-table-column>
-      <el-table-column label="Name" prop="LastName" align="center">
-        <template slot-scope="scope">
-          <el-input size="mini" v-model="scope.row.LastName"></el-input>
-        </template>
-      </el-table-column>
-      <el-table-column label="Name" prop="Email" align="center">
-        <template slot-scope="scope">
-          <el-input size="mini" v-model="scope.row.Email"></el-input>
-        </template>
-      </el-table-column>
-      <el-table-column prop="Active" label="ACTIVE" :formatter="formatter">
-        <template slot-scope="scope">
+      <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
+      <el-editable-column label="Name" prop="FirstName" :editRender="{Name: 'ElInput'}" align="center"></el-editable-column>
+      <el-editable-column label="Name" prop="LastName" :editRender="{Name: 'ElInput'}" align="center"></el-editable-column>
+      <el-editable-column label="Email" prop="Email" :editRender="{Name: 'ElInput'}" align="center"></el-editable-column>
+      <el-editable-column prop="Active" label="ACTIVE" :formatter="formatter" :editRender="{type: 'default'}" align="center">
+        <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.Active" clearable>
             <el-option
               v-for="item in useractivedata"
@@ -50,15 +33,15 @@
             </el-option>
           </el-select>
         </template>
-      </el-table-column>
-
-      <el-table-column  label="操作" align="center">
+        <template slot-scope="scope">{{ getColumnLabel(scope.row.Active) }}</template>
+      </el-editable-column>
+      <el-editable-column  label="操作" align="center">
         <template slot-scope="scope">
           <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
           <el-button size="mini" type="danger" @click="deleteRow(scope.$index, userdata)">Delete</el-button>
         </template>
-      </el-table-column>
-    </el-table>
+      </el-editable-column>
+    </el-editable>
     <el-pagination background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -365,7 +348,11 @@
         formatter(row, column) {
           // return row.address;
           return String(row.Active);
-        }
+        },
+        getColumnLabel (value) {
+          let selectItem = this.useractivedata.find(item => item.Value === value)
+          return selectItem ? selectItem.Name : null
+        },
       }
   };
 </script>

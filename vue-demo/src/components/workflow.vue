@@ -12,7 +12,7 @@
     </el-button-group>
     
     <el-editable ref="editable" :data="workflowdata" border style="width: 100%" stripe>
-      <el-editable-column label="ID" prop="ID" align="center"></el-editable-column>
+      <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
       <el-editable-column label="NAME" prop="Name" :editRender="{Name: 'ElInput'}" align="center"></el-editable-column>    
       <el-editable-column prop="DocType.ID" label="DOCTYPE" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
@@ -40,7 +40,7 @@
         </template>
         <template slot-scope="scope">{{ getColumnLabel2(scope.row.BeginState.ID) }}</template>
       </el-editable-column>
-      <el-editable-column prop="Active" label="ACTIVE" :editRender="{type: 'default'}" align="center"><!-- :formatter="formatter" -->
+      <el-editable-column prop="Active" label="ACTIVE" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.Active" clearable>
             <el-option
@@ -348,6 +348,8 @@
                   name:row.Name,
                   dtid:row.DocType.ID,
                   dsid:row.BeginState.ID,
+                  // acid:,
+                  // nodetype:
                   // workflowactive:row.Active
                 },
                 // data: {

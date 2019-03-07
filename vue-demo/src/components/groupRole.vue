@@ -13,13 +13,12 @@
       </el-button-group>
     </el-col>
 
-    <el-table
+    <el-editable ref="editable"
       :data="grouproledata" border style="width: 100%" stripe>
-      <!-- <el-table-column label="RoleID" prop="RoleID" align="center"></el-table-column> -->
-      <el-table-column prop="Id" label="ID" align="center">
-      </el-table-column>
-      <el-table-column prop="AcId" label="ACCESSCONTEXT" align="center">
-        <template slot-scope="scope">
+      <!-- <el-editable-column prop="Id" label="ID" align="center"></el-editable-column> -->
+      <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
+      <el-editable-column prop="AcId" label="ACCESSCONTEXT" :editRender="{type: 'default'}" align="center">
+        <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.AcId" clearable>
             <el-option
               v-for="item in accesscontextdata"
@@ -29,9 +28,10 @@
             </el-option>
           </el-select>
         </template>
-      </el-table-column>
-      <el-table-column prop="GroupId" label="Group" align="center">
-        <template slot-scope="scope">
+        <template slot-scope="scope">{{ getColumnLabel(scope.row.AcId) }}</template>
+      </el-editable-column>
+      <el-editable-column prop="GroupId" label="Group" :editRender="{type: 'default'}" align="center">
+        <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.GroupId" clearable>
             <el-option
               v-for="item in groupdata"
@@ -41,9 +41,10 @@
             </el-option>
           </el-select>
         </template>
-      </el-table-column>
-      <el-table-column prop="RoleId" label="Role" align="center">
-        <template slot-scope="scope">
+        <template slot-scope="scope">{{ getColumnLabel2(scope.row.GroupId) }}</template>
+      </el-editable-column>
+      <el-editable-column prop="RoleId" label="Role" :editRender="{type: 'default'}" align="center">
+        <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.RoleId" clearable>
             <el-option
               v-for="item in roledata"
@@ -53,15 +54,16 @@
             </el-option>
           </el-select>
         </template>
-      </el-table-column>
+        <template slot-scope="scope">{{ getColumnLabel3(scope.row.RoleId) }}</template>
+      </el-editable-column>
 
-      <el-table-column  label="操作" align="center">
+      <el-editable-column  label="操作" align="center">
         <template slot-scope="scope">
           <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
           <el-button size="mini" type="danger" @click="deleteRow(scope.$index, grouproledata)">Delete</el-button>
         </template>
-      </el-table-column>
-    </el-table>
+      </el-editable-column>
+    </el-editable>
     <el-pagination background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -462,6 +464,18 @@
         handleCurrentChange: function(currentPage){
           this.currentPage = currentPage;
           this.flowtypelist(currentPage);
+        },
+        getColumnLabel (value) {
+          let selectItem = this.accesscontextdata.find(item => item.ID === value)
+          return selectItem ? selectItem.Name : null
+        },
+        getColumnLabel2 (value) {
+          let selectItem = this.groupdata.find(item => item.ID === value)
+          return selectItem ? selectItem.Name : null
+        },
+        getColumnLabel3 (value) {
+          let selectItem = this.roledata.find(item => item.ID === value)
+          return selectItem ? selectItem.Name : null
         }
       }
   };
