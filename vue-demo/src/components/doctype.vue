@@ -1,6 +1,3 @@
-<!-- <template>
-  <div id="vue">Hello Vue.js! {{ message }}</div>
-</template> -->
 <template>
   <div>
     <!-- <el-col :span="24" class="breadcrumb-container">
@@ -20,7 +17,6 @@
          <el-button type="primary" icon="el-icon-delete" size="small">导出</el-button> .slice((currentPage-1)*pageSize,currentPage*pageSize)
       </el-button-group>
     </el-col> -->
-
     <el-button-group style="float: left; margin:10px">
       <!-- <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insert({name: `New ${Date.now()}`, flag: true, createDate: Date.now()})">新增一行</el-button> -->
       <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insertAt({name: `New last ${Date.now()}`, flag: true, createDate: Date.now()}, -1)">新增</el-button>
@@ -32,15 +28,16 @@
       <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
     </el-button-group>
 
-    <el-editable ref="editable" :data="doctypedata" border style="width: 100%" stripe>
-      <!-- <el-editable-column label="ID" prop="ID" align="center"></el-editable-column> -->
+    <el-editable ref="editable" :data="doctypedata.doctypes" border style="width: 100%" stripe>
       <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center">
       </el-editable-column>
       <el-editable-column label="Name" prop="Name" :editRender="{name: 'ElInput'}" align="center"></el-editable-column>
       <el-editable-column  label="操作" align="center">
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
-          <el-button size="mini" type="danger" @click="deleteRow(scope.$index, doctypedata)">Delete</el-button>
+          <el-button-group>
+            <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
+            <el-button size="mini" type="danger" @click="deleteRow(scope.$index, doctypedata)">Delete</el-button>
+          </el-button-group>
         </template>
       </el-editable-column>
     </el-editable>
@@ -51,7 +48,7 @@
       :page-sizes="[10, 50, 100, 200]"
       :page-size="pageSize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="total" style="float: right; margin:10px">
+      :total="doctypedata.total" style="float: right; margin:10px">
     </el-pagination>
 
     <el-dialog title="定义doctype" :visible.sync="dialogFormVisible" center>
@@ -307,7 +304,8 @@
             method: 'get',
             url: 'http://127.0.0.1:8081/v1/admin/flowtypelist',//2.get通过params选项
             params:{
-              page:currentPage
+              page:currentPage,
+              limit:this.pageSize
             }
           })
           .then(response => (this.doctypedata = response.data))

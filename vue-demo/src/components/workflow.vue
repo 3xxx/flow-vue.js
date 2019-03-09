@@ -18,7 +18,7 @@
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.DocType.ID" clearable>
             <el-option
-              v-for="item in doctypedata"
+              v-for="item in doctypedata.doctypes"
               :key="item.ID"
               :label="item.Name"
               :value="item.ID">
@@ -308,9 +308,9 @@
           axios({
             method: 'get',
             url: 'http://127.0.0.1:8081/v1/admin/flowtypelist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            // params:{
+            //   page:currentPage
+            // }
           })
           .then(response => (this.doctypedata = response.data))
           .catch(function (error) {
@@ -473,7 +473,7 @@
           return String(row.Active);
         },
         getColumnLabel (value) {
-          let selectItem = this.doctypedata.find(item => item.ID === value)
+          let selectItem = this.doctypedata.doctypes.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
         },
         getColumnLabel2 (value) {

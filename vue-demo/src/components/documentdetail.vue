@@ -12,12 +12,13 @@
       </el-button-group>
     </el-col>
 
-    <el-table
+    <el-editable ref="editable"
       :data="documentdetaildata" border style="width: 100%" stripe>
       <!-- <el-table-column label="DocID" prop="Document.ID" align="center"></el-table-column> -->
       <!-- <el-table-column label="DocType" prop="Document.DocType.ID" align="center"></el-table-column> -->
-      <el-table-column label="DocState" prop="Document.DocState.Name" align="center"></el-table-column>
-      <el-table-column label="recip GROUPs" prop="Document.Group.ID" size="mini">
+      <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
+      <el-editable-column label="DocState" prop="Document.DocState.Name" align="center"></el-editable-column>
+      <el-editable-column label="recip GROUPs" prop="value1" align="center">
         <template slot-scope="scope">
           <el-select v-model="value1" multiple clearable>
             <el-option
@@ -28,8 +29,8 @@
             </el-option>
           </el-select>
         </template>
-      </el-table-column>
-      <el-table-column label="ACTIONS" prop="Action[0].ID" size="mini">
+      </el-editable-column>
+      <el-table-column label="ACTIONS" prop="value2" align="center">
         <template slot-scope="scope">
           <el-select v-model="value2" clearable>
             <el-option
@@ -41,16 +42,17 @@
           </el-select>
         </template>
       </el-table-column>
-      <el-table-column label="TITLE" prop="Document.Title"></el-table-column>
-      <el-table-column label="PATH" prop="Document.Path" size="mini"></el-table-column>
-      <el-table-column label="CTIME" prop="Document.Ctime" size="mini" :formatter="formatter"></el-table-column>
-      <el-table-column  label="操作" align="center">
+      <el-editable-column label="TITLE" prop="Document.Title"></el-editable-column>
+      <el-editable-column label="PATH" prop="Document.Path" size="mini"></el-editable-column>
+      <el-editable-column label="CTIME" prop="Document.Ctime" size="mini" :formatter="formatter"></el-editable-column>
+      <el-editable-column label="Text" prop="Text" :editRender="{Name: 'ElInput'}" align="center"></el-editable-column> 
+      <el-editable-column  label="操作" align="center">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="handleSubmit(scope.$index, scope.row)">Apply</el-button>
           <!-- <el-button size="mini" type="danger" @click="deleteRow(scope.$index, documentdetaildata)">Delete</el-button> -->
         </template>
-      </el-table-column>
-    </el-table>
+      </el-editable-column>
+    </el-editable>
     <el-pagination background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -273,6 +275,7 @@
                   dtid:row.Document.DocType.ID,
                   daid:this.value2,
                   gid:this.value1,
+                  text:row.Text
                 },
                 // data: {
                 //   dtid:row.DoctypeId,
@@ -309,8 +312,8 @@
             method: 'get',
             url: 'http://127.0.0.1:8081/v1/admin/flowdocumentdetail',//2.get通过params选项
             params:{
-              docid:19,//this.docid,
-              dtid:3//this.dtid
+              docid:this.docid,
+              dtid:this.dtid
             }
           })
           .then(response => (this.documentdetaildata = response.data))
@@ -437,7 +440,15 @@
           // 然后再入口文件 main.js中导入并使用
           // import moment from 'moment'//导入文件
           // Vue.prototype.$moment = moment;//赋值使用
-        }
+        },
+         getColumnLabel (value) {
+          let selectItem = this.groupdata.find(item => item.ID === value)
+          return selectItem ? selectItem.Name : null
+        },
+        getColumnLabel2 (value) {
+          let selectItem = this.documentdetaildata[0].Action.find(item => item.ID === value)
+          return selectItem ? selectItem.Name : null
+        },
       }
   };
 </script>

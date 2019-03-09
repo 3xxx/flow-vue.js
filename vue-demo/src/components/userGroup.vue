@@ -3,18 +3,16 @@
 </template> -->
 <template>
   <div>
-    <el-col :span="24" class="breadcrumb-container">
-      <el-button-group style="float: left; margin:10px">
-        <el-button type="primary" size="small" @click="addRow(usergroupdata)">新增</el-button>
-        <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click.native="dialogFormVisible = true">添加</el-button>
-        <el-button type="primary" icon="el-icon-share" size="small">分享</el-button>
-        <el-button type="primary" icon="el-icon-delete" size="small">删除</el-button>
-      </el-button-group>
-      <el-button-group  style="float: right; margin:10px">
-        <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
+    <el-button-group style="float: left; margin:10px">
+      <!-- <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insertAt({name: `New last ${Date.now()}`, flag: true, createDate: Date.now()}, -1)">新增m</el-button> -->
+      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click.native="dialogFormVisible = true">添加m</el-button>
+      <el-button type="info" size="small" @click="$refs.editable.revert()">放弃更改</el-button>
+      <el-button type="info" size="small" icon="el-icon-delete" @click="$refs.editable.clear()">清空数据</el-button>
+    </el-button-group>
+    <el-button-group  style="float: right; margin:10px">
+      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
       <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
-      </el-button-group>
-    </el-col>
+    </el-button-group>
 
     <el-editable ref="editable"
       :data="usergroupdata" border style="width: 100%" stripe>
@@ -33,24 +31,26 @@
         </template>
         <template slot-scope="scope">{{ getColumnLabel(scope.row.Group.GroupType) }}</template>
       </el-editable-column>
-      <el-editable-column label="Name" prop="Group.Name" :editRender="{Name: 'ElInput'}" align="cente"></el-editable-column>
-      <el-editable-column label="Users" prop="Users" :editRender="{type: 'default'}" align="center">
+      <el-editable-column label="GrouName" prop="Group.Name" :editRender="{Name: 'ElInput'}" align="center"></el-editable-column>
+      <el-editable-column label="Users" prop="Users[0].LastName" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
-          <el-select v-model="scope.row.Users[0].LastName" clearable>
+          <el-select v-model="scope.row.Users[0].ID" clearable>
             <el-option
               v-for="item in scope.row.Users"
-              :key="item.LastName"
-              :label="item.LastName"
+              :key="item.ID"
+              :label="item.FirstName+item.LastName"
               :value="item.ID">
             </el-option>
           </el-select>
         </template>
-        <template slot-scope="scope">{{ getColumnLabel2(scope.row.Users[0].LastName) }}</template>
+        <!-- <template slot-scope="scope">{{ getColumnLabel2(scope.row.Users[0].LastName) }}</template> -->
       </el-editable-column>
       <el-editable-column  label="操作" align="center">
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
-          <el-button size="mini" type="danger" @click="deleteRow(scope.$index, usergroupdata)">Delete</el-button>
+          <el-button-group>
+            <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
+            <el-button size="mini" type="danger" @click="deleteRow(scope.$index, usergroupdata)">Delete</el-button>
+          </el-button-group>
         </template>
       </el-editable-column>
     </el-editable>
@@ -64,11 +64,31 @@
       :total="total" style="float: right; margin:10px">
     </el-pagination>
 
-    <el-dialog title="定义doctype" :visible.sync="dialogFormVisible" center>
-    <!-- 插入测试 -->
+    <el-dialog title="添加usergroup" :visible.sync="dialogFormVisible" center>
       <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="名称" prop="typename">
-          <el-input v-model.number="ruleForm2.typename" auto-complete="off" placeholder="输入名称"></el-input>
+        <el-form-item label="group" prop="groupid2">
+          <template >
+            <el-select v-model="ruleForm2.groupid2" clearable>
+              <el-option
+                v-for="item in groupdata"
+                :key="item.ID"
+                :label="item.Name"
+                :value="item.ID">
+              </el-option>
+            </el-select>
+          </template>
+        </el-form-item>
+        <el-form-item label="users" prop="userid2">
+          <template>
+            <el-select v-model="ruleForm2.userid2" multiple clearable>
+              <el-option
+                v-for="item in userdata"
+                :key="item.ID"
+                :label="item.FirstName+item.LastName"
+                :value="item.ID">
+              </el-option>
+            </el-select>
+          </template>
         </el-form-item>
       </el-form>
       <!-- 插入测试 -->
@@ -77,7 +97,6 @@
         <el-button type="primary" @click="submitForm('ruleForm2')">确 定</el-button>
       </div>
     </el-dialog>
-
   </div>
 </template>
 
@@ -210,10 +229,22 @@
               Name:'G'
             },
           ],
+          userdata:[
+            {ID:1,FirstName:"秦",LastName:'晓川1',Email:'xc-qin1@163.com',Active:true},
+            {ID:2,FirstName:"秦",LastName:'晓川2',Email:'xc-qin2@163.com',Active:true}
+          ],
+          groupdata:[
+            {ID:1,Name:"秦晓川",GroupType:"S"},
+            {ID:2,Name:"校核组",GroupType:"G"}
+          ],
+          userid2:[],
+          groupid2:''
         };
       },
       mounted:function () {
         this.usergroup(this.currentPage);
+        this.group(this.currentPage);
+        this.user(this.currentPage);
         // const that = this;
         // 获取浏览器可视区域高度
         // this.clientHeight = `${document.documentElement.clientHeight}`; //document.body.clientWidth;
@@ -233,14 +264,15 @@
                 //   'Access-Control-Allow-Origin': '*'
                 // },//设置跨域请求头
                 method: "POST",//请求方式
-                url: "http://127.0.0.1:8081/v1/admin/flowtype",//请求地址
+                url: "http://127.0.0.1:8081/v1/admin/flowusergroup",//请求地址
                 params:{
-                  name:this.ruleForm2.typename,
+                  gid:this.ruleForm2.groupid2,
+                  uid:this.ruleForm2.userid2
                 },
-                data: {
-                  name:this.ruleForm2.typename,
+                // data: {
+                  // name:this.ruleForm2.typename,
                   // "thirdapp_id":1//请求参数
-                }
+                // }
               })
               // .then(response => (this.posts = response.data.articles))
               .then(function (response) {
@@ -338,6 +370,32 @@
             }
           })
           .then(response => (this.usergroupdata = response.data))
+          .catch(function (error) {
+            console.log(error);
+          });
+        },
+        group(currentPage){
+          axios({
+            method: 'get',
+            url: 'http://127.0.0.1:8081/v1/admin/flowgrouplist',//2.get通过params选项
+            params:{
+              page:currentPage
+            }
+          })
+          .then(response => (this.groupdata = response.data))
+          .catch(function (error) {
+            console.log(error);
+          });
+        },
+        user(currentPage){
+          axios({
+            method: 'get',
+            url: 'http://127.0.0.1:8081/v1/admin/flowuserlist',//2.get通过params选项
+            params:{
+              page:currentPage
+            }
+          })
+          .then(response => (this.userdata = response.data))
           .catch(function (error) {
             console.log(error);
           });

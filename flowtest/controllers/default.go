@@ -31,14 +31,15 @@ func (c *MainController) Get() {
 // var db *sql.DB
 
 // func init() {
-// 	driver, connStr := "mysql", "root:root@/flow"
+// 	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
 // 	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
 // 	// flow.RegisterDB(tdb)
-
 // 	if tdb == nil {
 // 		log.Fatal("given database handle is `nil`")
 // 	}
 // 	db = tdb
+// 	tx, _ := db.Begin()
+// 	db.Close()
 // }
 
 // @Title show wf page
@@ -94,9 +95,17 @@ func (c *MainController) FlowType() {
 	}
 }
 
+//后端分页的数据结构
+type doctypelist struct {
+	Doctype []*flow.DocType `json:"doctypes"`
+	Page    int64           `json:"page"`
+	Total   int             `json:"total"` //string或int64都行！
+}
+
 // @Title post wf doctype...
 // @Description post workflowdoctype..
-// @Param page query string  true "The page of doctype"
+// @Param page query string false "The page of doctype"
+// @Param limit query string false "The size of page"
 // @Success 200 {object} models.GetProductsPage
 // @Failure 400 Invalid page supplied
 // @Failure 404 data not found
@@ -104,33 +113,51 @@ func (c *MainController) FlowType() {
 // 管理员定义流程类型doctype、流程状态state、流程节点node、
 // 流程动作action、流程流向transition、流程事件event
 func (c *MainController) FlowTypeList() {
-	var offset, limit int64
-	limit = 5
+	var offset, limit1, page1 int64
+	var err error
+	limit := c.Input().Get("limit")
+	if limit == "" {
+		limit1 = 0
+	} else {
+		limit1, err = strconv.ParseInt(limit, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
+	}
 	page := c.Input().Get("page")
-	page1, err := strconv.ParseInt(page, 10, 64)
-	if err != nil {
-		beego.Error(err)
+	if page == "" {
+		limit1 = 0
+		page1 = 1
+	} else {
+		page1, err = strconv.ParseInt(page, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
 	}
 
 	if page1 <= 1 {
 		offset = 0
 	} else {
-		offset = (page1 - 1) * limit
+		offset = (page1 - 1) * limit1
 	}
-	// offset = 0
-	// limit = 0
-	doctype, err := flow.DocTypes.List(offset, limit)
+	doctype, err := flow.DocTypes.List(offset, limit1)
 	if err != nil {
 		beego.Error(err)
 	}
+
+	arr, err := flow.DocTypes.List(0, 0)
+	if err != nil {
+		beego.Error(err)
+	}
+	list := doctypelist{doctype, page1, len(arr)}
 	// tx.Commit()
-	c.Data["json"] = doctype
+	c.Data["json"] = list
 	c.ServeJSON()
 }
 
 // @Title post wf doctype...
 // @Description post workflowdoctype..
-// @Param name query string  true "The name of doctype"
+// @Param name query string false "The name of doctype"
 // @Success 200 {object} models.GetProductsPage
 // @Failure 400 Invalid page supplied
 // @Failure 404 data not found
@@ -265,7 +292,8 @@ func (c *MainController) FlowState() {
 
 // @Title post wf docstate...
 // @Description post workflowdocstate..
-// @Param page query string  true "The page of docstate"
+// @Param page query string false "The page of docstate"
+// @Param limit query string false "The size of page"
 // @Success 200 {object} models.GetProductsPage
 // @Failure 400 Invalid page supplied
 // @Failure 404 data not found
@@ -273,23 +301,34 @@ func (c *MainController) FlowState() {
 // 管理员定义流程类型doctype、流程状态state、流程节点node、
 // 流程动作action、流程流向transition、流程事件event
 func (c *MainController) FlowStateList() {
-	var offset, limit int64
-	limit = 5
+	var offset, limit1, page1 int64
+	var err error
+	limit := c.Input().Get("limit")
+	if limit == "" {
+		limit1 = 0
+	} else {
+		limit1, err = strconv.ParseInt(limit, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
+	}
 	page := c.Input().Get("page")
-	page1, err := strconv.ParseInt(page, 10, 64)
-	if err != nil {
-		beego.Error(err)
+	if page == "" {
+		limit1 = 0
+		page1 = 1
+	} else {
+		page1, err = strconv.ParseInt(page, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
 	}
 
 	if page1 <= 1 {
 		offset = 0
 	} else {
-		offset = (page1 - 1) * limit
+		offset = (page1 - 1) * limit1
 	}
-
-	// offset = 0
-	// limit = 0
-	docstate, err := flow.DocStates.List(offset, limit)
+	docstate, err := flow.DocStates.List(offset, limit1)
 	if err != nil {
 		beego.Error(err)
 	}
@@ -355,19 +394,34 @@ func (c *MainController) FlowAction() {
 // 管理员定义流程类型doctype、流程状态state、流程节点node、
 // 流程动作action、流程流向transition、流程事件event
 func (c *MainController) FlowActionList() {
-	var offset, limit int64
-	limit = 10
-	page := c.Input().Get("page")
-	page1, err := strconv.ParseInt(page, 10, 64)
-	if err != nil {
-		beego.Error(err)
+	var offset, limit1, page1 int64
+	var err error
+	limit := c.Input().Get("limit")
+	if limit == "" {
+		limit1 = 0
+	} else {
+		limit1, err = strconv.ParseInt(limit, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
 	}
+	page := c.Input().Get("page")
+	if page == "" {
+		limit1 = 0
+		page1 = 1
+	} else {
+		page1, err = strconv.ParseInt(page, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
+	}
+
 	if page1 <= 1 {
 		offset = 0
 	} else {
-		offset = (page1 - 1) * limit
+		offset = (page1 - 1) * limit1
 	}
-	docstate, err := flow.DocActions.List(offset, limit)
+	docstate, err := flow.DocActions.List(offset, limit1)
 	if err != nil {
 		beego.Error(err)
 	}
@@ -441,6 +495,13 @@ func (c *MainController) FlowTransition() {
 	// }
 }
 
+//后端分页的数据结构
+type transitionlist struct {
+	Transisions []*flow.Transitionstruct `json:"transitions"`
+	Page        int64                    `json:"page"`
+	Total       int                      `json:"total"` //string或int64都行！
+}
+
 // @Title get wf transition...
 // @Description post transition..
 // @Param page query string  true "The page of transition"
@@ -464,23 +525,43 @@ func (c *MainController) FlowTransitionList() {
 	// if err != nil {
 	// 	beego.Error(err)
 	// }
-	var offset, limit int64
-	limit = 5
-	page := c.Input().Get("page")
-	page1, err := strconv.ParseInt(page, 10, 64)
-	if err != nil {
-		beego.Error(err)
+	var offset, limit1, page1 int64
+	var err error
+	limit := c.Input().Get("limit")
+	if limit == "" {
+		limit1 = 0
+	} else {
+		limit1, err = strconv.ParseInt(limit, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
 	}
+	page := c.Input().Get("page")
+	if page == "" {
+		limit1 = 0
+		page1 = 1
+	} else {
+		page1, err = strconv.ParseInt(page, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
+	}
+
 	if page1 <= 1 {
 		offset = 0
 	} else {
-		offset = (page1 - 1) * limit
+		offset = (page1 - 1) * limit1
 	}
-	transisions, err := flow.DocTypes.TransitionsList(offset, limit)
+	transisions, err := flow.DocTypes.TransitionsList(offset, limit1)
 	if err != nil {
 		beego.Error(err)
 	}
-	c.Data["json"] = transisions
+	arr, err := flow.DocTypes.TransitionsList(0, 0)
+	if err != nil {
+		beego.Error(err)
+	}
+	list := transitionlist{transisions, page1, len(arr)}
+	c.Data["json"] = list
 	c.ServeJSON()
 }
 
@@ -552,20 +633,34 @@ func (c *MainController) FlowWorkflow() {
 // 管理员定义流程Workflow
 // 输入doctype和初始action
 func (c *MainController) FlowWorkflowList() {
-	var offset, limit int64
-	limit = 5
+	var offset, limit1, page1 int64
+	var err error
+	limit := c.Input().Get("limit")
+	if limit == "" {
+		limit1 = 0
+	} else {
+		limit1, err = strconv.ParseInt(limit, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
+	}
 	page := c.Input().Get("page")
-	page1, err := strconv.ParseInt(page, 10, 64)
-	if err != nil {
-		beego.Error(err)
+	if page == "" {
+		limit1 = 0
+		page1 = 1
+	} else {
+		page1, err = strconv.ParseInt(page, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
 	}
 
 	if page1 <= 1 {
 		offset = 0
 	} else {
-		offset = (page1 - 1) * limit
+		offset = (page1 - 1) * limit1
 	}
-	workflows, err := flow.Workflows.List(offset, limit)
+	workflows, err := flow.Workflows.List(offset, limit1)
 	c.Data["json"] = workflows
 	c.ServeJSON()
 }
@@ -614,19 +709,34 @@ func (c *MainController) FlowAccessContext() {
 // 流程命名空间
 func (c *MainController) FlowAccessContextList() {
 	prefix := c.Input().Get("prefix")
-	var offset, limit int64
-	limit = 5
-	page := c.Input().Get("page")
-	page1, err := strconv.ParseInt(page, 10, 64)
-	if err != nil {
-		beego.Error(err)
+	var offset, limit1, page1 int64
+	var err error
+	limit := c.Input().Get("limit")
+	if limit == "" {
+		limit1 = 0
+	} else {
+		limit1, err = strconv.ParseInt(limit, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
 	}
+	page := c.Input().Get("page")
+	if page == "" {
+		limit1 = 0
+		page1 = 1
+	} else {
+		page1, err = strconv.ParseInt(page, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
+	}
+
 	if page1 <= 1 {
 		offset = 0
 	} else {
-		offset = (page1 - 1) * limit
+		offset = (page1 - 1) * limit1
 	}
-	accesscontexts, err := flow.AccessContexts.List(prefix, offset, limit)
+	accesscontexts, err := flow.AccessContexts.List(prefix, offset, limit1)
 	c.Data["json"] = accesscontexts
 	c.ServeJSON()
 }
@@ -842,20 +952,34 @@ func (c *MainController) FlowUser() {
 // 流程动作action、流程流向transition、流程事件event
 func (c *MainController) FlowUserList() {
 	prefix := c.Input().Get("prefix")
-	var offset, limit int64
-	limit = 5
+	var offset, limit1, page1 int64
+	var err error
+	limit := c.Input().Get("limit")
+	if limit == "" {
+		limit1 = 0
+	} else {
+		limit1, err = strconv.ParseInt(limit, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
+	}
 	page := c.Input().Get("page")
-	page1, err := strconv.ParseInt(page, 10, 64)
-	if err != nil {
-		beego.Error(err)
+	if page == "" {
+		limit1 = 0
+		page1 = 1
+	} else {
+		page1, err = strconv.ParseInt(page, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
 	}
 
 	if page1 <= 1 {
 		offset = 0
 	} else {
-		offset = (page1 - 1) * limit
+		offset = (page1 - 1) * limit1
 	}
-	nodes, err := flow.Users.List(prefix, offset, limit)
+	nodes, err := flow.Users.List(prefix, offset, limit1)
 	if err != nil {
 		beego.Error(err)
 	} else {
@@ -867,6 +991,7 @@ func (c *MainController) FlowUserList() {
 // @Title post wf Group...
 // @Description post Group..
 // @Param name query string  true "The name of Group"
+// @Param grouptype query string  true "The type of Group"
 // @Success 200 {object} models.GetProductsPage
 // @Failure 400 Invalid page supplied
 // @Failure 404 data not found
@@ -964,9 +1089,13 @@ func (c *MainController) FlowUserGroup() {
 	tx, _ := db.Begin()
 	db.Close()
 
-	uid := c.Input().Get("uid")
-	//pid转成64为
-	uID, err := strconv.ParseInt(uid, 10, 64)
+	// uid := c.Input().Get("uid")
+	// beego.Info(uid)
+	uid := make([]string, 0, 2)
+	c.Ctx.Input.Bind(&uid, "uid") //ul ==[str array]
+	// uid := c.GetStrings("uid")
+	beego.Info(uid)
+	uID, err := strconv.ParseInt(uid[0], 10, 64)
 	if err != nil {
 		beego.Error(err)
 	}
@@ -1004,22 +1133,36 @@ type GroupUsers struct {
 // @router /flowgroupuserslist [get]
 // 查询Group下的所有Users
 func (c *MainController) FlowGroupUsersList() {
-	var offset, limit int64
-	limit = 5
+	var offset, limit1, page1 int64
+	var err error
+	limit := c.Input().Get("limit")
+	if limit == "" {
+		limit1 = 0
+	} else {
+		limit1, err = strconv.ParseInt(limit, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
+	}
 	page := c.Input().Get("page")
-	page1, err := strconv.ParseInt(page, 10, 64)
-	if err != nil {
-		beego.Error(err)
+	if page == "" {
+		limit1 = 0
+		page1 = 1
+	} else {
+		page1, err = strconv.ParseInt(page, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
 	}
 
 	if page1 <= 1 {
 		offset = 0
 	} else {
-		offset = (page1 - 1) * limit
+		offset = (page1 - 1) * limit1
 	}
 
 	groupusers := make([]GroupUsers, 0)
-	groups, err := flow.Groups.List(offset, limit)
+	groups, err := flow.Groups.List(offset, limit1)
 	if err != nil {
 		beego.Error(err)
 	} else {
@@ -1081,20 +1224,34 @@ func (c *MainController) FlowRole() {
 // @router /flowrolelist [get]
 // 查询所有role
 func (c *MainController) FlowRoleList() {
-	var offset, limit int64
-	limit = 5
+	var offset, limit1, page1 int64
+	var err error
+	limit := c.Input().Get("limit")
+	if limit == "" {
+		limit1 = 0
+	} else {
+		limit1, err = strconv.ParseInt(limit, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
+	}
 	page := c.Input().Get("page")
-	page1, err := strconv.ParseInt(page, 10, 64)
-	if err != nil {
-		beego.Error(err)
+	if page == "" {
+		limit1 = 0
+		page1 = 1
+	} else {
+		page1, err = strconv.ParseInt(page, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
 	}
 
 	if page1 <= 1 {
 		offset = 0
 	} else {
-		offset = (page1 - 1) * limit
+		offset = (page1 - 1) * limit1
 	}
-	roles, err := flow.Roles.List(offset, limit)
+	roles, err := flow.Roles.List(offset, limit1)
 	if err != nil {
 		beego.Error(err)
 	} else {
@@ -1135,7 +1292,13 @@ func (c *MainController) FlowPermission() {
 		beego.Error(err)
 	}
 	//根据用户选择的动作
-	var actions []flow.DocActionID //[]flow.DocActionID{daID1, daID2, daID3, daID4}
+	daid := c.Input().Get("daid")
+	daID, err := strconv.ParseInt(daid, 10, 64)
+	if err != nil {
+		beego.Error(err)
+	}
+	actions := []flow.DocActionID{flow.DocActionID(daID)} //[]flow.DocActionID{daID1, daID2, daID3, daID4}
+
 	//给角色role赋予action权限
 	err = flow.Roles.AddPermissions(tx, flow.RoleID(roleID), flow.DocTypeID(dtID), actions)
 	if err != nil {
@@ -1172,23 +1335,36 @@ type Actions struct {
 // @router /flowrolepermissionlist [get]
 // 查询role和对应对应的permission
 func (c *MainController) FlowRolePermissionList() {
-	var offset, limit int64
-	limit = 5
-	page := c.Input().Get("page")
-	page1, err := strconv.ParseInt(page, 10, 64)
-	if err != nil {
-		beego.Error(err)
+	var offset, limit1, page1 int64
+	var err error
+	limit := c.Input().Get("limit")
+	if limit == "" {
+		limit1 = 0
+	} else {
+		limit1, err = strconv.ParseInt(limit, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
 	}
-
+	page := c.Input().Get("page")
+	if page == "" {
+		limit1 = 0
+		page1 = 1
+	} else {
+		page1, err = strconv.ParseInt(page, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
+	}
 	if page1 <= 1 {
 		offset = 0
 	} else {
-		offset = (page1 - 1) * limit
+		offset = (page1 - 1) * limit1
 	}
 
 	// rolepermission := make([]RolePermission, 0)
 	rolepermission := make([]flow.RolePermission, 0)
-	roles, err := flow.Roles.List(offset, limit)
+	roles, err := flow.Roles.List(offset, limit1)
 	if err != nil {
 		beego.Error(err)
 	} else {
@@ -1279,17 +1455,32 @@ func (c *MainController) FlowGroupRole() {
 // @router /flowgrouprolelist [get]
 // 查询group的角色role-来自accesscontext
 func (c *MainController) FlowGroupRoleList() {
-	var offset, limit int64
-	limit = 5
-	page := c.Input().Get("page")
-	page1, err := strconv.ParseInt(page, 10, 64)
-	if err != nil {
-		beego.Error(err)
+	var offset, limit1, page1 int64
+	var err error
+	limit := c.Input().Get("limit")
+	if limit == "" {
+		limit1 = 0
+	} else {
+		limit1, err = strconv.ParseInt(limit, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
 	}
+	page := c.Input().Get("page")
+	if page == "" {
+		limit1 = 0
+		page1 = 1
+	} else {
+		page1, err = strconv.ParseInt(page, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
+	}
+
 	if page1 <= 1 {
 		offset = 0
 	} else {
-		offset = (page1 - 1) * limit
+		offset = (page1 - 1) * limit1
 	}
 	// accesscontexts, err := flow.AccessContexts.List(prefix, offset, limit)
 	//groups,err:=
@@ -1301,7 +1492,7 @@ func (c *MainController) FlowGroupRoleList() {
 	// groupid = flow.GroupID(13)
 	// gids = append(gids, groupid)
 	// grouproles, err := flow.AccessContexts.GroupRoles(flow.AccessContextID(1), gids, offset, limit)
-	grouproles, err := flow.AccessContexts.GroupRolesList(offset, limit)
+	grouproles, err := flow.AccessContexts.GroupRolesList(offset, limit1)
 	if err != nil {
 		beego.Error(err)
 	}
@@ -1311,11 +1502,15 @@ func (c *MainController) FlowGroupRoleList() {
 
 // @Title post wf document
 // @Description post document
+// @Param dtid query string  true "The doctypeid of document"
+// @Param acid query string  true "The accesscontext of document"
+// @Param gid query string  true "The groupid of Group"
+// @Param name query string  true "The name of document"
+// @Param data query string  true "The data of document"
 // @Success 200 {object} models.GetProductsPage
 // @Failure 400 Invalid page supplied
 // @Failure 404 data not found
 // @router /flowdoc [post]
-// 每次新建一个文件，自动对文件进行流程初始化，即，进行定义动作事件
 func (c *MainController) FlowDoc() {
 	//连接数据库
 	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
@@ -1345,8 +1540,8 @@ func (c *MainController) FlowDoc() {
 	if err != nil {
 		beego.Error(err)
 	}
-	name := c.Input().Get("name")
-	data := c.Input().Get("data")
+	name := c.Input().Get("docname")
+	data := c.Input().Get("docdata")
 
 	//查询预先定义的流程类型workflow，这个相当于doctype下面再分很多种流程
 	//比如doctype为图纸设计流程，下面可以分为二级校审流程，三级校审流程，四级校审流程
@@ -1831,6 +2026,7 @@ type DocumentDetail struct {
 	// DocTypeId    flow.DocTypeID
 	Document *flow.Document
 	Action   []flow.DocAction
+	Text     string
 }
 
 // @Title get wf document details
@@ -1913,13 +2109,17 @@ func (c *MainController) FlowDocumentDetail() {
 	// documentdetail.Document = document
 	//数组模式
 	documentdetail := make([]DocumentDetail, 1)
-	for _, value := range TransitionMap[document.State.ID].Transitions {
-		// beego.Info(key)
-		// beego.Info(value.Upon.ID)
-		documentdetailarr := make([]flow.DocAction, 1)
-		documentdetailarr[0].ID = value.Upon.ID
-		documentdetailarr[0].Name = value.Upon.Name
-		documentdetail[0].Action = append(documentdetail[0].Action, documentdetailarr...)
+
+	if _, ok := TransitionMap[document.State.ID]; ok {
+		//存在
+		for _, value := range TransitionMap[document.State.ID].Transitions {
+			// beego.Info(key)
+			// beego.Info(value.Upon.ID)
+			documentdetailarr := make([]flow.DocAction, 1)
+			documentdetailarr[0].ID = value.Upon.ID
+			documentdetailarr[0].Name = value.Upon.Name
+			documentdetail[0].Action = append(documentdetail[0].Action, documentdetailarr...)
+		}
 	}
 	documentdetail[0].Document = document
 

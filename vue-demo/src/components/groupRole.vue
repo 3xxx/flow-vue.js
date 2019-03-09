@@ -1,17 +1,14 @@
 <template>
   <div>
-    <el-col :span="24" class="breadcrumb-container">
-      <el-button-group style="float: left; margin:10px">
-        <el-button type="primary" size="small" @click="addRow(grouproledata)">新增</el-button>
-        <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click.native="dialogFormVisible = true">添加</el-button>
-        <el-button type="primary" icon="el-icon-share" size="small">分享</el-button>
-        <el-button type="primary" icon="el-icon-delete" size="small">删除</el-button>
-      </el-button-group>
-      <el-button-group  style="float: right; margin:10px">
-        <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
+    <el-button-group style="float: left; margin:10px">
+      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insertAt({name: `New last ${Date.now()}`, flag: true, createDate: Date.now()}, -1)">新增</el-button>
+      <el-button type="info" size="small" @click="$refs.editable.revert()">放弃更改</el-button>
+      <el-button type="info" size="small" icon="el-icon-delete" @click="$refs.editable.clear()">清空数据</el-button>
+    </el-button-group>
+    <el-button-group  style="float: right; margin:10px">
+      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
       <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
-      </el-button-group>
-    </el-col>
+    </el-button-group>
 
     <el-editable ref="editable"
       :data="grouproledata" border style="width: 100%" stripe>
@@ -59,8 +56,10 @@
 
       <el-editable-column  label="操作" align="center">
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
-          <el-button size="mini" type="danger" @click="deleteRow(scope.$index, grouproledata)">Delete</el-button>
+          <el-button-group>
+            <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
+            <el-button size="mini" type="danger" @click="deleteRow(scope.$index, grouproledata)">Delete</el-button>
+          </el-button-group>
         </template>
       </el-editable-column>
     </el-editable>

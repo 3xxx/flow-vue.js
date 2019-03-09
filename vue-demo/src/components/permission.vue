@@ -3,18 +3,16 @@
 </template> -->
 <template>
   <div>
-    <el-col :span="24" class="breadcrumb-container">
-      <el-button-group style="float: left; margin:10px">
-        <el-button type="primary" size="small" @click="addRow(permissiondata)">新增</el-button>
-        <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click.native="dialogFormVisible = true">添加</el-button>
-        <el-button type="primary" icon="el-icon-share" size="small">分享</el-button>
-        <el-button type="primary" icon="el-icon-delete" size="small">删除</el-button>
-      </el-button-group>
-      <el-button-group  style="float: right; margin:10px">
-        <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
+    <el-button-group style="float: left; margin:10px">
+      <!-- <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insertAt({name: `New last ${Date.now()}`, flag: true, createDate: Date.now()}, -1)">新增m</el-button> -->
+      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click.native="dialogFormVisible = true">添加</el-button>
+      <el-button type="info" size="small" @click="$refs.editable.revert()">放弃更改</el-button>
+      <el-button type="info" size="small" icon="el-icon-delete" @click="$refs.editable.clear()">清空数据</el-button>
+    </el-button-group>
+    <el-button-group  style="float: right; margin:10px">
+      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
       <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
-      </el-button-group>
-    </el-col>
+    </el-button-group>
 
     <el-editable ref="editable"
       :data="permissiondata" border style="width: 100%" stripe>
@@ -36,7 +34,7 @@
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.TypeAction.DocTypeID" clearable>
             <el-option
-              v-for="item in doctypedata"
+              v-for="item in doctypedata.doctypes"
               :key="item.ID"
               :label="item.Name"
               :value="item.ID">
@@ -45,12 +43,12 @@
         </template>
         <template slot-scope="scope">{{ getColumnLabel2(scope.row.TypeAction.DocTypeID) }}</template>
       </el-editable-column>
-      <el-editable-column prop="TypeAction.Actions" label="Action" :formatter="formatter" :editRender="{type: 'default'}" align="center">
+      <el-editable-column prop="TypeAction.Actions[0].ID" label="Action" :formatter="formatter" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.TypeAction.Actions[0].ID" clearable>
             <el-option
               v-for="item in scope.row.TypeAction.Actions"
-              :key="item.Name"
+              :key="item.ID"
               :label="item.Name"
               :value="item.ID">
             </el-option>
@@ -60,8 +58,10 @@
       </el-editable-column>
       <el-editable-column  label="操作" align="center">
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
-          <el-button size="mini" type="danger" @click="deleteRow(scope.$index, permissiondata)">Delete</el-button>
+          <el-button-group>
+            <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
+            <el-button size="mini" type="danger" @click="deleteRow(scope.$index, permissiondata)">Delete</el-button>
+          </el-button-group>
         </template>
       </el-editable-column>
     </el-editable>
@@ -75,11 +75,43 @@
       :total="total" style="float: right; margin:10px">
     </el-pagination>
 
-    <el-dialog title="定义doctype" :visible.sync="dialogFormVisible" center>
-    <!-- 插入测试 -->
+    <el-dialog title="添加permission" :visible.sync="dialogFormVisible" center>
       <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="名称" prop="typename">
-          <el-input v-model.number="ruleForm2.typename" auto-complete="off" placeholder="输入名称"></el-input>
+        <el-form-item label="DOCTYPE" prop="dtid">
+          <template >
+            <el-select v-model="ruleForm2.dtid2" clearable>
+              <el-option
+                v-for="item in doctypedata.doctypes"
+                :key="item.ID"
+                :label="item.Name"
+                :value="item.ID">
+              </el-option>
+            </el-select>
+          </template>
+        </el-form-item>
+        <el-form-item label="Role" prop="roleid">
+          <template>
+            <el-select v-model="ruleForm2.roleid2" clearable>
+              <el-option
+                v-for="item in roledata"
+                :key="item.ID"
+                :label="item.Name"
+                :value="item.ID">
+              </el-option>
+            </el-select>
+          </template>
+        </el-form-item>
+        <el-form-item label="Action" prop="daid">
+          <template>
+            <el-select v-model="ruleForm2.daid2" clearable>
+              <el-option
+                v-for="item in docactiondata"
+                :key="item.ID"
+                :label="item.Name"
+                :value="item.ID">
+              </el-option>
+            </el-select>
+          </template>
         </el-form-item>
       </el-form>
       <!-- 插入测试 -->
@@ -216,7 +248,9 @@
             }
           ],
           search: '',
-
+          dtid2:'',
+          daid2:'',
+          roleid2:''
         };
       },
       mounted:function () {
@@ -236,14 +270,12 @@
                 //   'Access-Control-Allow-Origin': '*'
                 // },//设置跨域请求头
                 method: "POST",//请求方式
-                url: "http://127.0.0.1:8081/v1/admin/flowtype",//请求地址
+                url: "http://127.0.0.1:8081/v1/admin/flowpermission",//请求地址
                 params:{
-                  name:this.ruleForm2.typename,
+                  dtid:this.ruleForm2.dtid2,
+                  roleid:this.ruleForm2.roleid2,
+                  daid:this.ruleForm2.daid2,
                 },
-                data: {
-                  name:this.ruleForm2.typename,
-                  // "thirdapp_id":1//请求参数
-                }
               })
               // .then(response => (this.posts = response.data.articles))
               .then(function (response) {
@@ -265,7 +297,6 @@
               .catch(function (error) {
                 console.log(error);
               });
-
             } else {
               console.log('error submit!!');
               return false;
@@ -363,9 +394,9 @@
           axios({
             method: 'get',
             url: 'http://127.0.0.1:8081/v1/admin/flowtypelist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            // params:{
+            //   page:currentPage
+            // }
           })
           .then(response => (this.doctypedata = response.data))
           .catch(function (error) {
@@ -480,7 +511,7 @@
           return selectItem ? selectItem.Name : null
         },
         getColumnLabel2 (value) {
-          let selectItem = this.doctypedata.find(item => item.ID === value)
+          let selectItem = this.doctypedata.doctypes.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
         },
         getColumnLabel3 (value) {

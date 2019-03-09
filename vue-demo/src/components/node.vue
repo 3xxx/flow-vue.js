@@ -1,27 +1,20 @@
 <template>
   <div>
-    <el-col :span="24" class="breadcrumb-container">
-      <el-button-group style="float: left; margin:10px">
-        <el-button type="primary" size="small" @click="addRow(nodedata)">新增</el-button>
-        <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click.native="dialogFormVisible = true">添加</el-button>
-        <el-button type="primary" icon="el-icon-share" size="small">分享</el-button>
-        <el-button type="primary" icon="el-icon-delete" size="small">删除</el-button>
-      </el-button-group>
-      <el-button-group  style="float: right; margin:10px">
-        <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
-        <!-- <el-input placeholder="请输入内容" v-model="input5" class="input-with-select" size="small" type="primary"> -->
-        <!-- <el-button type="primary" slot="append" icon="el-icon-search" size="small"></el-button> -->
-        <!-- </el-input> -->
-        <!-- <el-input v-model="search" size="mini" placeholder="输入关键字搜索"/> -->
+    <el-button-group style="float: left; margin:10px">
+      <!-- <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insertAt({name: `New last ${Date.now()}`, flag: true, createDate: Date.now()}, -1)">新增</el-button> -->
+      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click.native="dialogFormVisible = true">添加m</el-button>
+      <el-button type="info" size="small" @click="$refs.editable.revert()">放弃更改</el-button>
+      <el-button type="info" size="small" icon="el-icon-delete" @click="$refs.editable.clear()">清空数据</el-button>
+    </el-button-group>
+    <el-button-group  style="float: right; margin:10px">
+      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
       <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
-        <!-- <el-button type="primary" icon="el-icon-delete" size="small">导出</el-button> .slice((currentPage-1)*pageSize,currentPage*pageSize)-->
-      </el-button-group>
-    </el-col>
+    </el-button-group>
 
     <el-col>
       <el-button-group style="float: left; margin:10px">
         <!-- <template> -->
-          <el-select v-model="value" placeholder="请选择" @change="changeValue" clearable>
+          <el-select v-model="value" placeholder="请选择workflow" @change="changeValue" clearable>
             <el-option
               v-for="item in workflowdata"
               :key="item.ID"
@@ -44,7 +37,7 @@
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.DocType" clearable>
             <el-option
-              v-for="item in doctypedata"
+              v-for="item in doctypedata.doctypes"
               :key="item.ID"
               :label="item.Name"
               :value="item.ID">
@@ -94,8 +87,8 @@
       <el-editable-column label="操作" align="center">
         <template slot-scope="scope">
           <el-button-group>
-          <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
-          <el-button size="mini" type="danger" @click="deleteRow(scope.$index, nodedata)">Delete</el-button>
+            <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
+            <el-button size="mini" type="danger" @click="deleteRow(scope.$index, nodedata)">Delete</el-button>
           </el-button-group>
         </template>
       </el-editable-column>
@@ -114,12 +107,13 @@
     <!-- 插入测试 -->
       <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
         <el-form-item label="名称" prop="nodename">
-          <el-input v-model.number="ruleForm2.nodename" auto-complete="off" placeholder="输入名称"></el-input>
+          <el-input v-model.number="ruleForm2.nodename" auto-complete="off" placeholder="输入名称" style='width: 215px;'></el-input>
+          <!-- <el-form-item label="TITLE" prop="docname" class="transparentIcon" style='width: 320px;'> -->
         </el-form-item>
         <el-form-item label="DocType" prop="dtid">
           <el-select v-model.number="ruleForm2.dtid" clearable>
             <el-option
-              v-for="item in doctypedata"
+              v-for="item in doctypedata.doctypes"
               :key="item.ID"
               :label="item.Name"
               :value="item.ID">
@@ -239,15 +233,11 @@
             desc: ''
           },
           formLabelWidth: '120px',
-
           isCollapse: true,
           bannerHeight:200,
-
           clientHeight:'',
-          // calleft:0
           posts:[],
           numbers:0,
-
           // dialogFormVisible: false,
           form: {
             name: '',
@@ -265,20 +255,17 @@
               ID:1,
               Name:'测试数据'
             }
-          ],
-          tableData: [
-            {ID:1,Name:"图纸"},
-            {ID:2,Name:"合同"}
           ],      
           nodedata: [
             {
               ID:1,
-              DocType:2,
-              DocState:3,
+              DocType:3,
+              DocState:7,
               // AccCtx:4,
               // Wflow:1,
-              Name:'我是node',
-              NodeType:'begin'
+              Name:'node测试数据',
+              NodeType:'begin',
+              Workflow: 3
             }
           ],
           doctypedata: [
@@ -480,6 +467,7 @@
         },
         deleteRow(index, rows) {//删除改行
           //先删除数据库
+
           //再删除前端行
           rows.splice(index, 1);
         },
@@ -527,7 +515,8 @@
               });
         },
         sendGetByStr(){
-          axios.get(`api/v1/wx/getlistarticles?page=1`)//1.get通过直接发字符串拼接
+          //1.get通过直接发字符串拼接
+          axios.get(`api/v1/wx/getlistarticles?page=1`)
             // .then(function (response) {
             //   console.log(response);
             //   console.log(response.data.info);
@@ -626,7 +615,7 @@
           this.node(currentPage);
         },
         getColumnLabel (value) {
-          let selectItem = this.doctypedata.find(item => item.ID === value)
+          let selectItem = this.doctypedata.doctypes.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
         },
         getColumnLabel2 (value) {

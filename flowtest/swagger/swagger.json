@@ -145,6 +145,43 @@
                 ],
                 "description": "post document",
                 "operationId": "MainController.post wf document",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "dtid",
+                        "description": "The doctypeid of document",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "acid",
+                        "description": "The accesscontext of document",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "gid",
+                        "description": "The groupid of Group",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "name",
+                        "description": "The name of document",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "data",
+                        "description": "The data of document",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "",
@@ -379,6 +416,13 @@
                         "in": "query",
                         "name": "name",
                         "description": "The name of Group",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "grouptype",
+                        "description": "The type of Group",
                         "required": true,
                         "type": "string"
                     }
@@ -786,7 +830,12 @@
                         "in": "query",
                         "name": "page",
                         "description": "The page of docstate",
-                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "description": "The size of page",
                         "type": "string"
                     }
                 ],
@@ -946,7 +995,12 @@
                         "in": "query",
                         "name": "page",
                         "description": "The page of doctype",
-                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "description": "The size of page",
                         "type": "string"
                     }
                 ],
@@ -978,7 +1032,6 @@
                         "in": "query",
                         "name": "name",
                         "description": "The name of doctype",
-                        "required": true,
                         "type": "string"
                     }
                 ],

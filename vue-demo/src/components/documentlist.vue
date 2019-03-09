@@ -4,8 +4,8 @@
 <template>
   <div>
     <el-button-group style="float: left; margin:10px">
-      <!-- <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insert({name: `New ${Date.now()}`, flag: true, createDate: Date.now()})">新增一行</el-button> -->
-      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insertAt({name: `New last ${Date.now()}`, flag: true, createDate: Date.now()}, -1)">新增</el-button>
+      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click.native="dialogFormVisible = true">添加m</el-button>
+      <!-- <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insertAt({name: `New last ${Date.now()}`, flag: true, createDate: Date.now()}, -1)">新增</el-button> -->
       <el-button type="info" size="small" @click="$refs.editable.revert()">放弃更改</el-button>
       <el-button type="info" size="small" icon="el-icon-delete" @click="$refs.editable.clear()">清空数据</el-button>
     </el-button-group>
@@ -14,13 +14,36 @@
       <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
     </el-button-group>
 
+    <el-col>
+      <el-button-group style="float: left; margin:10px">
+        <!-- <template> -->
+          <el-select v-model="dtvalue" placeholder="请选择doctype" @change="changedtValue" clearable>
+            <el-option
+              v-for="item in doctypedata.doctypes"
+              :key="item.ID"
+              :label="item.Name"
+              :value="item.ID">
+            </el-option>
+          </el-select>
+          <el-select v-model="acvalue" placeholder="请选择accCTX" @change="changeacValue" clearable>
+            <el-option
+              v-for="item in accesscontextdata"
+              :key="item.ID"
+              :label="item.Name"
+              :value="item.ID">
+            </el-option>
+          </el-select>
+        <!-- </template> -->
+      </el-button-group>
+    </el-col>
+
     <el-editable ref="editable" :data="documentsdata" border style="width: 100%" stripe>
-      <!-- <el-editable-column label="ID" prop="ID" align="center"></el-editable-column> -->
-      <el-editable-column label="DOCTYPE" prop="DocType.ID" :editRender="{type: 'default'}" align="center">
+      <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
+      <!-- <el-editable-column label="DOCTYPE" prop="DocType.ID" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.DocType.ID" clearable>
             <el-option
-              v-for="item in doctypedata"
+              v-for="item in doctypedata.doctypes"
               :key="item.ID"
               :label="item.Name"
               :value="item.ID">
@@ -29,7 +52,7 @@
         </template>
         <template slot-scope="scope">{{ getColumnLabel2(scope.row.DocType.ID) }}</template>
       </el-editable-column>
-      <el-editable-column label="AC_CONTEXT" prop="AccessContext.ID" :editRender="{type: 'default'}" align="center">
+      <el-editable-column label="accCTX" prop="AccessContext.ID" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.AccessContext.ID" clearable>
             <el-option
@@ -41,7 +64,8 @@
           </el-select>
         </template>
         <template slot-scope="scope">{{ getColumnLabel(scope.row.AccessContext.ID) }}</template>
-      </el-editable-column>
+      </el-editable-column> -->
+      <el-editable-column label="TITLE" prop="Title" align="center"></el-editable-column>
       <el-editable-column label="DOCSTATE" prop="DocState.ID" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.DocState.ID" clearable>
@@ -68,11 +92,8 @@
         </template>
         <template slot-scope="scope">{{ getColumnLabel4(scope.row.Group.ID) }}</template>
       </el-editable-column>
-      <el-editable-column label="TITLE" prop="Title">
-      </el-editable-column>
-      <el-editable-column label="PATH" prop="Path" size="mini">
-      </el-editable-column>
-      <el-editable-column label="CTIME" prop="Ctime" size="mini" :formatter="formatter">
+      <el-editable-column label="PATH" prop="Path" size="mini" align="center"></el-editable-column>
+      <el-editable-column label="CTIME" prop="Ctime" size="mini" :formatter="formatter" align="center">
       </el-editable-column>
       <el-editable-column  label="操作" align="center">
         <template slot-scope="scope">
@@ -94,14 +115,12 @@
     </el-pagination>
 
     <el-dialog title="添加document" :visible.sync="dialogFormVisible" center>
-    <!-- 插入测试 -->
       <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
-        
         <el-form-item label="DOCTYPE" prop="dtid">
           <template >
-            <el-select v-model="ruleForm2.value1" clearable>
+            <el-select v-model="ruleForm2.dtid2" clearable>
               <el-option
-                v-for="item in doctypedata"
+                v-for="item in doctypedata.doctypes"
                 :key="item.ID"
                 :label="item.Name"
                 :value="item.ID">
@@ -111,7 +130,7 @@
         </el-form-item>
         <el-form-item label="ACCESSCONTEXT" prop="acid">
           <template>
-            <el-select v-model="ruleForm2.value2" clearable>
+            <el-select v-model="ruleForm2.acid2" clearable>
               <el-option
                 v-for="item in accesscontextdata"
                 :key="item.ID"
@@ -123,7 +142,7 @@
         </el-form-item>
         <el-form-item label="GROUP" prop="gid">
           <template>
-            <el-select v-model="ruleForm2.value3" value-key="ID" clearable>
+            <el-select v-model="ruleForm2.gid2" value-key="ID" clearable>
               <el-option
                 v-for="item in groupdata"
                 :key="item.ID"
@@ -139,7 +158,6 @@
         <el-form-item label="DATA" prop="docdata" class="transparentIcon" style='width: 320px;'>
           <el-input v-model.number="ruleForm2.docdata" auto-complete="off" placeholder="输入名称"></el-input>
         </el-form-item>
-
       </el-form>
       <!-- 插入测试 -->
       <div slot="footer" class="dialog-footer">
@@ -197,10 +215,10 @@
           /*插入form方法*/
           /*设定规则指向*/
           ruleForm2: {
-            name:'',
-            pass: '',
-            num: '',
-            delivery: false,
+            // name:'',
+            // pass: '',
+            // num: '',
+            // delivery: false,
           },
           rules2: {
             typename: [
@@ -264,7 +282,8 @@
                 "GroupType": ""
               },
               Ctime: "2019-02-09T21:52:40Z",
-              Title: ""
+              Title: "这个是测试数据",
+              Path: "/path/document"
             }
           ],
           accesscontextdata: [
@@ -285,26 +304,18 @@
             {ID:1,Name:"秦晓川",GroupType:"S"},
             {ID:2,Name:"校核组",GroupType:"G"}
           ],
-          value1:'',
-          value2:'',
-          value3:'',
-          sexList: [
-            {
-              "label": "男",
-              "value": 1,
-              ID:1
-            },
-            {
-              "label": "女",
-              "value": 0,
-              ID:2
-            }
-          ],
-          sex: '1',
+          dtid2:'',
+          acid2:'',
+          gid2:'',
+          acvalue:'',
+          dtvalue:'',
+          dtid:'',
+          acid:'',
+          message:''
         };
       },
       mounted:function () {
-        this.documents(3,this.currentPage);
+        // this.documents(3,this.currentPage);
         this.accesscontext(this.currentPage);
         this.group(this.currentPage);
         this.docstate(this.currentPage);
@@ -312,7 +323,8 @@
       },
       methods:{
         detail(index, row){
-          console.log(row);
+          console.log(row.ID);
+          console.log(row.DocType.ID);
           this.$router.push({
             path: '/documentdetail',
             query: {docid: row.ID,dtid:row.DocType.ID}
@@ -322,23 +334,19 @@
           this.$refs[formName].validate((valid) => {
             if (valid) {
               axios({
-                method: "GET",//请求方式
-                url: "http://127.0.0.1:8081/v1/admin/flowdocumentdetail",//请求地址
+                method: "POST",//请求方式
+                url: "http://127.0.0.1:8081/v1/admin/flowdoc",//请求地址
                 params:{
-                  form:this.ruleForm2,
+                  // form:this.ruleForm2,
                   // dsid:this.ruleForm2.DocstateId,
-                  // dtid:this.ruleForm2.value1,
-                  // // dtid:this.ruleForm2.DoctypeId,
-                  // acid:this.ruleForm2.value2,
+                  dtid:this.ruleForm2.dtid2,
+                  // dtid:this.ruleForm2.DoctypeId,
+                  acid:this.ruleForm2.acid2,
                   // // gid:this.ruleForm2.GroupId,
-                  // gid:this.ruleForm2.value3,
-                  // title:this.ruleForm2.docname,
-                  // data:this.ruleForm2.docdata,
+                  gid:this.ruleForm2.gid2,
+                  docname:this.ruleForm2.docname,
+                  docdata:this.ruleForm2.docdata,
                 },
-                // data: {
-                  // name:this.ruleForm2.typename,
-                  // "thirdapp_id":1//请求参数
-                // }
               })
               // .then(response => (this.posts = response.data.articles))
               .then(function (response) {
@@ -428,15 +436,15 @@
                 console.log(error);
               });
         },
-        documents(dtid,currentPage){
+        documents(currentPage){
           axios({
             method: 'get',
             url: 'http://127.0.0.1:8081/v1/admin/flowdocumentlist',//2.get通过params选项
             params:{
               page:currentPage,
               limit:this.pageSize,
-              dtid:dtid,
-              acid:1
+              dtid:this.dtid,
+              acid:this.acid
             }
           })
           .then(response => (this.documentsdata = response.data))
@@ -543,7 +551,7 @@
           }
           // return util.formatDate.format(new Date(date), 'yyyy-MM-dd');
           // this.$moment().format('YYYY-MM-DD HH:mm:ss')
-          return this.$moment(date).format("YYYY-MM-DD HH:mm");
+          return this.$moment(date).subtract(8,'hour').format("YYYY-MM-DD HH:mm");
           // https://blog.csdn.net/ysq0317/article/details/81089962
           // vue的话，在moment.js的官网里，是给了安装方法的
           // cnpm install moment --save   
@@ -556,7 +564,7 @@
           return selectItem ? selectItem.Name : null
         },
         getColumnLabel2 (value) {
-          let selectItem = this.doctypedata.find(item => item.ID === value)
+          let selectItem = this.doctypedata.doctypes.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
         },
         getColumnLabel3 (value) {
@@ -566,6 +574,30 @@
         getColumnLabel4 (value) {
           let selectItem = this.groupdata.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
+        },
+        changedtValue(value) {
+          console.log(value);
+          this.dtid = value;
+          if (this.acid!=''){
+            this.documents(this.currentPage);
+          }
+          // let obj = {};
+          // obj = this.options.find((item)=>{
+          //     return item.value === value;
+          // });
+          // console.log(obj.label);
+        },
+        changeacValue(value) {
+          console.log(value);
+          this.acid = value;
+          if (this.dtid!=''){
+            this.documents(this.currentPage);
+          }
+          // let obj = {};
+          // obj = this.options.find((item)=>{
+          //     return item.value === value;
+          // });
+          // console.log(obj.label);
         }
       }
   };

@@ -5,7 +5,8 @@
   <div>
     <el-button-group style="float: left; margin:10px">
       <!-- <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insert({name: `New ${Date.now()}`, flag: true, createDate: Date.now()})">新增一行</el-button> -->
-      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insertAt({name: `New last ${Date.now()}`, flag: true, createDate: Date.now()}, -1)">新增</el-button>
+      <!-- <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insertAt({name: `New last ${Date.now()}`, flag: true, createDate: Date.now()}, -1)">新增</el-button> -->
+      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click.native="dialogFormVisible = true">添加m</el-button>
       <el-button type="info" size="small" @click="$refs.editable.revert()">放弃更改</el-button>
       <el-button type="info" size="small" icon="el-icon-delete" @click="$refs.editable.clear()">清空数据</el-button>
     </el-button-group>
@@ -16,8 +17,7 @@
 
     <el-editable ref="editable"
       :data="documentsdata" border style="width: 100%" stripe>
-      <!-- <el-editable-column label="ID" prop="Id" align="center"></el-editable-column> -->
-      <el-editable-column label="ACCESSCONTEXT" prop="AcId" size="mini" :editRender="{type: 'default'}" align="center">
+      <el-editable-column label="AccCtx" prop="AcId" size="mini" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.AcId" clearable>
             <el-option
@@ -57,19 +57,10 @@
         <template slot-scope="scope">{{ getColumnLabel3(scope.row.GroupId) }}</template>
       </el-editable-column>
       <el-editable-column label="TITLE" prop="Title" size="mini" :editRender="{Name: 'ElInput'}" align="center">
-        <!-- <template slot-scope="scope">
-          <el-input size="mini" v-model="scope.row.Title"></el-input>
-        </template> -->
       </el-editable-column>
       <el-editable-column label="DATA" prop="Data" size="mini" :editRender="{Name: 'ElInput'}" align="center">
-        <!-- <template slot-scope="scope">
-          <el-input size="mini" v-model="scope.row.Data"></el-input>
-        </template> -->
       </el-editable-column>
       <el-editable-column label="PATH" prop="Path" size="mini" :editRender="{Name: 'ElInput'}" align="center">
-        <!-- <template slot-scope="scope">
-          <el-input size="mini" v-model="scope.row.Path"></el-input>
-        </template> -->
       </el-editable-column>
       <el-editable-column label="CTIME" prop="Ctime" size="mini" :formatter="formatter">
       </el-editable-column>
@@ -93,14 +84,12 @@
     </el-pagination>
 
     <el-dialog title="添加document" :visible.sync="dialogFormVisible" center>
-    <!-- 插入测试 -->
       <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
-        
         <el-form-item label="DOCTYPE" prop="dtid">
           <template >
             <el-select v-model="ruleForm2.value1" clearable>
               <el-option
-                v-for="item in doctypedata"
+                v-for="item in doctypedata.doctypes"
                 :key="item.ID"
                 :label="item.Name"
                 :value="item.ID">
@@ -138,7 +127,6 @@
         <el-form-item label="DATA" prop="docdata" class="transparentIcon" style='width: 320px;'>
           <el-input v-model.number="ruleForm2.docdata" auto-complete="off" placeholder="输入名称"></el-input>
         </el-form-item>
-
       </el-form>
       <!-- 插入测试 -->
       <div slot="footer" class="dialog-footer">
@@ -299,8 +287,8 @@
                   acid:this.ruleForm2.value2,
                   // gid:this.ruleForm2.GroupId,
                   gid:this.ruleForm2.value3,
-                  title:this.ruleForm2.docname,
-                  data:this.ruleForm2.docdata,
+                  docname:this.ruleForm2.docname,
+                  docdata:this.ruleForm2.docdata,
                   // path:this.ruleForm2.Path
                   // ctime:row.Ctime
                 },

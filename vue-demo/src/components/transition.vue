@@ -1,29 +1,23 @@
-<!-- <template>
-  <div id="vue">Hello Vue.js! {{ message }}</div>
-</template> -->
 <template>
   <div>
-    <el-col :span="24" class="breadcrumb-container">
-      <el-button-group style="float: left; margin:10px">
-        <el-button type="primary" size="small" @click="addRow(transitiondata)">新增</el-button>
-        <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click.native="dialogFormVisible = true">添加</el-button>
-        <el-button type="primary" icon="el-icon-share" size="small">分享</el-button>
-        <el-button type="primary" icon="el-icon-delete" size="small">删除</el-button>
-      </el-button-group>
-      <el-button-group  style="float: right; margin:10px">
-        <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
+    <el-button-group style="float: left; margin:10px">
+      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insertAt({name: `New last ${Date.now()}`, flag: true, createDate: Date.now()}, -1)">新增</el-button>
+      <el-button type="info" size="small" @click="$refs.editable.revert()">放弃更改</el-button>
+      <el-button type="info" size="small" icon="el-icon-delete" @click="$refs.editable.clear()">清空数据</el-button>
+    </el-button-group>
+    <el-button-group  style="float: right; margin:10px">
+      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
       <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
-      </el-button-group>
-    </el-col>
+    </el-button-group>
 
     <el-editable ref="editable"
-      :data="transitiondata" border style="width: 100%" stripe>
+      :data="transitiondata.transitions" border style="width: 100%" stripe>
       <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
       <el-editable-column prop="DoctypeId" label="DOCTYPE" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.DoctypeId" clearable>
             <el-option
-              v-for="item in doctypedata"
+              v-for="item in doctypedata.doctypes"
               :key="item.ID"
               :label="item.Name"
               :value="item.ID">
@@ -87,7 +81,7 @@
       :page-sizes="[10, 50, 100, 200]"
       :page-size="pageSize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="total" style="float: right; margin:10px">
+      :total="transitiondata.total" style="float: right; margin:10px">
     </el-pagination>
 
     <el-dialog title="定义doctype" :visible.sync="dialogFormVisible" center>
@@ -313,7 +307,8 @@
             method: 'get',
             url: 'http://127.0.0.1:8081/v1/admin/flowtransitionlist',//2.get通过params选项
             params:{
-              page:currentPage
+              page:currentPage,
+              limit:this.pageSize
             }
           })
           .then(response => (this.transitiondata = response.data))
@@ -325,9 +320,9 @@
           axios({
             method: 'get',
             url: 'http://127.0.0.1:8081/v1/admin/flowtypelist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            // params:{
+            //   page:currentPage
+            // }
           })
           .then(response => (this.doctypedata = response.data))
           .catch(function (error) {
@@ -450,7 +445,7 @@
           this.transition(currentPage);
         },
         getColumnLabel (value) {
-          let selectItem = this.doctypedata.find(item => item.ID === value)
+          let selectItem = this.doctypedata.doctypes.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
         },
         getColumnLabel2 (value) {

@@ -31,8 +31,10 @@
       </el-editable-column>
       <el-editable-column  label="操作" align="center">
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
+          <el-button-group>
+            <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
+            <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
+          </el-button-group>
         </template>
       </el-editable-column>
     </el-editable>
