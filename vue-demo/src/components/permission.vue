@@ -235,12 +235,16 @@
               Name:'审查角色'
             }
           ],
-          doctypedata: [
-            {
-              ID:2,
-              Name:'图纸设计'
-            }
-          ],
+          doctypedata: {
+            doctypes: [
+              {
+                ID: 3,
+                Name: "图纸设计"
+              }
+            ],
+            page: 1,
+            total: 7
+          },
           docactiondata: [
             {
               ID:4,

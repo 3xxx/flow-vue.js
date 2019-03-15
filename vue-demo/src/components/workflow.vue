@@ -27,7 +27,7 @@
         </template>
         <template slot-scope="scope">{{ getColumnLabel(scope.row.DocType.ID) }}</template>
       </el-editable-column>
-      <el-editable-column prop="BeginState.ID" label="BeginSTATE" :editRender="{type: 'default'}" align="center">
+      <!-- <el-editable-column prop="BeginState.ID" label="BeginSTATE" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.BeginState.ID" clearable>
             <el-option
@@ -39,7 +39,7 @@
           </el-select>
         </template>
         <template slot-scope="scope">{{ getColumnLabel2(scope.row.BeginState.ID) }}</template>
-      </el-editable-column>
+      </el-editable-column> -->
       <el-editable-column prop="Active" label="ACTIVE" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.Active" clearable>
@@ -181,18 +181,27 @@
             resource: '',
             desc: ''
           },
-          workflowdata: [
-            {
-              ID:1,
-              Name:'测试数据'
-            }
-          ],
-          doctypedata: [
-            {
-              ID:2,
-              Name:'图纸设计'
-            }
-          ],
+          workflowdata: [{
+            Active: true,
+            BeginState: {
+              ID: 7, Name: "设计中..."
+            },
+            DocType: {
+              ID: 3, Name: "图纸设计"
+            },
+            ID: 3,
+            Name: "图纸设计流程"
+          }],
+          doctypedata: {
+            doctypes: [
+              {
+                ID: 3,
+                Name: "图纸设计"
+              }
+            ],
+            page: 1,
+            total: 7
+          },
           docstatedata: [
             {
               ID:3,
@@ -532,7 +541,7 @@
   .home_main{
     padding:10px;
   }
-  .breadcrumb-container .title {
+/*  .breadcrumb-container .title {
       width: 200px;
       float: left;
       color: #475669;
@@ -544,5 +553,5 @@
   }
   .el-breadcrumb__inner, .el-breadcrumb__inner a {
     font-weight: 400;
-  }
+  }*/
 </style>

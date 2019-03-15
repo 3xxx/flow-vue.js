@@ -15,8 +15,7 @@
         <span>3xxx</span>
       </el-col>
     </el-header>
-
-<!--  style="flex: 0 0 230px;width: 230px;background:#eef1f6"  class="el-menu-vertical-demo"-->
+    <!--  style="flex: 0 0 230px;width: 230px;background:#eef1f6"  class="el-menu-vertical-demo"-->
     <el-container>
       <el-aside>
         <el-menu default-active="doctype" @select="handleSelect">
@@ -53,7 +52,6 @@
           </el-submenu>
         </el-menu>
       </el-aside>
-
       <el-main class="home_main">
         <el-col :span="24" class="breadcrumb-container">
           <strong class="title">{{$route.name}}</strong>
@@ -68,7 +66,6 @@
             <router-view></router-view>
           </div>
         </el-col>
-        
       </el-main>
     </el-container>
   </el-container>
@@ -152,7 +149,7 @@
           // case 'dumentdetail':
           //   this.$router.push('/documentlist/documentdetail')
           //   break;
-          case 'dumentdetail':
+          case 'documentdetail':
             this.$router.push('/documentdetail')
             break;
           default:

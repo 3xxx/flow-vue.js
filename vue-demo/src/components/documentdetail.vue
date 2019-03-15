@@ -53,7 +53,7 @@
         </template>
       </el-editable-column>
     </el-editable>
-    <el-pagination background
+    <!-- <el-pagination background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="currentPage"
@@ -61,8 +61,46 @@
       :page-size="pageSize"
       layout="total, sizes, prev, pager, next, jumper"
       :total="total" style="float: right; margin:10px">
-    </el-pagination>
-
+    </el-pagination> -->
+  <!-- </div> -->
+  <el-col :span="24" class="breadcrumb-container">
+    <p></p>
+  </el-col>
+    <!-- <template> -->
+    <el-col :span="24" class="breadcrumb-container">
+    <!-- <div class="block"> :timestamp="activity.timestamp"-->
+      <el-timeline :reverse="reverse">
+        <el-timeline-item
+          v-for="(item, index) in documentdetaildata[0].History"
+          :key='index'> 
+          <el-card>
+            <h4>Group：{{item.Group}}</h4>
+            <p>Comment：{{item.Data}}</p>
+            <p>于“ {{item.Ctime | dateformat}} ”将文档状态从“ {{item.FromState}} ”通过动作“ {{item.DocAction}} ”改为“ {{item.ToState}} ”</p>
+          </el-card>
+        </el-timeline-item>
+      </el-timeline>
+      <!-- <el-timeline>
+      <el-timeline-item timestamp="2018/4/12" placement="top">
+        <el-card>
+          <h4>更新 Github 模板</h4>
+          <p>王小虎 提交于 2018/4/12 20:46</p>
+        </el-card>
+      </el-timeline-item>
+      <el-timeline-item timestamp="2018/4/3" placement="top">
+        <el-card>
+          <h4>更新 Github 模板</h4>
+          <p>王小虎 提交于 2018/4/3 20:46</p>
+        </el-card>
+      </el-timeline-item>
+      <el-timeline-item timestamp="2018/4/2" placement="top">
+        <el-card>
+          <h4>更新 Github 模板</h4>
+          <p>王小虎 提交于 2018/4/2 20:46</p>
+        </el-card>
+      </el-timeline-item>
+      </el-timeline> -->
+    </el-col>  
   </div>
 </template>
 
@@ -104,6 +142,25 @@
           }
         };
         return {
+          reverse: true,//时间线倒序
+          activities2: [{
+            content: '支持使用图标',
+            timestamp: '2018-04-12 20:46',
+            size: 'large',
+            type: 'primary',
+            icon: 'el-icon-more'
+          }, {
+            content: '支持自定义颜色',
+            timestamp: '2018-04-03 20:46',
+            color: '#0bbd87'
+          }, {
+            content: '支持自定义尺寸',
+            timestamp: '2018-04-02 20:46',
+            size: 'large'
+          }, {
+            content: '默认样式的节点',
+            timestamp: '2018-04-01 20:46'
+          }],
           total: 50,
           currentPage: 1,
           pageSize: 10,
@@ -158,7 +215,53 @@
             resource: '',
             desc: ''
           },
-          documentdetaildata:[],
+          documentdetaildata:[
+            {
+              Document: {
+                ID: 5,
+                DocType: {
+                  ID: 14,
+                  Name: "秘密"
+                },
+                Path: "",
+                AccessContext: {
+                  ID: 1
+                },
+                DocState: {
+                  ID: 10,
+                  Name: "核定中..."
+                },
+                Group: {
+                  ID: 7,
+                  Name: "email1@example.com",
+                  GroupType: ""
+                },
+                Ctime: "2019-03-09T20:09:56Z",
+                Title: "布置图啊1",
+                Data: "data"
+              },
+              Action: null,
+              History: [
+                {
+                  FromState: "设计中...",
+                  DocAction: "提交设计",
+                  ToState: "校核中...",
+                  Group: "email4@example.com",
+                  Data: "no comments",
+                  Ctime: "2019-03-09T18:31:02Z"
+                },
+                {
+                  FromState: "校核中...",
+                  DocAction: "提交审查",
+                  ToState: "审查中...",
+                  Group: "email4@example.com",
+                  Data: "校核完毕，提交审查",
+                  Ctime: "2019-03-09T19:59:20Z"
+                }
+              ],
+              Text: ""
+            }
+          ],
           // docid:(()=>{
           //   /* $route.query获取shopid */
           //   return this.$route.query.docid

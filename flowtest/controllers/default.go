@@ -1857,7 +1857,7 @@ func (c *MainController) FlowEvent() {
 // @Failure 400 Invalid page supplied
 // @Failure 404 data not found
 // @router /flowdoceventlist [get]
-// 添加events：
+// 查询events：
 func (c *MainController) FlowEventList() {
 	// var tx *sql.Tx
 	dtid := c.Input().Get("dtid")
@@ -2026,6 +2026,7 @@ type DocumentDetail struct {
 	// DocTypeId    flow.DocTypeID
 	Document *flow.Document
 	Action   []flow.DocAction
+	History  []*flow.DocEventsHistory
 	Text     string
 }
 
@@ -2062,7 +2063,6 @@ func (c *MainController) FlowDocumentDetail() {
 		beego.Error(err)
 	}
 	//列出符合要求（有权限）的接受groups
-
 	// beegon.Info(TransitionMap[document.State.ID].Transitions[].Upon.ID)
 	// {
 	//   "8": {
@@ -2109,7 +2109,6 @@ func (c *MainController) FlowDocumentDetail() {
 	// documentdetail.Document = document
 	//数组模式
 	documentdetail := make([]DocumentDetail, 1)
-
 	if _, ok := TransitionMap[document.State.ID]; ok {
 		//存在
 		for _, value := range TransitionMap[document.State.ID].Transitions {
@@ -2123,6 +2122,22 @@ func (c *MainController) FlowDocumentDetail() {
 	}
 	documentdetail[0].Document = document
 
+	//查出历史记录
+	// docEventListInput := flow.DocEventsListInput{
+	// 		DocTypeID:       flow.DocTypeID(dtID),       // Events on documents of this type are listed
+	// 		AccessContextID: flow.AccessContextID(acID), // Access context from within which to list
+	// 		GroupID:         flow.GroupID(gID),          // List events created by this (singleton) group
+	// 		DocStateID:      flow.DocStateID(dsID),      // List events acting on this state
+	// 		// CtimeStarting:   time.Time,             // List events created after this time
+	// 		// CtimeBefore:     time.Time,             // List events created before this time
+	// 		Status: flow.EventStatusAll, // EventStatusAll,List events that are in this state of application
+	// 	}
+	// myDocEvent, err := flow.DocEvents.List(&docEventListInput, offset, limit1)
+	doceventshistory, err := flow.DocEvents.DocEventsHistory(flow.DocTypeID(dtID), flow.DocumentID(docID))
+	if err != nil {
+		beego.Error(err)
+	}
+	documentdetail[0].History = doceventshistory
 	//action按钮
 	if err != nil {
 		beego.Error(err)

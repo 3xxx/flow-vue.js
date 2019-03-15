@@ -268,12 +268,16 @@
               Workflow: 3
             }
           ],
-          doctypedata: [
-            {
-              ID:2,
-              Name:'图纸设计'
-            }
-          ],
+          doctypedata: {
+            doctypes: [
+              {
+                ID: 3,
+                Name: "图纸设计"
+              }
+            ],
+            page: 1,
+            total: 7
+          },
           docstatedata: [
             {
               ID:3,
@@ -615,6 +619,7 @@
           this.node(currentPage);
         },
         getColumnLabel (value) {
+          console.log(this.doctypedata.doctypes)
           let selectItem = this.doctypedata.doctypes.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
         },

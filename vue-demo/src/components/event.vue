@@ -300,10 +300,16 @@
               Ctime:'2019-02-09',
             }
           ],
-          doctypedata:[
-            {ID:1,Name:"图纸"},
-            {ID:2,Name:"合同"}
-          ],
+          doctypedata: {
+            doctypes: [
+              {
+                ID: 3,
+                Name: "图纸设计"
+              }
+            ],
+            page: 1,
+            total: 7
+          },
           docstatedata:[
             {ID:1,Name:"设计中。。"},
             {ID:2,Name:"校核中。。"}
@@ -599,7 +605,7 @@
           // Vue.prototype.$moment = moment;//赋值使用
         },
         getColumnLabel (value) {
-          let selectItem = this.doctypedata.find(item => item.ID === value)
+          let selectItem = this.doctypedata.doctypes.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
         },
         getColumnLabel2 (value) {

@@ -10,16 +10,18 @@ import 'element-ui/lib/theme-chalk/index.css'
 import axios from 'axios'
 import './assets/icon/iconfont.css'
 // import store from '@/store'
-import store from './store'
-
-import Editable from '@/components/Editable.vue'
-import EditableColumn from '@/components/EditableColumn.vue'
+// import store from './store'
+// import Editable from '@/components/Editable.vue'
+// import EditableColumn from '@/components/EditableColumn.vue'
 import moment from 'moment'//导入文件
-
+import VueElementExtends from 'vue-element-extends'
+import 'vue-element-extends/lib/index.css'
 Vue.prototype.$moment = moment;//赋值使用
-
-Vue.component(Editable.name, Editable)
-Vue.component(EditableColumn.name, EditableColumn)
+Vue.filter('dateformat', function(dataStr, pattern = 'YYYY-MM-DD HH:mm:ss') {
+    return moment(dataStr).format(pattern)
+})
+// Vue.component(Editable.name, Editable)
+// Vue.component(EditableColumn.name, EditableColumn)
 
 Vue.prototype.$ajax = axios;
 
@@ -27,9 +29,10 @@ Vue.prototype.$ajax = axios;
 // axios.defaults.baseURL = '/api';
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 
 Vue.use(ElementUI);
+Vue.use(VueElementExtends);
 // Vue.use(Element, {
 //   size: Cookies.get('size') || 'medium', // set element-ui default size
 //   i18n: (key, value) => i18n.t(key, value)
@@ -38,7 +41,7 @@ Vue.use(ElementUI);
 new Vue({
   el: '#app',
   router,
-  store,
+  // store,
   components: { App },
   template: '<App/>'
 })
