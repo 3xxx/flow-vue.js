@@ -274,7 +274,7 @@
                 //   'Access-Control-Allow-Origin': '*'
                 // },//设置跨域请求头
                 method: "POST",//请求方式
-                url: "http://127.0.0.1:8081/v1/admin/flowpermission",//请求地址
+                url: "/api/flowpermission",//请求地址
                 params:{
                   dtid:this.ruleForm2.dtid2,
                   roleid:this.ruleForm2.roleid2,
@@ -334,7 +334,7 @@
           console.log(row);
               axios({
                 method: "POST",//请求方式
-                url: "http://127.0.0.1:8081/v1/admin/flowpermission",//请求地址
+                url: "/api/flowpermission",//请求地址
                 params:{
                   name:row.Name,
                   dtid:row.DoctypeId,
@@ -371,7 +371,7 @@
         permission(currentPage){
           axios({
             method: 'get',
-            url: 'http://127.0.0.1:8081/v1/admin/flowrolepermissionlist',//2.get通过params选项
+            url: '/api/flowrolepermissionlist',//2.get通过params选项
             params:{
               page:currentPage
             }
@@ -384,7 +384,7 @@
         role(currentPage){
           axios({
             method: 'get',
-            url: 'http://127.0.0.1:8081/v1/admin/flowrolelist',//2.get通过params选项
+            url: '/api/flowrolelist',//2.get通过params选项
             params:{
               page:currentPage
             }
@@ -397,7 +397,7 @@
         doctype(currentPage){
           axios({
             method: 'get',
-            url: 'http://127.0.0.1:8081/v1/admin/flowtypelist',//2.get通过params选项
+            url: '/api/flowtypelist',//2.get通过params选项
             // params:{
             //   page:currentPage
             // }
@@ -410,7 +410,7 @@
         docaction(currentPage){
           axios({
             method: 'get',
-            url: 'http://127.0.0.1:8081/v1/admin/flowactionlist',//2.get通过params选项
+            url: '/api/flowactionlist',//2.get通过params选项
             params:{
               page:currentPage
             }

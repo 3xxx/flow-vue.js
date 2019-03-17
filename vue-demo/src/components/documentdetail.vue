@@ -42,9 +42,9 @@
           </el-select>
         </template>
       </el-table-column>
-      <el-editable-column label="TITLE" prop="Document.Title"></el-editable-column>
-      <el-editable-column label="PATH" prop="Document.Path" size="mini"></el-editable-column>
-      <el-editable-column label="CTIME" prop="Document.Ctime" size="mini" :formatter="formatter"></el-editable-column>
+      <el-editable-column label="TITLE" prop="Document.Title" align="center"></el-editable-column>
+      <el-editable-column label="PATH" prop="Document.Path" size="mini" align="center"></el-editable-column>
+      <el-editable-column label="CTIME" prop="Document.Ctime" size="mini" :formatter="formatter" align="center"></el-editable-column>
       <el-editable-column label="Text" prop="Text" :editRender="{Name: 'ElInput'}" align="center"></el-editable-column> 
       <el-editable-column  label="操作" align="center">
         <template slot-scope="scope">
@@ -303,7 +303,7 @@
             if (valid) {
               axios({
                 method: "POST",//请求方式
-                url: "http://127.0.0.1:8081/v1/admin/flowdoc",//请求地址
+                url: "/api/flowdoc",//请求地址
                 params:{
                   // acid:this.ruleForm2.AcId,
                   // dsid:this.ruleForm2.DocstateId,
@@ -371,7 +371,7 @@
           console.log(row);
               axios({
                 method: "POST",//请求方式
-                url: "http://127.0.0.1:8081/v1/admin/flownext",//请求地址
+                url: "/api/flownext",//请求地址
                 params:{
                   // docaction:row,
                   docid:row.Document.ID,
@@ -397,7 +397,7 @@
                     message: '提交成功' 
                   });
                   //刷新表格
-                  this.user(currentPage);
+                  this.documentdetail();
                   this.dialogFormVisible = false;                 
                 } else {
                   //写入失败！
@@ -413,7 +413,7 @@
           this.dtid = this.$route.query.dtid;
           axios({
             method: 'get',
-            url: 'http://127.0.0.1:8081/v1/admin/flowdocumentdetail',//2.get通过params选项
+            url: '/api/flowdocumentdetail',//2.get通过params选项
             params:{
               docid:this.docid,
               dtid:this.dtid
@@ -427,7 +427,7 @@
         doctype(currentPage){
           axios({
             method: 'get',
-            url: 'http://127.0.0.1:8081/v1/admin/flowtypelist',//2.get通过params选项
+            url: '/api/flowtypelist',//2.get通过params选项
             params:{
               page:currentPage
             }
@@ -440,7 +440,7 @@
         docstate(currentPage){
           axios({
             method: 'get',
-            url: 'http://127.0.0.1:8081/v1/admin/flowstatelist',//2.get通过params选项
+            url: '/api/flowstatelist',//2.get通过params选项
             params:{
               page:currentPage
             }
@@ -453,7 +453,7 @@
         accesscontext(currentPage){
           axios({
             method: 'get',
-            url: 'http://127.0.0.1:8081/v1/admin/flowaccesscontextlist',//2.get通过params选项
+            url: '/api/flowaccesscontextlist',//2.get通过params选项
             params:{
               page:currentPage
             }
@@ -466,7 +466,7 @@
         group(currentPage){
           axios({
             method: 'get',
-            url: 'http://127.0.0.1:8081/v1/admin/flowgrouplist',//2.get通过params选项
+            url: '/api/flowgrouplist',//2.get通过params选项
             params:{
               page:currentPage
             }
@@ -479,7 +479,7 @@
         docaction(currentPage){
           axios({
             method: 'get',
-            url: 'http://127.0.0.1:8081/v1/admin/flowactionlist',//2.get通过params选项
+            url: '/api/flowactionlist',//2.get通过params选项
             params:{
               page:currentPage
             }
@@ -530,7 +530,7 @@
         },
         formatter:function(row, column){
           var date = row.Document.Ctime;
-          console.log(date)
+          // console.log(date)
           if (date === undefined) {
             return "";
           }

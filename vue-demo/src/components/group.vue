@@ -191,7 +191,7 @@
                 //   'Access-Control-Allow-Origin': '*'
                 // },//设置跨域请求头
                 method: "POST",//请求方式
-                url: "http://127.0.0.1:8081/v1/admin/flowtype",//请求地址
+                url: "/api/flowtype",//请求地址
                 params:{
                   name:this.ruleForm2.typename,
                 },
@@ -252,7 +252,7 @@
           console.log(row);
               axios({
                 method: "POST",//请求方式
-                url: "http://127.0.0.1:8081/v1/admin/flowgroup",//请求地址
+                url: "/api/flowgroup",//请求地址
                 params:{
                   name:row.Name,
                   grouptype:row.GroupType,
@@ -288,7 +288,7 @@
         group(currentPage){
           axios({
             method: 'get',
-            url: 'http://127.0.0.1:8081/v1/admin/flowgrouplist',//2.get通过params选项
+            url: '/api/flowgrouplist',//2.get通过params选项
             params:{
               page:currentPage
             }

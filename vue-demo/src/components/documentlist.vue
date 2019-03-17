@@ -323,8 +323,8 @@
       },
       methods:{
         detail(index, row){
-          console.log(row.ID);
-          console.log(row.DocType.ID);
+          // console.log(row.ID);
+          // console.log(row.DocType.ID);
           this.$router.push({
             path: '/documentdetail',
             query: {docid: row.ID,dtid:row.DocType.ID}
@@ -335,7 +335,7 @@
             if (valid) {
               axios({
                 method: "POST",//请求方式
-                url: "http://127.0.0.1:8081/v1/admin/flowdoc",//请求地址
+                url: "/api/flowdoc",//请求地址
                 params:{
                   // form:this.ruleForm2,
                   // dsid:this.ruleForm2.DocstateId,
@@ -397,7 +397,7 @@
           console.log(row);
               axios({
                 method: "POST",//请求方式
-                url: "http://127.0.0.1:8081/v1/admin/flowdocument",//请求地址
+                url: "/api/flowdocument",//请求地址
                 params:{
                   acid:row.AcId,
                   // dsid:row.DocstateId,
@@ -439,7 +439,7 @@
         documents(currentPage){
           axios({
             method: 'get',
-            url: 'http://127.0.0.1:8081/v1/admin/flowdocumentlist',//2.get通过params选项
+            url: '/api/flowdocumentlist',//2.get通过params选项
             params:{
               page:currentPage,
               limit:this.pageSize,
@@ -455,7 +455,7 @@
         doctype(currentPage){
           axios({
             method: 'get',
-            url: 'http://127.0.0.1:8081/v1/admin/flowtypelist',//2.get通过params选项
+            url: '/api/flowtypelist',//2.get通过params选项
             params:{
               page:currentPage
             }
@@ -468,7 +468,7 @@
         docstate(currentPage){
           axios({
             method: 'get',
-            url: 'http://127.0.0.1:8081/v1/admin/flowstatelist',//2.get通过params选项
+            url: '/api/flowstatelist',//2.get通过params选项
             params:{
               page:currentPage
             }
@@ -481,7 +481,7 @@
         accesscontext(currentPage){
           axios({
             method: 'get',
-            url: 'http://127.0.0.1:8081/v1/admin/flowaccesscontextlist',//2.get通过params选项
+            url: '/api/flowaccesscontextlist',//2.get通过params选项
             params:{
               page:currentPage
             }
@@ -494,7 +494,7 @@
         group(currentPage){
           axios({
             method: 'get',
-            url: 'http://127.0.0.1:8081/v1/admin/flowgrouplist',//2.get通过params选项
+            url: '/api/flowgrouplist',//2.get通过params选项
             params:{
               page:currentPage
             }

@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 // import HelloWorld from '@/components/HelloWorld'
+import readme from '@/components/readme'
 import doctype from '@/components/doctype'
 import docstate from '@/components/docstate'
 import docaction from '@/components/docaction'
@@ -19,16 +20,17 @@ import documents from '@/components/documents'
 import event from '@/components/event'
 import documentlist from '@/components/documentlist'
 import documentdetail from '@/components/documentdetail'
+import usermailbox from '@/components/usermailbox'
+import groupmailbox from '@/components/groupmailbox'
 
 Vue.use(Router)
 
 export default new Router({
   routes: [
     {
-      path: '/',
-      name: 'App',
-      component: App,
+      path: '/',component: App,//默认子路由不能有name属性，name: 'App',
       children: [
+        { path: '/', component: readme, name: 'README' },
         { path: '/doctype', component: doctype, name: 'DOCTYPE' },
         { path: '/docstate', component: docstate, name: 'DOCSTATE' },
         { path: '/docaction', component: docaction, name: 'DOCACTION' },
@@ -46,6 +48,8 @@ export default new Router({
         { path: '/event', component: event, name: 'event' },
         { path: '/documentlist', component: documentlist, name: 'documentlist' },
         { path: '/documentdetail', component: documentdetail, name: 'documentdetail' },
+        { path: '/usermailbox', component: usermailbox, name: 'usermailbox' },
+        { path: '/groupmailbox', component: groupmailbox, name: 'groupmailbox' },
         // { path: '/documentlist', component: documentlist, name: 'documentlist',
         //   children: [
         //     { path: '/documentdetail', component: documentdetail, name: 'documentdetail' }

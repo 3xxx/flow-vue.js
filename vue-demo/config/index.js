@@ -6,12 +6,18 @@ const path = require('path')
 
 module.exports = {
   dev: {
-
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
-
+    proxyTable: {
+        "/api": {
+            target: "https://bjys.itdos.com/v1/admin", //https://bjys.itdos.com/v1/admin---218.78.187.216/api/v1设置调用的接口域名和端口
+            changeOrigin: true,
+            pathRewrite: {
+                "^/api": "" //用'/api' 代替 'http://218.78.187.216/api/v1'
+            }
+        } 
+    },
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST阿里云上Vue部署问题
     //我将端口4000和端口8000已经设置进了安全组，在阿里云的centos7上./front_end目录下执行命令npm run dev就报错～ 一定要记住的就是，

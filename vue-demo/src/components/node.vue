@@ -343,7 +343,7 @@
                 //   'Access-Control-Allow-Origin': '*'
                 // },//设置跨域请求头
                 method: "POST",//请求方式
-                url: "http://127.0.0.1:8081/v1/admin/flownode",//请求地址
+                url: "/api/flownode",//请求地址
                 params:{
                   name:this.ruleForm2.nodename,
                   dtid:this.ruleForm2.dtid,
@@ -401,7 +401,7 @@
         workflow(currentPage){
           axios({
             method: 'get',
-            url: 'http://127.0.0.1:8081/v1/admin/flowworkflowlist',//2.get通过params选项
+            url: '/api/flowworkflowlist',//2.get通过params选项
             params:{
               page:currentPage
             }
@@ -414,7 +414,7 @@
         node(currentPage){
           axios({
             method: 'get',
-            url: 'http://127.0.0.1:8081/v1/admin/flownodelist',//2.get通过params选项
+            url: '/api/flownodelist',//2.get通过params选项
             params:{
               page:currentPage,
               workflowid:this.workflowid
@@ -433,7 +433,7 @@
         doctype(currentPage){
           axios({
             method: 'get',
-            url: 'http://127.0.0.1:8081/v1/admin/flowtypelist',//2.get通过params选项
+            url: '/api/flowtypelist',//2.get通过params选项
             params:{
               page:currentPage
             }
@@ -446,7 +446,7 @@
         docstate(currentPage){
           axios({
             method: 'get',
-            url: 'http://127.0.0.1:8081/v1/admin/flowstatelist',//2.get通过params选项
+            url: '/api/flowstatelist',//2.get通过params选项
             params:{
               page:currentPage
             }
@@ -459,7 +459,7 @@
         accesscontext(currentPage){
           axios({
             method: 'get',
-            url: 'http://127.0.0.1:8081/v1/admin/flowaccesscontextlist',//2.get通过params选项
+            url: '/api/flowaccesscontextlist',//2.get通过params选项
             params:{
               page:currentPage
             }
@@ -482,7 +482,7 @@
           console.log(row);
               axios({
                 method: "POST",//请求方式
-                url: "http://127.0.0.1:8081/v1/admin/flownode",//请求地址
+                url: "/api/flownode",//请求地址
                 params:{
                   name:row.Name,
                   dtid:row.DocType,

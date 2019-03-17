@@ -1,91 +1,103 @@
 <template>
   <div>
-    <el-button-group style="float: left; margin:10px">
-      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insertAt({name: `New last ${Date.now()}`, flag: true, createDate: Date.now()}, -1)">新增</el-button>
-      <el-button type="info" size="small" @click="$refs.editable.revert()">放弃更改</el-button>
-      <el-button type="info" size="small" icon="el-icon-delete" @click="$refs.editable.clear()">清空数据</el-button>
-    </el-button-group>
-    <el-button-group  style="float: right; margin:10px">
-      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
-      <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
-    </el-button-group>
+    <h1>1 设计说明</h1>
+    <el-collapse v-model="activeNames">
+      <el-collapse-item title="什么是文档流程？" name="1">
+        <div>一个文档流程的本质就是改变文档状态state）；对应的，我们再设计一个改变状态的动作action；如果再给文档分类doctype，比如合同流程，采购流程的文档；再配合用户-角色-权限（accesscontex）；当一个文档处于一个state的时候，谁有权限permission操作action它？就要预设置好当前状态state下transition:从state1通过动作action1改为state2;那么一个文档如何按照指定的流程来往下走呢，就要先定义一系列节点node，再将这些节点组合到workflow下，见下面的数据结构和说明：</div>
+        <pre>
+          <code>
+            Document Type : docType1 //1.定义文档类型-流程类型
+            Document States : [
+                docState1, docState2, docState3, docState4 // 2.定义4个状态
+            ]
+            Document Actions : [
+              docAction12, docAction23, docAction34 // 3.定义修改状态的动作，实际应用中，除了向前传递，还要定义向后回退的动作。for the above document states
+              docAction21, docAction31, docAction41  //每个都直接回退到1
+            ]
+            Document Type State Transitions : [
+              docState1 --docAction12--&gt; docState2, //前进流程
+              docState2 --docAction21--&gt; docState1, //回退流程
+              docState2 --docAction23--&gt; docState3,
+              docState3 --docAction31--&gt; docState1,
+              docState3 --docAction34--&gt; docState4,
+              docState4 --docAction41--&gt; docState1,
+            ]
 
-    <el-editable ref="editable"
-      :data="grouproledata" border style="width: 100%" stripe>
-      <!-- <el-editable-column prop="Id" label="ID" align="center"></el-editable-column> -->
-      <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
-      <el-editable-column prop="AcId" label="ACCESSCONTEXT" :editRender="{type: 'default'}" align="center">
-        <template slot="edit" slot-scope="scope">
-          <el-select v-model="scope.row.AcId" clearable>
-            <el-option
-              v-for="item in accesscontextdata"
-              :key="item.ID"
-              :label="item.Name"
-              :value="item.ID">
-            </el-option>
-          </el-select>
-        </template>
-        <template slot-scope="scope">{{ getColumnLabel(scope.row.AcId) }}</template>
-      </el-editable-column>
-      <el-editable-column prop="GroupId" label="Group" :editRender="{type: 'default'}" align="center">
-        <template slot="edit" slot-scope="scope">
-          <el-select v-model="scope.row.GroupId" clearable>
-            <el-option
-              v-for="item in groupdata"
-              :key="item.Name"
-              :label="item.Name"
-              :value="item.ID">
-            </el-option>
-          </el-select>
-        </template>
-        <template slot-scope="scope">{{ getColumnLabel2(scope.row.GroupId) }}</template>
-      </el-editable-column>
-      <el-editable-column prop="RoleId" label="Role" :editRender="{type: 'default'}" align="center">
-        <template slot="edit" slot-scope="scope">
-          <el-select v-model="scope.row.RoleId" clearable>
-            <el-option
-              v-for="item in roledata"
-              :key="item.Name"
-              :label="item.Name"
-              :value="item.ID">
-            </el-option>
-          </el-select>
-        </template>
-        <template slot-scope="scope">{{ getColumnLabel3(scope.row.RoleId) }}</template>
-      </el-editable-column>
+            Access Contexts : [
+              accCtx1, accCtx2 // 主要是为了用户-角色-权限用的
+            ]
+            
+            Workflow : {
+              Name : wFlow1,  //一个doctype只能对应一个workflow
+              Initial State : docState1  //一个流程的初始状态
+            }
+            Nodes : [
+              node1: {
+                Document Type : docType1,
+                Workflow : wFlow1,
+                Node Type : NodeTypeBegin, // 开始节点 note this
+                From State : docState1,
+                Access Context : accCtx1,
+              },
+              node2: {
+                Document Type : docType1,
+                Workflow : wFlow1,
+                Node Type : NodeTypeLinear, // 中间节点可以是线性的，也可以是平行的 note this
+                From State : docState2,
+                Access Context : accCtx2, // a different context
+              },
+              node3: {
+                Document Type : docType1,
+                Workflow : wFlow1,
+                Node Type : NodeTypeEnd, // note this
+                From State : docState3,
+                Access Context : accCtx1,
+              },
+            ]
+          </code>
+        </pre>
+        <div>以上都是系统管理员设置的部分，当一个用户使用这个系统的时候，他在某个板块（doctype分类）新建（上传）一个文档document，系统自动根据这个分类，设置了文档的初始state，在这个state下，一般只有一个动作可选，就是传递给下一个状态的操作，还要选接受的人或组（也可以系统固定），还可以写上注释、说明，最后点击按钮提交apply；系统要做的，记录下来谁在什么时间操作了，把信息message发送给对应的用户的信箱mailbox，当对应的用户登录系统的时候，可以查看message。</div>
+        <div>当用户点击信箱里某个信息，转到对应的文档详情detail上，能看到这个文档以往（历史）操作记录时间线，可以对这个文档进行操作：选择动作action，选择接受的组，提交apply。</div>
+      </el-collapse-item>
+    </el-collapse>
+    <h1>2 设置部分</h1>
+    <el-collapse v-model="activeNames">
+      <el-collapse-item title="1.1 设置doctype docstate和docaction" name="2">
+        <div>1.1.1 文档类型doctype，只是给定一个名字而已，每个doctype对应一个workflow流程，如果文档某些需要签署到总经理，有些则只要签署到部门经理，咋办？</div>
+        <div>1.1.2 文档状态，即每一级给定一个状态，也只是定一个名字而已；</div>
+        <div>1.1.3 用户动作，从一个状态到另一个状态对应的动作，只是一个名字而已；</div>
+      </el-collapse-item>
+      <el-collapse-item title="1.2 设置transition node 和workflow" name="3">
+        <div>1.2.1 transition转变，就是定义一个状态到另一个状态以及动作；</div>
+        <div>1.2.2 workflow流程，一种文档类型完整流程，将节点纳入到这个流程中，就完成了一个文档流程的设置；</div>
+        <div>1.2.3 node节点，给流程定义完整流程中各个节点，包括节点类型：比如是单线过来的还是这个节点有多线过来，有开始节点，和结束节点……；</div>
+      </el-collapse-item>
+      <el-collapse-item title="1.3 设置accesscontex" name="4">
+        <div>1.3.1 accesscontex访问环境，就是给某个流程定义一下用户-角色-权限；</div>
+        <div>1.3.2 user用户，每个用户会自动生成一个单用户组，因为flow都是针对group的；</div>
+        <div>1.3.3 group用户组；</div>
+        <div>1.3.3 user_group将用户加入组；</div>
+        <div>1.3.3 role定义角色；</div>
+        <div>1.3.3 permission定义角色权限，即action；</div>
+        <div>1.3.3 group_role将group加入角色；</div>
+      </el-collapse-item>
+    </el-collapse>
+    <h1>3 用户部分</h1>
+    <el-collapse v-model="activeNames">
+      <el-collapse-item title="3.1 新建文档" name="5">
+        <div>；</div>
+        <div>。</div>
+      </el-collapse-item>
+      <el-collapse-item title="3.2 传递文档" name="6">
+        <div>选择action决定文档是往前传递还是回退，加入说明</div>
+        <div>查阅历史时间线。</div>
+      </el-collapse-item>
+      <el-collapse-item title="3.3 查阅消息" name="7">
+        <div>；</div>
+        <div>。</div>
+      </el-collapse-item>
 
-      <el-editable-column  label="操作" align="center">
-        <template slot-scope="scope">
-          <el-button-group>
-            <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
-            <el-button size="mini" type="danger" @click="deleteRow(scope.$index, grouproledata)">Delete</el-button>
-          </el-button-group>
-        </template>
-      </el-editable-column>
-    </el-editable>
-    <el-pagination background
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="currentPage"
-      :page-sizes="[10, 50, 100, 200]"
-      :page-size="pageSize"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="total" style="float: right; margin:10px">
-    </el-pagination>
-
-    <el-dialog title="定义doctype" :visible.sync="dialogFormVisible" center>
-    <!-- 插入测试 -->
-      <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="名称" prop="typename">
-          <el-input v-model.number="ruleForm2.typename" auto-complete="off" placeholder="输入名称"></el-input>
-        </el-form-item>
-      </el-form>
-      <!-- 插入测试 -->
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false; resetForm('ruleForm2')">取 消</el-button>
-        <el-button type="primary" @click="submitForm('ruleForm2')">确 定</el-button>
-      </div>
-    </el-dialog>
+    </el-collapse>
 
   </div>
 </template>
@@ -94,7 +106,7 @@
 /* eslint-disable */
   const axios = require('axios');
   export default { // 这里需要将模块引出，可在其他地方使用
-    name: 'groupRole',
+    name: 'readme',
       data() {
         var checkName = (rule, value, callback) => {
           if (value === '') {
@@ -128,6 +140,7 @@
           }
         };
         return {
+          activeNames: ['1'],
           total: 50,
           currentPage: 1,
           pageSize: 10,
@@ -182,40 +195,22 @@
             resource: '',
             desc: ''
           },
+          doctypedata:[
+            {ID:1,Name:"图纸"},
+            {ID:2,Name:"合同"}
+          ],
           search: '',
-          grouproledata:[
-            {
-              Id:1,
-              AcId:1,
-              GroupId:1,
-              RoleId:1
-            }
-          ],
-          accesscontextdata:[
-            {
-              ID:1,
-              Name:'context'
-            }
-          ],
-          groupdata:[
-            {
-              ID:1,
-              Name:'审查组'
-            }
-          ],
-          roledata:[
-            {
-              ID:1,
-              Name:'审查角色'
-            }
-          ],
         };
       },
       mounted:function () {
-        this.grouprole(this.currentPage);
-        this.group(this.currentPage);
-        this.accesscontext(this.currentPage);
-        this.role(this.currentPage);
+        this.doctype(this.currentPage);
+        // const that = this;
+        // 获取浏览器可视区域高度
+        // this.clientHeight = `${document.documentElement.clientHeight}`; //document.body.clientWidth;
+        // console.log(this.clientHeight);
+        // window.onresize = function temp() {
+          // this.clientHeight = `${document.documentElement.clientHeight}`;
+        // };
       },
       methods:{
         submitForm(formName) {
@@ -232,10 +227,10 @@
                 params:{
                   name:this.ruleForm2.typename,
                 },
-                data: {
-                  name:this.ruleForm2.typename,
+                // data: {
+                  // name:this.ruleForm2.typename,
                   // "thirdapp_id":1//请求参数
-                }
+                // }
               })
               // .then(response => (this.posts = response.data.articles))
               .then(function (response) {
@@ -279,23 +274,25 @@
         handleClose(key, keyPath) {
           console.log(key, keyPath);
         },
+        handleEdit(index, row) {
+          console.log(index, row.Name);
+        },
+        handleDelete(index, row) {
+          console.log(index, row);
+        },
         deleteRow(index, rows) {//删除改行
-          //先删除数据库
-          //再删除前端行
           rows.splice(index, 1);
         },
-        addRow(grouproledata,event){
-          grouproledata.push({ ID:''})
+        addRow(doctypedata,event){
+          doctypedata.push({ ID:'', Name: ''})
         },
         handleSubmit(index, row) {
           console.log(row);
               axios({
                 method: "POST",//请求方式
-                url: "/api/flowgrouprole",//请求地址
+                url: "/api/flowtype",//请求地址
                 params:{
-                  acid:row.AcId,
-                  gid:row.GroupId,
-                  roleid:row.RoleId,
+                  name:row.Name,
                 },
                 // data: {
                 //   dtid:row.DoctypeId,
@@ -314,7 +311,7 @@
                     message: '提交成功' 
                   });
                   //刷新表格
-                  this.workflow(currentPage);
+                  this.doctype(currentPage);
                   this.dialogFormVisible = false;                 
                 } else {
                   //写入失败！
@@ -325,54 +322,28 @@
                 console.log(error);
               });
         },
-        grouprole(currentPage){
-          axios({
-            method: 'get',
-            url: '/api/flowgrouprolelist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
-          })
-          .then(response => (this.grouproledata = response.data))
-          .catch(function (error) {
-            console.log(error);
-          });
+        sendGetByStr(){
+          axios.get(`api/v1/wx/getlistarticles?page=1`)//1.get通过直接发字符串拼接
+            // .then(function (response) {
+            //   console.log(response);
+            //   console.log(response.data.info);
+            // }
+            .then(response => (this.info = response.data.info)
+            )
+            .catch(function (error) {
+              console.log(error);
+            });
         },
-        accesscontext(currentPage){
+        doctype(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowaccesscontextlist',//2.get通过params选项
+            url: '/api/flowtypelist',//2.get通过params选项
             params:{
-              page:currentPage
+              page:currentPage,
+              limit:this.pageSize
             }
           })
-          .then(response => (this.accesscontextdata = response.data))
-          .catch(function (error) {
-            console.log(error);
-          });
-        },
-        group(currentPage){
-          axios({
-            method: 'get',
-            url: '/api/flowgrouplist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
-          })
-          .then(response => (this.groupdata = response.data))
-          .catch(function (error) {
-            console.log(error);
-          });
-        },
-        role(currentPage){
-          axios({
-            method: 'get',
-            url: '/api/flowrolelist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
-          })
-          .then(response => (this.roledata = response.data))
+          .then(response => (this.doctypedata = response.data))
           .catch(function (error) {
             console.log(error);
           });
@@ -462,20 +433,14 @@
         },
         handleCurrentChange: function(currentPage){
           this.currentPage = currentPage;
-          this.flowtypelist(currentPage);
+          this.doctype(currentPage);
         },
-        getColumnLabel (value) {
-          let selectItem = this.accesscontextdata.find(item => item.ID === value)
-          return selectItem ? selectItem.Name : null
-        },
-        getColumnLabel2 (value) {
-          let selectItem = this.groupdata.find(item => item.ID === value)
-          return selectItem ? selectItem.Name : null
-        },
-        getColumnLabel3 (value) {
-          let selectItem = this.roledata.find(item => item.ID === value)
-          return selectItem ? selectItem.Name : null
-        }
+
+        // addRow(tableData,event){//新增一行
+          //之前一直想不到怎么新增一行空数据，最后幸亏一位朋友提示：表格新增一行，其实就是源数据的新增，
+          //从源数据入手就可以实现了，于是 恍然大悟啊！
+          // tableData.push({ name: '', xpath: '',desc:'',value:'',defVal:'' })
+        // },
       }
   };
 </script>

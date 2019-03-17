@@ -20,19 +20,19 @@
       <el-aside>
         <el-menu default-active="doctype" @select="handleSelect">
           <el-submenu index="doctype">
-            <template slot="title"><i class="el-icon-edit"></i>Doctype-state-action</template>
+            <template slot="title"><i class="el-icon-ali-set"></i>Doctype-state-action</template>
             <el-menu-item index="doctype">Doctype</el-menu-item>
             <el-menu-item index="docstate">Docstate</el-menu-item>
             <el-menu-item index="docaction">Docaction</el-menu-item>
           </el-submenu>
           <el-submenu index="transition">
-            <template slot="title"><i class="el-icon-edit-outline"></i>Transison</template>
+            <template slot="title"><i class="el-icon-ali-all"></i>Transison</template>
             <el-menu-item index="transition">Doctype_transition</el-menu-item>
             <el-menu-item index="workflow">Workflow</el-menu-item>
             <el-menu-item index="node">workflow_node</el-menu-item>
           </el-submenu>
           <el-submenu index="user">
-            <template slot="title"><i class="el-icon-ali-all"></i>Accesscontext</template>
+            <template slot="title"><i class="el-icon-ali-account"></i>Accesscontext</template>
             <el-menu-item index="accesscontext">accesscontext</el-menu-item>
             <el-menu-item index="user">user</el-menu-item>
             <el-menu-item index="group">group</el-menu-item>
@@ -41,14 +41,19 @@
             <el-menu-item index="permission">permission</el-menu-item>
             <el-menu-item index="groupRole">group_role</el-menu-item>
           </el-submenu>
-          <el-submenu index="documents">
+          <!-- <el-submenu index="documents">
             <template slot="title"><i class="el-icon-ali-favorite"></i>Douments</template>
             <el-menu-item index="documents">documents</el-menu-item>
             <el-menu-item index="event">event</el-menu-item>
-          </el-submenu>
+          </el-submenu> -->
           <el-submenu index="documentlist">
-            <template slot="title"><i class="el-icon-ali-favorite"></i>Douments2</template>
+            <template slot="title"><i class="el-icon-ali-viewlist"></i>Douments</template>
             <el-menu-item index="documentlist">documentlist</el-menu-item>
+          </el-submenu>
+          <el-submenu index="mailbox">
+            <template slot="title"><i class="el-icon-message"></i>mailbox</template>
+            <el-menu-item index="usermailbox">usermailbox</el-menu-item>
+            <el-menu-item index="groupmailbox">groupmailbox</el-menu-item>
           </el-submenu>
         </el-menu>
       </el-aside>
@@ -98,6 +103,9 @@
       },
       handleSelect(key, keyPath){
         switch(key){
+          case 'readme':
+            this.$router.push('/');
+            break;
           case 'doctype':
             this.$router.push('/doctype');
             break;
@@ -152,9 +160,14 @@
           case 'documentdetail':
             this.$router.push('/documentdetail')
             break;
-          default:
-            this.$router.push('/doctype');
+          case 'usermailbox':
+            this.$router.push('/usermailbox')
             break;
+          case 'groupmailbox':
+            this.$router.push('/groupmailbox')
+          // default:
+          //   this.$router.push('/doctype');
+          //   break;
         }
       },
     },
@@ -187,11 +200,11 @@
   .blueheader {
     height: 60px;
     line-height: 60px;
-    background: #67c23a;
+    background: #409EFF;
     color: #fff;
   }
   .el-menu-item.is-active {
-    color: #67c23a;
+    color: #409EFF;
   }
   .headlogo{
     float: left;

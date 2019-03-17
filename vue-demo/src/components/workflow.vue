@@ -27,7 +27,7 @@
         </template>
         <template slot-scope="scope">{{ getColumnLabel(scope.row.DocType.ID) }}</template>
       </el-editable-column>
-      <!-- <el-editable-column prop="BeginState.ID" label="BeginSTATE" :editRender="{type: 'default'}" align="center">
+      <el-editable-column prop="BeginState.ID" label="BeginSTATE" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.BeginState.ID" clearable>
             <el-option
@@ -39,7 +39,7 @@
           </el-select>
         </template>
         <template slot-scope="scope">{{ getColumnLabel2(scope.row.BeginState.ID) }}</template>
-      </el-editable-column> -->
+      </el-editable-column>
       <el-editable-column prop="Active" label="ACTIVE" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.Active" clearable>
@@ -249,7 +249,7 @@
                 //   'Access-Control-Allow-Origin': '*'
                 // },//设置跨域请求头
                 method: "POST",//请求方式
-                url: "http://127.0.0.1:8081/v1/admin/flowtype",//请求地址
+                url: "/api/flowtype",//请求地址
                 params:{
                   name:this.ruleForm2.typename,
                 },
@@ -303,7 +303,7 @@
         workflow(currentPage){
           axios({
             method: 'get',
-            url: 'http://127.0.0.1:8081/v1/admin/flowworkflowlist',//2.get通过params选项
+            url: '/api/flowworkflowlist',//2.get通过params选项
             params:{
               page:currentPage
             }
@@ -316,7 +316,7 @@
         doctype(currentPage){
           axios({
             method: 'get',
-            url: 'http://127.0.0.1:8081/v1/admin/flowtypelist',//2.get通过params选项
+            url: '/api/flowtypelist',//2.get通过params选项
             // params:{
             //   page:currentPage
             // }
@@ -329,7 +329,7 @@
         docstate(currentPage){
           axios({
             method: 'get',
-            url: 'http://127.0.0.1:8081/v1/admin/flowstatelist',//2.get通过params选项
+            url: '/api/flowstatelist',//2.get通过params选项
             params:{
               page:currentPage
             }
@@ -352,7 +352,7 @@
           console.log(row);
               axios({
                 method: "POST",//请求方式
-                url: "http://127.0.0.1:8081/v1/admin/flowworkflow",//请求地址
+                url: "/api/flowworkflow",//请求地址
                 params:{
                   name:row.Name,
                   dtid:row.DocType.ID,
