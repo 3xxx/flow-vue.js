@@ -11,7 +11,7 @@
     </el-button-group>
 
     <el-editable ref="editable"
-      :data="transitiondata.transitions" border style="width: 100%" stripe>
+      :data.sync="transitiondata.transitions" border style="width: 100%" stripe>
       <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
       <el-editable-column prop="DoctypeId" label="DOCTYPE" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
@@ -194,20 +194,28 @@
             desc: ''
           },
           formLabelWidth: '120px',
-          tableData: [],
           transitiondata: [
             {
-              Id:1,
-              DoctypeId:2,
-              FromStateId:3,
-              DocactionId:4,
-              ToStateId:5
+              page: 1,
+              total: 6,
+              transitions:{
+                DocactionId: 1,
+                DoctypeId: 1,
+                FromStateId: 2,
+                Id: 1,
+                ToStateId: 3
+              }
             }
           ],
-          doctypedata: [
+          doctypedata:[
             {
-              ID:2,
-              Name:'图纸设计'
+              page: 1,
+              total: 3,
+              doctypes:
+              {
+                ID: 1,
+                Name: "draw"
+              }
             }
           ],
           docstatedata: [
@@ -223,7 +231,8 @@
           docactiondata: [
             {
               ID:4,
-              Name:'提交设计'
+              Name:'提交设计',
+              Reconfirm: false
             }
           ],
           search: '',

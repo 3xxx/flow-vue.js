@@ -76,29 +76,42 @@
         <div>1.3.1 accesscontex访问环境，就是给某个流程定义一下用户-角色-权限；</div>
         <div>1.3.2 user用户，每个用户会自动生成一个单用户组，因为flow都是针对group的；</div>
         <div>1.3.3 group用户组；</div>
-        <div>1.3.3 user_group将用户加入组；</div>
-        <div>1.3.3 role定义角色；</div>
-        <div>1.3.3 permission定义角色权限，即action；</div>
-        <div>1.3.3 group_role将group加入角色；</div>
+        <div>1.3.4 user_group将用户加入组；</div>
+        <div>1.3.5 role定义角色；</div>
+        <div>1.3.6 permission定义角色权限，即action；</div>
+        <div>1.3.7 group_role将group加入角色.</div>
       </el-collapse-item>
     </el-collapse>
     <h1>3 用户部分</h1>
     <el-collapse v-model="activeNames">
       <el-collapse-item title="3.1 新建文档" name="5">
-        <div>；</div>
-        <div>。</div>
+        <div>命名一个新的文档，支持子孙文档，附件作为链接地址……实际应用flow，就是嵌入你的系统中的文档；</div>
+        <div>比如engineercms里对于工程设计成果的校审流程，类似projectwise里定制的流程或OA办公系统里的流程。</div>
       </el-collapse-item>
       <el-collapse-item title="3.2 传递文档" name="6">
-        <div>选择action决定文档是往前传递还是回退，加入说明</div>
-        <div>查阅历史时间线。</div>
+        <div>选择action决定文档是往前传递还是回退，加入说明文字；</div>
+        <div>可以查阅历史时间线。</div>
       </el-collapse-item>
       <el-collapse-item title="3.3 查阅消息" name="7">
-        <div>；</div>
-        <div>。</div>
+        <div>当特定的用户登录，就能在自己的信箱中查阅信息，看看有哪些需要处理的流程；</div>
+        <div>已读的和未读的信息按不同颜色区分。</div>
       </el-collapse-item>
-
     </el-collapse>
-
+    <h1>4 github&theory</h1>
+    <el-collapse v-model="activeNames">
+      <el-collapse-item title="4.1 github" name="8">
+        <div><a href="https://github.com/js-ojus/flow">flow</a>——A workflow engine written in Go (golang).</div>
+        <div><a href="https://github.com/3xxx/flow-vue.js">flow-vue.js</a>——A flow-UI(interface) made with flow+beego+vue.js+element+vue-element-extends.</div>
+        <div><a href="https://github.com/vuejs/vue">vue.js</a>——A JavaScript framework for building UI on the web.</div>
+        <div><a href="https://github.com/astaxie/beego">beego</a>——A open-source, high-performance web framework for the Go programming language.</div>
+        <div><a href="https://github.com/ElemeFE/element">element</a>——A Vue.js 2.0 UI Toolkit for Web.</div>
+        <div><a href="https://github.com/xuliangzhan/vue-element-extends">vue-element-extends</a>——A vue.js element editable.</div>
+      </el-collapse-item>
+      <el-collapse-item title="4.2 theory" name="9">
+        <div><a href="https://exceptionnotfound.net/tag/workflow-engine">workflow-engine</a>——An eight-part series on designing a workflow engine database.</div>
+        <div></div>
+      </el-collapse-item>
+    </el-collapse>
   </div>
 </template>
 

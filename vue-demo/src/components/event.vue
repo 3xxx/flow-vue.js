@@ -15,7 +15,7 @@
     </el-button-group>
 
     <el-editable ref="editable"
-      :data="eventdata" border style="width: 100%" stripe>
+      :data.sync="eventdata" border style="width: 100%" stripe>
       <!-- <el-editable-column label="ID" prop="ID" align="center"></el-editable-column> -->
       <el-editable-column label="DOCTYPE" prop="DocType" size="mini" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">

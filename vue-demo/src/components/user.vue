@@ -14,7 +14,7 @@
     </el-button-group>
 
     <el-editable ref="editable"
-      :data="userdata" border style="width: 100%" stripe>
+      :data.sync="userdata" border style="width: 100%" stripe>
       <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
       <el-editable-column label="Name" prop="FirstName" :editRender="{Name: 'ElInput'}" align="center"></el-editable-column>
       <el-editable-column label="Name" prop="LastName" :editRender="{Name: 'ElInput'}" align="center"></el-editable-column>

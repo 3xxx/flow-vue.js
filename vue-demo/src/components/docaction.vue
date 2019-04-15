@@ -12,7 +12,7 @@
     </el-button-group>
 
     <el-editable ref="editable"
-      :data="docactiondata" border style="width: 100%" stripe>
+      :data.sync="docactiondata" border style="width: 100%" stripe>
       <!-- <el-editable-column label="ID" prop="ID" align="center"></el-editable-column> -->
       <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
       <el-editable-column label="Name" prop="Name" :editRender="{name: 'ElInput'}" align="center">

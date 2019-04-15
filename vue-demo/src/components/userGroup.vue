@@ -15,7 +15,7 @@
     </el-button-group>
 
     <el-editable ref="editable"
-      :data="usergroupdata" border style="width: 100%" stripe>
+      :data.sync="usergroupdata" border style="width: 100%" stripe>
       <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
       <!-- <el-editable-column label="GroupType" prop="Group.GroupType" :editRender="{Name: 'ElInput'}" align="cente"></el-editable-column> -->
       <el-editable-column prop="Group.GroupType" label="GroupType" :editRender="{type: 'default'}" align="center">

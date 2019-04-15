@@ -12,26 +12,27 @@
 
     <el-col>
       <el-button-group style="float: left; margin:10px">
-          <el-select v-model="uid" placeholder="请选择user" @change="changeuserValue" clearable>
-            <el-option
-              v-for="item in userdata"
-              :key="item.ID"
-              :label="item.FirstName+item.LastName"
-              :value="item.ID">
-            </el-option>
-          </el-select>
-          <el-select v-model="unreadvalue" placeholder="请选择unread" @change="changeunreadValue" clearable>
-            <el-option
-              v-for="item in unreaddata"
-              :key="item.ID"
-              :label="item.Name"
-              :value="item.ID">
-            </el-option>
-          </el-select>
+        <el-select v-model="uid" placeholder="请选择user" @change="changeuserValue" clearable>
+          <el-option
+            v-for="item in userdata"
+            :key="item.ID"
+            :label="item.FirstName+item.LastName"
+            :value="item.ID">
+          </el-option>
+        </el-select>
+        <el-select v-model="unreadvalue" placeholder="请选择unread" @change="changeunreadValue" clearable>
+          <el-option
+            v-for="item in unreaddata"
+            :key="item.ID"
+            :label="item.Name"
+            :value="item.Name">
+          </el-option>
+        </el-select>
       </el-button-group>
     </el-col>
 
-    <el-editable ref="editable" :data="usermailboxdata" border style="width: 100%" stripe>
+    <el-editable ref="editable" 
+      :data.sync="usermailboxdata" border style="width: 100%" stripe>
       <el-editable-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">

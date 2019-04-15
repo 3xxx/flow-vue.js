@@ -31,7 +31,8 @@
       </el-button-group>
     </el-col>
 
-    <el-editable ref="editable" :data="groupmailboxdata" border style="width: 100%" stripe>
+    <el-editable ref="editable" 
+      :data.sync="groupmailboxdata" border style="width: 100%" stripe>
       <el-editable-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
@@ -283,8 +284,15 @@
             {ID:2,Name:"合同"}
           ],
           doctypedata:[
-            {ID:1,Name:"图纸"},
-            {ID:2,Name:"合同"}
+            {
+              page: 1,
+              total: 3,
+              doctypes:
+              {
+                ID: 1,
+                Name: "draw"
+              }
+            }
           ],
           groupdata:[
             {ID:1,Name:"秦晓川",GroupType:"S"},

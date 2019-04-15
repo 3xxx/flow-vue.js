@@ -11,7 +11,7 @@
     </el-button-group>
 
     <el-editable ref="editable"
-      :data="grouproledata" border style="width: 100%" stripe>
+      :data.sync="grouproledata" border style="width: 100%" stripe>
       <!-- <el-editable-column prop="Id" label="ID" align="center"></el-editable-column> -->
       <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
       <el-editable-column prop="AcId" label="ACCESSCONTEXT" :editRender="{type: 'default'}" align="center">

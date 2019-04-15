@@ -10,7 +10,7 @@
       <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
     </el-button-group>
 
-    <el-editable ref="editable" :data="docstatedata" border style="width: 100%" stripe>
+    <el-editable ref="editable" :data.sync="docstatedata" border style="width: 100%" stripe>
       <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center">
       </el-editable-column>
       <el-editable-column label="Name" prop="Name" :editRender="{Name: 'ElInput'}" align="center">

@@ -13,7 +13,7 @@
     </el-col>
 
     <el-editable ref="editable"
-      :data="documentdetaildata" border style="width: 100%" stripe>
+      :data.sync="documentdetaildata" border style="width: 100%" stripe>
       <!-- <el-table-column label="DocID" prop="Document.ID" align="center"></el-table-column> -->
       <!-- <el-table-column label="DocType" prop="Document.DocType.ID" align="center"></el-table-column> -->
       <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
@@ -277,8 +277,15 @@
             {ID:2,Name:"合同"}
           ],
           doctypedata:[
-            {ID:1,Name:"图纸"},
-            {ID:2,Name:"合同"}
+            {
+              page: 1,
+              total: 3,
+              doctypes:
+              {
+                ID: 1,
+                Name: "draw"
+              }
+            }
           ],
           groupdata:[
             {ID:1,Name:"秦晓川",GroupType:"S"},

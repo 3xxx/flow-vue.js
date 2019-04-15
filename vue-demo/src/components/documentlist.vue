@@ -37,7 +37,7 @@
       </el-button-group>
     </el-col>
 
-    <el-editable ref="editable" :data="documentsdata" border style="width: 100%" stripe>
+    <el-editable ref="editable" :data.sync="documentsdata" border style="width: 100%" stripe>
       <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
       <!-- <el-editable-column label="DOCTYPE" prop="DocType.ID" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
@@ -297,8 +297,15 @@
             {ID:2,Name:"合同"}
           ],
           doctypedata:[
-            {ID:1,Name:"图纸"},
-            {ID:2,Name:"合同"}
+            {
+              page: 1,
+              total: 3,
+              doctypes:
+              {
+                ID: 1,
+                Name: "draw"
+              }
+            }
           ],
           groupdata:[
             {ID:1,Name:"秦晓川",GroupType:"S"},

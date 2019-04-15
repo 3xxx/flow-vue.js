@@ -27,7 +27,7 @@
     </el-col>
 
     <el-editable ref="editable"
-      :data="nodedata" border style="width: 100%" stripe>
+      :data.sync="nodedata" border style="width: 100%" stripe>
       <!-- <el-table-column label="ID" prop="ID" align="center"></el-table-column> -->
       <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center">
       </el-editable-column>
@@ -619,7 +619,7 @@
           this.node(currentPage);
         },
         getColumnLabel (value) {
-          console.log(this.doctypedata.doctypes)
+          // console.log(this.doctypedata.doctypes)
           let selectItem = this.doctypedata.doctypes.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
         },
@@ -632,7 +632,7 @@
           return selectItem ? selectItem.Name : null
         },
         changeValue(value) {
-          console.log(value);
+          // console.log(value);
           this.workflowid = value; 
           this.node(this.currentPage);
           // let obj = {};

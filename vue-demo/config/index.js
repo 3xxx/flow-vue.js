@@ -16,7 +16,21 @@ module.exports = {
             pathRewrite: {
                 "^/api": "" //用'/api' 代替 'http://218.78.187.216/api/v1'
             }
-        } 
+        },
+        "/wxapi": {
+            target: "https://zsj.itdos.com/v1/wx", //https://bjys.itdos.com/v1/admin---218.78.187.216/api/v1设置调用的接口域名和端口
+            changeOrigin: true,
+            pathRewrite: {
+                "^/wxapi": "" //用'/api' 代替 'http://218.78.187.216/api/v1'
+            }
+        },
+        "/projapi": {
+            target: "https://zsj.itdos.com/v1/project", //https://bjys.itdos.com/v1/admin---218.78.187.216/api/v1设置调用的接口域名和端口
+            changeOrigin: true,
+            pathRewrite: {
+                "^/projapi": "" //用'/api' 代替 'http://218.78.187.216/api/v1'
+            }
+        }
     },
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST阿里云上Vue部署问题

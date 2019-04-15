@@ -26,7 +26,7 @@ func init() {
 		beego.NewNamespace("/v1",
 			beego.NSNamespace("/admin",
 				beego.NSInclude(
-					&controllers.MainController{},
+					&controllers.FlowController{},
 					// &controllers.CustomerCookieCheckerController{},
 				),
 			),
@@ -42,6 +42,6 @@ func init() {
 			// ),
 		)
 	beego.AddNamespace(ns)
-	beego.Router("/", &controllers.MainController{})
+	beego.Router("/", &controllers.FlowController{})
 	beego.SetStaticPath("/swagger", "swagger")
 }

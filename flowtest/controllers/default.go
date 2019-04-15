@@ -18,11 +18,11 @@ import (
 )
 
 // Flowtest API
-type MainController struct {
+type FlowController struct {
 	beego.Controller
 }
 
-func (c *MainController) Get() {
+func (c *FlowController) Get() {
 	c.Data["Website"] = "beego.me"
 	c.Data["Email"] = "astaxie@gmail.com"
 	c.TplName = "flow.tpl"
@@ -49,7 +49,7 @@ func (c *MainController) Get() {
 // @Failure 404 articls not found
 // @router /workflow [get]
 // 页面
-func (c *MainController) WorkFlow() {
+func (c *FlowController) WorkFlow() {
 	c.TplName = "index.tpl"
 }
 
@@ -62,7 +62,7 @@ func (c *MainController) WorkFlow() {
 // @router /flowtype [post]
 // 管理员定义流程类型doctype、流程状态state、流程节点node、
 // 流程动作action、流程流向transition、流程事件event
-func (c *MainController) FlowType() {
+func (c *FlowController) FlowType() {
 	// func init() {
 	// orm.RegisterDriver("mysql", orm.DRMySQL)//注册驱动
 	// orm.RegisterModel(new(Model))//注册 model
@@ -112,7 +112,7 @@ type doctypelist struct {
 // @router /flowtypelist [get]
 // 管理员定义流程类型doctype、流程状态state、流程节点node、
 // 流程动作action、流程流向transition、流程事件event
-func (c *MainController) FlowTypeList() {
+func (c *FlowController) FlowTypeList() {
 	var offset, limit1, page1 int64
 	var err error
 	limit := c.Input().Get("limit")
@@ -164,7 +164,7 @@ func (c *MainController) FlowTypeList() {
 // @router /flowtypeupdate [post]
 // 管理员定义流程类型doctype、流程状态state、流程节点node、
 // 流程动作action、流程流向transition、流程事件event
-func (c *MainController) FlowTypeUpdate() {
+func (c *FlowController) FlowTypeUpdate() {
 	// func init() {
 	// orm.RegisterDriver("mysql", orm.DRMySQL)//注册驱动
 	// orm.RegisterModel(new(Model))//注册 model
@@ -208,7 +208,7 @@ func (c *MainController) FlowTypeUpdate() {
 // @router /flowtypedelete [post]
 // 管理员定义流程类型doctype、流程状态state、流程节点node、
 // 流程动作action、流程流向transition、流程事件event
-func (c *MainController) FlowTypeDelete() {
+func (c *FlowController) FlowTypeDelete() {
 	// func init() {
 	// orm.RegisterDriver("mysql", orm.DRMySQL)//注册驱动
 	// orm.RegisterModel(new(Model))//注册 model
@@ -246,7 +246,7 @@ func (c *MainController) FlowTypeDelete() {
 // @router /flowstate [post]
 // 管理员定义流程类型doctype、流程状态state、流程节点node、
 // 流程动作action、流程流向transition、流程事件event
-func (c *MainController) FlowState() {
+func (c *FlowController) FlowState() {
 	// func init() {
 	// orm.RegisterDriver("mysql", orm.DRMySQL)//注册驱动
 	// orm.RegisterModel(new(Model))//注册 model
@@ -300,7 +300,7 @@ func (c *MainController) FlowState() {
 // @router /flowstatelist [get]
 // 管理员定义流程类型doctype、流程状态state、流程节点node、
 // 流程动作action、流程流向transition、流程事件event
-func (c *MainController) FlowStateList() {
+func (c *FlowController) FlowStateList() {
 	var offset, limit1, page1 int64
 	var err error
 	limit := c.Input().Get("limit")
@@ -346,7 +346,7 @@ func (c *MainController) FlowStateList() {
 // @router /flowaction [post]
 // 管理员定义流程类型doctype、流程状态state、流程节点node、
 // 流程动作action、流程流向transition、流程事件event
-func (c *MainController) FlowAction() {
+func (c *FlowController) FlowAction() {
 	// func init() {
 	// orm.RegisterDriver("mysql", orm.DRMySQL)//注册驱动
 	// orm.RegisterModel(new(Model))//注册 model
@@ -393,7 +393,7 @@ func (c *MainController) FlowAction() {
 // @router /flowactionlist [get]
 // 管理员定义流程类型doctype、流程状态state、流程节点node、
 // 流程动作action、流程流向transition、流程事件event
-func (c *MainController) FlowActionList() {
+func (c *FlowController) FlowActionList() {
 	var offset, limit1, page1 int64
 	var err error
 	limit := c.Input().Get("limit")
@@ -438,7 +438,7 @@ func (c *MainController) FlowActionList() {
 // @router /flowtransition [post]
 // 管理员定义流程类型doctype、流程状态state、流程节点node、
 // 流程流向transition，输入doctype、docstate1、docaction、docstate2
-func (c *MainController) FlowTransition() {
+func (c *FlowController) FlowTransition() {
 	// func init() {
 	// orm.RegisterDriver("mysql", orm.DRMySQL)//注册驱动
 	// orm.RegisterModel(new(Model))//注册 model
@@ -510,7 +510,7 @@ type transitionlist struct {
 // @Failure 404 data not found
 // @router /flowtransitionlist [get]
 // 展示doctype下from docstate可能的transion
-func (c *MainController) FlowTransitionList() {
+func (c *FlowController) FlowTransitionList() {
 	// dtid := c.Input().Get("dtid")
 	// dtID, err := strconv.ParseInt(dtid, 10, 64)
 	// if err != nil {
@@ -574,7 +574,7 @@ func (c *MainController) FlowTransitionList() {
 // @router /flowworkflow [post]
 // 管理员定义流程Workflow
 // 输入doctype和初始action
-func (c *MainController) FlowWorkflow() {
+func (c *FlowController) FlowWorkflow() {
 	// func init() {
 	// orm.RegisterDriver("mysql", orm.DRMySQL)//注册驱动
 	// orm.RegisterModel(new(Model))//注册 model
@@ -632,7 +632,7 @@ func (c *MainController) FlowWorkflow() {
 // @router /flowworkflowlist [get]
 // 管理员定义流程Workflow
 // 输入doctype和初始action
-func (c *MainController) FlowWorkflowList() {
+func (c *FlowController) FlowWorkflowList() {
 	var offset, limit1, page1 int64
 	var err error
 	limit := c.Input().Get("limit")
@@ -674,7 +674,7 @@ func (c *MainController) FlowWorkflowList() {
 // @router /flowaccesscontext [post]
 // 管理员定义流程AccessContext
 // 流程命名空间
-func (c *MainController) FlowAccessContext() {
+func (c *FlowController) FlowAccessContext() {
 	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
 	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
 	if tdb == nil {
@@ -707,7 +707,7 @@ func (c *MainController) FlowAccessContext() {
 // @router /flowaccesscontextlist [get]
 // 管理员定义流程AccessContext
 // 流程命名空间
-func (c *MainController) FlowAccessContextList() {
+func (c *FlowController) FlowAccessContextList() {
 	prefix := c.Input().Get("prefix")
 	var offset, limit1, page1 int64
 	var err error
@@ -752,7 +752,7 @@ func (c *MainController) FlowAccessContextList() {
 // 流程node，输入doctype，docstate1，access，workflow，name和nodetype
 // A `Node` each has to be defined for each document state of the workflow,
 // except the final state. Please look at `_Workflows.AddNode`.
-func (c *MainController) FlowNode() {
+func (c *FlowController) FlowNode() {
 	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
 	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
 	if tdb == nil {
@@ -838,7 +838,7 @@ func (c *MainController) FlowNode() {
 // @Failure 404 data not found
 // @router /flownodelist [get]
 // 管理员定义流程Node
-func (c *MainController) FlowNodeList() {
+func (c *FlowController) FlowNodeList() {
 	// var offset, limit int64
 	// limit = 5
 	// page := c.Input().Get("page")
@@ -875,7 +875,7 @@ func (c *MainController) FlowNodeList() {
 // @router /flowuser [post]
 // 管理员定义流程user
 // 流程动作action、流程流向transition、流程事件event
-func (c *MainController) FlowUser() {
+func (c *FlowController) FlowUser() {
 	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
 	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
 	if tdb == nil {
@@ -950,7 +950,7 @@ func (c *MainController) FlowUser() {
 // @router /flowuserlist [get]
 // 管理员定义流程user
 // 流程动作action、流程流向transition、流程事件event
-func (c *MainController) FlowUserList() {
+func (c *FlowController) FlowUserList() {
 	prefix := c.Input().Get("prefix")
 	var offset, limit1, page1 int64
 	var err error
@@ -998,7 +998,7 @@ func (c *MainController) FlowUserList() {
 // @router /flowgroup [post]
 // 管理员定义流程Group
 // 流程动作action、流程流向transition、流程事件event
-func (c *MainController) FlowGroup() {
+func (c *FlowController) FlowGroup() {
 	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
 	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
 	if tdb == nil {
@@ -1033,7 +1033,7 @@ func (c *MainController) FlowGroup() {
 // @router /flowgrouplist [get]
 // 管理员定义流程Group
 // 流程动作action、流程流向transition、流程事件event
-func (c *MainController) FlowGroupList() {
+func (c *FlowController) FlowGroupList() {
 	var offset, limit1, page1 int64
 	var err error
 	limit := c.Input().Get("limit")
@@ -1079,7 +1079,7 @@ func (c *MainController) FlowGroupList() {
 // @router /flowusergroup [post]
 // 管理员定义流程GroupUser
 // 将users加入group
-func (c *MainController) FlowUserGroup() {
+func (c *FlowController) FlowUserGroup() {
 	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
 	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
 	if tdb == nil {
@@ -1132,7 +1132,7 @@ type GroupUsers struct {
 // @Failure 404 data not found
 // @router /flowgroupuserslist [get]
 // 查询Group下的所有Users
-func (c *MainController) FlowGroupUsersList() {
+func (c *FlowController) FlowGroupUsersList() {
 	var offset, limit1, page1 int64
 	var err error
 	limit := c.Input().Get("limit")
@@ -1191,7 +1191,7 @@ func (c *MainController) FlowGroupUsersList() {
 // @router /flowrole [post]
 // 管理员定义流程Role
 // 流程动作action、流程流向transition、流程事件event
-func (c *MainController) FlowRole() {
+func (c *FlowController) FlowRole() {
 	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
 	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
 	if tdb == nil {
@@ -1223,7 +1223,7 @@ func (c *MainController) FlowRole() {
 // @Failure 404 data not found
 // @router /flowrolelist [get]
 // 查询所有role
-func (c *MainController) FlowRoleList() {
+func (c *FlowController) FlowRoleList() {
 	var offset, limit1, page1 int64
 	var err error
 	limit := c.Input().Get("limit")
@@ -1269,7 +1269,7 @@ func (c *MainController) FlowRoleList() {
 // @router /flowpermission [post]
 // 管理员定义流程Permission
 // 流程动作action、流程流向transition、流程事件event
-func (c *MainController) FlowPermission() {
+func (c *FlowController) FlowPermission() {
 	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
 	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
 	if tdb == nil {
@@ -1334,7 +1334,7 @@ type Actions struct {
 // @Failure 404 data not found
 // @router /flowrolepermissionlist [get]
 // 查询role和对应对应的permission
-func (c *MainController) FlowRolePermissionList() {
+func (c *FlowController) FlowRolePermissionList() {
 	var offset, limit1, page1 int64
 	var err error
 	limit := c.Input().Get("limit")
@@ -1400,7 +1400,7 @@ func (c *MainController) FlowRolePermissionList() {
 // @router /flowgrouprole [post]
 // 管理员定义流程GroupRole
 // 来自accesscontext
-func (c *MainController) FlowGroupRole() {
+func (c *FlowController) FlowGroupRole() {
 	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
 	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
 	if tdb == nil {
@@ -1454,7 +1454,7 @@ func (c *MainController) FlowGroupRole() {
 // @Failure 404 data not found
 // @router /flowgrouprolelist [get]
 // 查询group的角色role-来自accesscontext
-func (c *MainController) FlowGroupRoleList() {
+func (c *FlowController) FlowGroupRoleList() {
 	var offset, limit1, page1 int64
 	var err error
 	limit := c.Input().Get("limit")
@@ -1511,7 +1511,7 @@ func (c *MainController) FlowGroupRoleList() {
 // @Failure 400 Invalid page supplied
 // @Failure 404 data not found
 // @router /flowdoc [post]
-func (c *MainController) FlowDoc() {
+func (c *FlowController) FlowDoc() {
 	//连接数据库
 	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
 	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
@@ -1581,7 +1581,7 @@ func (c *MainController) FlowDoc() {
 // @Failure 404 data not found
 // @router /flowdoclist [get]
 // 文件列表页，水平显示每个文件的状态
-func (c *MainController) FlowDocList() {
+func (c *FlowController) FlowDocList() {
 	//查询预先定义的doctype流程类型
 	dtid := c.Input().Get("dtid")
 	dtID, err := strconv.ParseInt(dtid, 10, 64)
@@ -1677,7 +1677,7 @@ func (c *MainController) FlowDocList() {
 // @Failure 404 data not found
 // @router /flowdoctransitionlist [get]
 // 文件列表页，显示doc和文档可能的走向——不要正确，暂停
-// func (c *MainController) FlowDocTransitionList() {
+// func (c *FlowController) FlowDocTransitionList() {
 // 	// var tx *sql.Tx
 // 	var err error
 // 	var offset, limit1, page1 int64
@@ -1784,7 +1784,7 @@ func (c *MainController) FlowDocList() {
 // @Failure 404 data not found
 // @router /flowdocevent [post]
 // 添加events：
-func (c *MainController) FlowEvent() {
+func (c *FlowController) FlowEvent() {
 	//连接数据库
 	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
 	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
@@ -1858,7 +1858,7 @@ func (c *MainController) FlowEvent() {
 // @Failure 404 data not found
 // @router /flowdoceventlist [get]
 // 查询events：
-func (c *MainController) FlowEventList() {
+func (c *FlowController) FlowEventList() {
 	// var tx *sql.Tx
 	dtid := c.Input().Get("dtid")
 	dtID, err := strconv.ParseInt(dtid, 10, 64)
@@ -1943,7 +1943,7 @@ func (c *MainController) FlowEventList() {
 // @router /flowdocumentlist [get]
 // 1.列表显示文档
 // 2.点击一个具体文档——显示详情——显示actions
-func (c *MainController) FlowDocumentList() {
+func (c *FlowController) FlowDocumentList() {
 	var offset, limit1, page1 int64
 	var err error
 	limit := c.Input().Get("limit")
@@ -2039,7 +2039,7 @@ type DocumentDetail struct {
 // @Failure 404 data not found
 // @router /flowdocumentdetail [get]
 // 2.点击一个具体文档——显示详情——显示actions
-func (c *MainController) FlowDocumentDetail() {
+func (c *FlowController) FlowDocumentDetail() {
 	var tx *sql.Tx
 	//查询预先定义的doctype流程类型
 	dtid := c.Input().Get("dtid")
@@ -2121,7 +2121,6 @@ func (c *MainController) FlowDocumentDetail() {
 		}
 	}
 	documentdetail[0].Document = document
-
 	//查出历史记录
 	// docEventListInput := flow.DocEventsListInput{
 	// 		DocTypeID:       flow.DocTypeID(dtID),       // Events on documents of this type are listed
@@ -2156,7 +2155,7 @@ func (c *MainController) FlowDocumentDetail() {
 // @Failure 404 data not found
 // @router /flownext [post]
 // FlowDocAction列出了文档和动作，用户点击action，则这里进行修改docstate
-func (c *MainController) FlowNext() {
+func (c *FlowController) FlowNext() {
 	// var tx *sql.Tx //用这个nil，后面就不用commit了吧，都在flow里commit了。
 	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
 	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
@@ -2251,7 +2250,7 @@ func (c *MainController) FlowNext() {
 		GroupID:     singletongroup.ID,      //Group (user) who performed the action that raised this event; required，执行引发此事件的操作的组(用户)
 		Text:        text,                   //Any comments or notes; required，
 	}
-	beego.Info(docEventInput)
+	// beego.Info(docEventInput)
 	deID, err := flow.DocEvents.New(tx, &docEventInput)
 	if err != nil {
 		beego.Error(err)
@@ -2274,6 +2273,144 @@ func (c *MainController) FlowNext() {
 		tx1.Commit() //用这个nil，后面就不用commit了吧，都在flow里commit了。
 		fmt.Println("newDocStateId=", newDocStateId, err)
 		c.Data["json"] = map[string]interface{}{"err": nil, "data": "写入成功!"}
+		c.ServeJSON()
+	}
+}
+
+// @Title get user mailbox
+// @Description get usermailbox
+// @Param uid query string true "The id of user"
+// @Param page query string true "The page of mailbox"
+// @Param limit query string false "The limit page of mailbox"
+// @Param unread query string false "The unread of mailbox"
+// @Success 200 {object} models.GetProductsPage
+// @Failure 400 Invalid page supplied
+// @Failure 404 data not found
+// @router /flowusermailbox [get]
+// 1.列表显示用户邮件
+func (c *FlowController) FlowUserMailbox() {
+	var offset, limit1, page1 int64
+	var err error
+	limit := c.Input().Get("limit")
+	if limit == "" {
+		limit1 = 0
+	} else {
+		limit1, err = strconv.ParseInt(limit, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
+	}
+	page := c.Input().Get("page")
+	if page == "" {
+		limit1 = 0
+		page1 = 1
+	} else {
+		page1, err = strconv.ParseInt(page, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
+	}
+	if page1 <= 1 {
+		offset = 0
+	} else {
+		offset = (page1 - 1) * limit1
+	}
+
+	//查询预先定义的doctype流程类型
+	uid := c.Input().Get("uid")
+	uID, err := strconv.ParseInt(uid, 10, 64)
+	if err != nil {
+		beego.Error(err)
+	}
+	unread := c.Input().Get("unread")
+	var unreadbool bool
+	if unread != "" {
+		if unread == "true" {
+			unreadbool = true
+		} else {
+			unreadbool = false
+		}
+	} else {
+		unreadbool = false
+	}
+
+	notification, err := flow.Mailboxes.ListByUser(flow.UserID(uID), offset, limit1, unreadbool)
+
+	if err != nil {
+		beego.Error(err)
+		c.Data["json"] = map[string]interface{}{"err": err, "data": "查询失败!"}
+		c.ServeJSON()
+	} else {
+		c.Data["json"] = notification
+		c.ServeJSON()
+	}
+}
+
+// @Title get group mailbox
+// @Description get groupmailbox
+// @Param gid query string true "The id of group"
+// @Param page query string true "The page of mailbox"
+// @Param limit query string false "The limit page of mailbox"
+// @Param unread query string false "The unread of mailbox"
+// @Success 200 {object} models.GetProductsPage
+// @Failure 400 Invalid page supplied
+// @Failure 404 data not found
+// @router /flowgroupmailbox [get]
+// 1.列表显示用户邮件
+func (c *FlowController) FlowGroupMailbox() {
+	var offset, limit1, page1 int64
+	var err error
+	limit := c.Input().Get("limit")
+	if limit == "" {
+		limit1 = 0
+	} else {
+		limit1, err = strconv.ParseInt(limit, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
+	}
+	page := c.Input().Get("page")
+	if page == "" {
+		limit1 = 0
+		page1 = 1
+	} else {
+		page1, err = strconv.ParseInt(page, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
+	}
+	if page1 <= 1 {
+		offset = 0
+	} else {
+		offset = (page1 - 1) * limit1
+	}
+
+	//查询预先定义的doctype流程类型
+	gid := c.Input().Get("gid")
+	gID, err := strconv.ParseInt(gid, 10, 64)
+	if err != nil {
+		beego.Error(err)
+	}
+	unread := c.Input().Get("unread")
+	var unreadbool bool
+	if unread != "" {
+		if unread == "true" {
+			unreadbool = true
+		} else {
+			unreadbool = false
+		}
+	} else {
+		unreadbool = false
+	}
+
+	notification, err := flow.Mailboxes.ListByGroup(flow.GroupID(gID), offset, limit1, unreadbool)
+
+	if err != nil {
+		beego.Error(err)
+		c.Data["json"] = map[string]interface{}{"err": err, "data": "查询失败!"}
+		c.ServeJSON()
+	} else {
+		c.Data["json"] = notification
 		c.ServeJSON()
 	}
 }
@@ -2402,7 +2539,7 @@ func fatal0(err error) {
 // 	return nil
 // }wflist []*flow.DocState
 
-// func (c *MainController) testaddflow() {
+// func (c *FlowController) testaddflow() {
 // 	// driver, connStr := "mysql", "root:root@/flow"
 // 	// tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
 // 	// if tdb == nil {
@@ -2492,7 +2629,7 @@ func fatal0(err error) {
 // 	// return wflist
 // }
 
-// func (c *MainController) flownext() {
+// func (c *FlowController) flownext() {
 // 	// tx, _ := flow.db.Begin()
 // 	var tx *sql.Tx
 // 	defer tx.Rollback()
@@ -2526,7 +2663,7 @@ func fatal0(err error) {
 // }
 
 //2019-01-11测试成功，作为保留
-// func (c *MainController) FlowGetDocTypeByName() {
+// func (c *FlowController) FlowGetDocTypeByName() {
 // 	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
 // 	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
 // 	if tdb == nil {

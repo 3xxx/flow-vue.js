@@ -16,7 +16,7 @@
     </el-button-group>
 
     <el-editable ref="editable"
-      :data="documentsdata" border style="width: 100%" stripe>
+      :data.sync="documentsdata" border style="width: 100%" stripe>
       <el-editable-column label="AccCtx" prop="AcId" size="mini" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.AcId" clearable>
@@ -253,8 +253,15 @@
             {ID:2,Name:"合同"}
           ],
           doctypedata:[
-            {ID:1,Name:"图纸"},
-            {ID:2,Name:"合同"}
+            {
+              page: 1,
+              total: 3,
+              doctypes:
+              {
+                ID: 1,
+                Name: "draw"
+              }
+            }
           ],
           groupdata:[
             {ID:1,Name:"秦晓川",GroupType:"S"},

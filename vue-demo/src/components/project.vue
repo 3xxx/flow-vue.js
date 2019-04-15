@@ -1,8 +1,7 @@
 <template>
   <div>
     <el-button-group style="float: left; margin:10px">
-      <!-- <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insert({name: `New ${Date.now()}`, flag: true, createDate: Date.now()})">新增一行</el-button> -->
-      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insertAt({name: `New last ${Date.now()}`, flag: true, createDate: Date.now()}, -1)">新增</el-button>
+      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insertAt({name: `New last ${Date.now()}`, flag: true, createDate: Date.now()}, -1)">新增project</el-button>
       <el-button type="info" size="small" @click="$refs.editable.revert()">放弃更改</el-button>
       <el-button type="info" size="small" icon="el-icon-delete" @click="$refs.editable.clear()">清空数据</el-button>
     </el-button-group>
@@ -10,55 +9,20 @@
       <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
       <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
     </el-button-group>
-    
-    <el-editable ref="editable" 
-      :data.sync="workflowdata" border style="width: 100%" stripe>
-      <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
-      <el-editable-column label="NAME" prop="Name" :editRender="{Name: 'ElInput'}" align="center"></el-editable-column>    
-      <el-editable-column prop="DocType.ID" label="DOCTYPE" :editRender="{type: 'default'}" align="center">
-        <template slot="edit" slot-scope="scope">
-          <el-select v-model="scope.row.DocType.ID" clearable>
-            <el-option
-              v-for="item in doctypedata.doctypes"
-              :key="item.ID"
-              :label="item.Name"
-              :value="item.ID">
-            </el-option>
-          </el-select>
-        </template>
-        <template slot-scope="scope">{{ getColumnLabel(scope.row.DocType.ID) }}</template>
+
+    <el-editable ref="editable" :data.sync="docstatedata" border style="width: 100%" stripe>
+      <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center">
       </el-editable-column>
-      <el-editable-column prop="BeginState.ID" label="BeginSTATE" :editRender="{type: 'default'}" align="center">
-        <template slot="edit" slot-scope="scope">
-          <el-select v-model="scope.row.BeginState.ID" clearable>
-            <el-option
-              v-for="item in docstatedata"
-              :key="item.ID"
-              :label="item.Name"
-              :value="item.ID">
-            </el-option>
-          </el-select>
-        </template>
-        <template slot-scope="scope">{{ getColumnLabel2(scope.row.BeginState.ID) }}</template>
-      </el-editable-column>
-      <el-editable-column prop="Active" label="ACTIVE" :editRender="{type: 'default'}" align="center">
-        <template slot="edit" slot-scope="scope">
-          <el-select v-model="scope.row.Active" clearable>
-            <el-option
-              v-for="item in workflowactivedata"
-              :key="item.ID"
-              :label="item.Name"
-              :value="item.Value">
-            </el-option>
-          </el-select>
-        </template>
-        <template slot-scope="scope">{{ getColumnLabel3(scope.row.Active) }}</template>
-      </el-editable-column>
-      <el-editable-column label="操作" align="center">
+      <el-editable-column label="Name" prop="Name" :editRender="{Name: 'ElInput'}" align="center">
+        <!-- <template slot-scope="scope">
+          <el-input size="mini" v-model="scope.row.Name"></el-input>
+        </template> -->
+      </el-editable-column>  
+      <el-editable-column  label="操作" align="center">
         <template slot-scope="scope">
           <el-button-group>
-          	<el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
-          	<el-button size="mini" type="danger" @click="deleteRow(scope.$index, workflowdata)">Delete</el-button>
+            <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
+            <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
           </el-button-group>
         </template>
       </el-editable-column>
@@ -73,7 +37,7 @@
       :total="total" style="float: right; margin:10px">
     </el-pagination>
 
-    <el-dialog title="定义doctype" :visible.sync="dialogFormVisible" center>
+    <el-dialog title="定义docstate" :visible.sync="dialogFormVisible" center>
     <!-- 插入测试 -->
       <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
         <el-form-item label="名称" prop="typename">
@@ -94,7 +58,7 @@
 /* eslint-disable */
   const axios = require('axios');
   export default { // 这里需要将模块引出，可在其他地方使用
-    name: 'workflow',
+    name: 'project',
       data() {
         var checkName = (rule, value, callback) => {
           if (value === '') {
@@ -182,61 +146,15 @@
             resource: '',
             desc: ''
           },
-          workflowdata: [{
-            Active: true,
-            BeginState: {
-              ID: 7, Name: "设计中..."
-            },
-            DocType: {
-              ID: 3, Name: "图纸设计"
-            },
-            ID: 3,
-            Name: "图纸设计流程"
-          }],
-          doctypedata: {
-            doctypes: [
-              {
-                ID: 3,
-                Name: "图纸设计"
-              }
-            ],
-            page: 1,
-            total: 7
-          },
-          docstatedata: [
-            {
-              ID:3,
-              Name:'设计中……'
-            },
-            {
-              ID:5,
-              Name:'校核中……'
-            }
-          ],
-          docactiondata: [
-            {
-              ID:4,
-              Name:'提交设计'
-            }
-          ],
-          workflowactivedata: [
-            {
-              ID:1,
-              Value:true,
-              Name:'true'//这个对应label，必须为string，显示出来的内容
-            },
-            {
-              ID:2,
-              Value:false,
-              Name:'false'
-            },
+
+          docstatedata:[
+            {ID:1,Name:"图纸"},
+            {ID:2,Name:"合同"}
           ],
           search: '',
         };
       },
       mounted:function () {
-        this.workflow(this.currentPage);
-        this.doctype(this.currentPage);
         this.docstate(this.currentPage);
       },
       methods:{
@@ -301,66 +219,25 @@
         handleClose(key, keyPath) {
           console.log(key, keyPath);
         },
-        workflow(currentPage){
-          axios({
-            method: 'get',
-            url: '/api/flowworkflowlist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
-          })
-          .then(response => (this.workflowdata = response.data))
-          .catch(function (error) {
-            console.log(error);
-          });
+        handleEdit(index, row) {
+          console.log(index, row);
         },
-        doctype(currentPage){
-          axios({
-            method: 'get',
-            url: '/api/flowtypelist',//2.get通过params选项
-            // params:{
-            //   page:currentPage
-            // }
-          })
-          .then(response => (this.doctypedata = response.data))
-          .catch(function (error) {
-            console.log(error);
-          });
-        },
-        docstate(currentPage){
-          axios({
-            method: 'get',
-            url: '/api/flowstatelist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
-          })
-          .then(response => (this.docstatedata = response.data))
-          .catch(function (error) {
-            console.log(error);
-          });
+        handleDelete(index, row) {
+          console.log(index, row);
         },
         deleteRow(index, rows) {//删除改行
-          //先删除数据库
-          //再删除前端行
           rows.splice(index, 1);
         },
-        addRow(workflowdata,event){
-          console.log('ID');
-          workflowdata.push({ ID:'',Name:'',DocType:{ID:'',Name:''},BeginState:{ID:'',Name:''},Active:true})
+        addRow(docstatedata,event){
+          docstatedata.push({ ID:'', Name: ''})
         },
         handleSubmit(index, row) {
           console.log(row);
               axios({
                 method: "POST",//请求方式
-                url: "/api/flowworkflow",//请求地址
+                url: "/api/flowstate",//请求地址
                 params:{
                   name:row.Name,
-                  dtid:row.DocType.ID,
-                  dsid:row.BeginState.ID,
-                  // acid:,
-                  // nodetype:
-                  // workflowactive:row.Active
                 },
                 // data: {
                 //   dtid:row.DoctypeId,
@@ -379,7 +256,7 @@
                     message: '提交成功' 
                   });
                   //刷新表格
-                  this.workflow(currentPage);
+                  this.docstate(currentPage);
                   this.dialogFormVisible = false;                 
                 } else {
                   //写入失败！
@@ -390,7 +267,19 @@
                 console.log(error);
               });
         },
-
+        docstate(currentPage){
+          axios({
+            method: 'get',
+            url: '/api/flowstatelist',//2.get通过params选项
+            params:{
+              page:currentPage
+            }
+          })
+          .then(response => (this.docstatedata = response.data))
+          .catch(function (error) {
+            console.log(error);
+          });
+        },
         //html剔除富文本标签，留下纯文本
         getSimpleText(html){
           var re1 = new RegExp("<.+?>","g");//匹配html标签的正则表达式，"g"是搜索匹配多个符合的内容
@@ -476,23 +365,7 @@
         },
         handleCurrentChange: function(currentPage){
           this.currentPage = currentPage;
-          this.workflow(currentPage);
-        },
-        formatter(row, column) {
-          // return row.address;
-          return String(row.Active);
-        },
-        getColumnLabel (value) {
-          let selectItem = this.doctypedata.doctypes.find(item => item.ID === value)
-          return selectItem ? selectItem.Name : null
-        },
-        getColumnLabel2 (value) {
-          let selectItem = this.docstatedata.find(item => item.ID === value)
-          return selectItem ? selectItem.Name : null
-        },
-        getColumnLabel3 (value) {
-          let selectItem = this.workflowactivedata.find(item => item.Value === value)
-          return selectItem ? selectItem.Name : null
+          this.docstate(currentPage);
         }
       }
   };
@@ -542,7 +415,7 @@
   .home_main{
     padding:10px;
   }
-/*  .breadcrumb-container .title {
+  .breadcrumb-container .title {
       width: 200px;
       float: left;
       color: #475669;
@@ -554,5 +427,5 @@
   }
   .el-breadcrumb__inner, .el-breadcrumb__inner a {
     font-weight: 400;
-  }*/
+  }
 </style>
