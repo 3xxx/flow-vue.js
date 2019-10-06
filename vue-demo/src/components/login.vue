@@ -55,6 +55,26 @@ export default {
               Name: this.loginForm.username,
               // Password: md5(this.loginForm.password)
             })
+            // .then((response) => {
+            //   if (response.data.Status === 1) {
+            //     setCookie("token", response.data.Result);
+            //     setCookie("username", tt.loginForm.username);
+            //     this.$message({
+            //       showClose: true,
+            //       type: "success",
+            //       message: "登陆成功"
+            //     });
+            //     setTimeout(() => {
+            //       this.$router.push({ path: "/" });
+            //     }, 1000);
+            //   } else {
+            //     this.$message({
+            //       showClose: true,
+            //       type: "warning",
+            //       message: response.data.Result
+            //     });
+            //   }
+            // })
             .then(
               function(response) {
                 var status = response.data.Status;

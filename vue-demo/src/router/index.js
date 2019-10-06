@@ -2,9 +2,10 @@ import Vue from 'vue'
 import Router from 'vue-router'
 // import HelloWorld from '@/components/HelloWorld'
 // 路由页面导入
-import login from '@/components/Login.vue'
+import login from '@/components/login.vue'
 import chatme from '@/components/chatme.vue'
-import home from '@/components/Home.vue'
+import home from '@/components/home.vue'
+import home_user from '@/components/userbox/home_user.vue'
 import readme from '@/components/readme'
 import doctype from '@/components/doctype'
 import docstate from '@/components/docstate'
@@ -25,33 +26,26 @@ import event from '@/components/event'
 import documentlist from '@/components/documentlist'
 import documentdetail from '@/components/documentdetail'
 import usermailbox from '@/components/usermailbox'
+import usertobeprocessed from '@/components/userbox/usertobeprocessed'
+import userhaveprocessed from '@/components/userbox/userhaveprocessed'
+import grouptobeprocessed from '@/components/userbox/grouptobeprocessed'
+import usertobesubmit from '@/components/userbox/usertobesubmit'
 import groupmailbox from '@/components/groupmailbox'
 
 import cmshome from '@/components/cmshome'
 import cmsindex from '@/components/cmsindex'
 import projects from '@/components/projects'
+import projecthome from '@/components/projecthome'
 import project from '@/components/project'
 
 // 懒加载方式，当路由被访问的时候才加载对应组件
 Vue.use(Router)
 
 export default new Router({
+  // mode:'history',
   routes: [
-    // {
-    //   path: '/cms',
-    //   // name: '首页',
-    //   // redirect: {
-    //   //   name: 'cmshome'
-    //   // },
-    //   children: [      
-    //     { path: '/cms', component: cmsindex, name: 'cmsindex' },
-    //   //   { path: '/docstate', component: docstate, name: 'DOCSTATE' },
-    //   //   { path: '/docaction', component: docaction, name: 'DOCACTION' },
-    //   ]
-    // },
     {
       path: '/',
-      // name: '项目',
       redirect: {
         name: '首页'
       },
@@ -59,13 +53,25 @@ export default new Router({
       children: [  
         { path: '/', component: cmsindex, name: 'cmsindex' },    
         { path: '/projects', component: projects, name: 'projects' },
-        { path: '/project', component: project, name: 'project' },
-        // { path: '/docaction', component: docaction, name: 'DOCACTION' },
+        { path: '/project', component: projecthome,name: 'projecthome',
+          children: [
+            {path: '/project', component: project, name: 'project'}
+          ]
+        },
       ]
     },
-
+    // {
+    //   path: '/project',
+    //   redirect: {
+    //     name: '项目'
+    //   },
+    //   component: projecthome,
+    //   children: [  
+    //     { path: '/project', component: project, name: 'project' },
+    //   ]
+    // },
     {
-      path: '/login',
+      path: '/flow/login',
       name: '登录',
       component: login
     },
@@ -82,12 +88,12 @@ export default new Router({
     {
       path: '/flow',
       redirect: {
-        name: 'home'
+        name: 'README'
       },
       // name: 'readme',//默认子路由不能有name属性，name: 'App',
       component: home,
       children: [
-        { path: '/flow', component: readme, name: 'README' },
+        { path: '/flow/readme', component: readme, name: 'README' },
       ]
     },
     {
@@ -142,6 +148,25 @@ export default new Router({
       children: [
         { path: '/flow/usermailbox', component: usermailbox, name: 'usermailbox' },
         { path: '/flow/groupmailbox', component: groupmailbox, name: 'groupmailbox' },
+      ]
+    },
+    {
+      path: '/flow',
+      name: 'usermailbox2',
+      component: home_user,
+      children: [
+        { path: '/flow/usertobeprocessed',component: usertobeprocessed,name: 'usertobeprocessed',},
+        { path: '/flow/userhaveprocessed', component: userhaveprocessed, name: 'userhaveprocessed' },
+        { path: '/flow/usertobesubmit', component: usertobesubmit, name: 'usertobesubmit' },
+        { path: '/flow/documentdetail2', component: documentdetail, name: 'documentdetail2' },
+      ]
+    },
+    {
+      path: '/flow',
+      name: 'groupmailbox2',
+      component: home_user,
+      children: [
+        { path: '/flow/grouptobeprocessed', component: grouptobeprocessed, name: 'grouptobeprocessed' },
       ]
     }
   ]

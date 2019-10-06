@@ -1,12 +1,9 @@
-<!-- <template>
-  <div id="vue">Hello Vue.js! {{ message }}</div>
-</template> -->
+<!-- 03 用户已处理页面 -->
 <template>
   <div>
+    <!-- <vxe-toolbar> -->
     <el-button-group style="float: left; margin:10px">
-      <!-- <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insert({name: `New ${Date.now()}`, flag: true, createDate: Date.now()})">新增一行</el-button> -->
-      <!-- <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insertAt({name: `New last ${Date.now()}`, flag: true, createDate: Date.now()}, -1)">新增</el-button> -->
-      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click.native="dialogFormVisible = true">添加m</el-button>
+      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click.native="dialogFormVisible = true">添加</el-button>
       <el-button type="info" size="small" @click="$refs.editable.revert()">放弃更改</el-button>
       <el-button type="info" size="small" icon="el-icon-delete" @click="$refs.editable.clear()">清空数据</el-button>
     </el-button-group>
@@ -14,65 +11,69 @@
       <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
       <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
     </el-button-group>
+    <!-- </vxe-toolbar> -->
 
-    <el-editable ref="editable"
-      :data.sync="documentsdata" border style="width: 100%" stripe>
-      <el-editable-column label="AccCtx" prop="AcId" size="mini" :editRender="{type: 'default'}" align="center">
+    <vxe-toolbar>
+      <!-- <template v-slot:buttons>
+        <vxe-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click.native="dialogFormVisible = true">添加</vxe-button>
+        <vxe-button @click="insertEvent(tableData[2])">在第3行插入并激活 Sex 单元格</vxe-button>
+        <vxe-button @click="insertEvent(-1)">在最后行插入</vxe-button>
+        <vxe-button @click="getInsertEvent">获取新增</vxe-button>
+      </template> -->
+    </vxe-toolbar>
+
+    <vxe-table border stripe :data="usermailboxdata.notification">
+      <vxe-table-column type="expand" width="50" align="center">
+        <template slot-scope="props">
+          <el-form label-position="left" inline class="demo-table-expand">
+            <el-form-item label="DATA">
+              <span>{{ props.row.Message.Data }}</span>
+            </el-form-item>
+            <el-form-item label="DocType">
+              <span>{{ props.row.Message.DocType.Name }}</span>
+            </el-form-item>
+            <el-form-item label="Ctime">
+              <span>{{ props.row.Ctime | dateformat }}</span>
+            </el-form-item>
+          </el-form>
+        </template>
+      </vxe-table-column>
+      <vxe-table-column title="序号" type="index" show-overflow-tooltip width="50" align="center"></vxe-table-column>
+      <vxe-table-column title="DOCTYPE" field="Message.DocType.Name" :editRender="{type: 'default'}" align="center">
+      </vxe-table-column>
+      <vxe-table-column title="DOC" field="Message.Title" :editRender="{type: 'default'}" align="center">
+      </vxe-table-column>
+      <vxe-table-column title="GROUP" field="Group" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
-          <el-select v-model="scope.row.AcId" clearable>
+          <el-select v-model="scope.row.Group" clearable>
             <el-option
-              v-for="item in accesscontextdata"
+              v-for="item in groupdata.groups"
               :key="item.ID"
               :label="item.Name"
               :value="item.ID">
             </el-option>
           </el-select>
         </template>
-        <template slot-scope="scope">{{ getColumnLabel(scope.row.AcId) }}</template>
-      </el-editable-column>
-      <el-editable-column label="DOCSTATE" prop="DocstateId" size="mini" :editRender="{type: 'default'}" align="center">
-        <template slot="edit" slot-scope="scope">
-          <el-select v-model="scope.row.DocstateId" clearable>
-            <el-option
-              v-for="item in docstatedata"
-              :key="item.ID"
-              :label="item.Name"
-              :value="item.ID">
-            </el-option>
-          </el-select>
-        </template>
-        <template slot-scope="scope">{{ getColumnLabel2(scope.row.DocstateId) }}</template>
-      </el-editable-column>
-      <el-editable-column label="GROUP" prop="GroupId" size="mini" :editRender="{type: 'default'}" align="center">
-        <template slot="edit" slot-scope="scope">
-          <el-select v-model="scope.row.GroupId" clearable>
-            <el-option
-              v-for="item in groupdata"
-              :key="item.ID"
-              :label="item.Name"
-              :value="item.ID">
-            </el-option>
-          </el-select>
-        </template>
-        <template slot-scope="scope">{{ getColumnLabel3(scope.row.GroupId) }}</template>
-      </el-editable-column>
-      <el-editable-column label="TITLE" prop="Title" size="mini" :editRender="{Name: 'ElInput'}" align="center">
-      </el-editable-column>
-      <el-editable-column label="DATA" prop="Data" size="mini" :editRender="{Name: 'ElInput'}" align="center">
-      </el-editable-column>
-      <el-editable-column label="PATH" prop="Path" size="mini" :editRender="{Name: 'ElInput'}" align="center">
-      </el-editable-column>
-      <el-editable-column label="CTIME" prop="Ctime" size="mini" :formatter="formatter">
-      </el-editable-column>
-      <el-editable-column  label="操作" align="center">
+        <template slot-scope="scope">{{ getColumnLabel(scope.row.Group) }}</template>
+      </vxe-table-column>
+      <vxe-table-column title="CTIME" field="Ctime" size="mini" :formatter="formatter" align="center">
+      </vxe-table-column>
+      <vxe-table-column title="Unread" field="Unread" size="mini" align="center">
+      </vxe-table-column>
+      <vxe-table-column  title="操作" align="center">
         <template slot-scope="scope">
           <el-button-group>
-            <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
-            <el-button size="mini" type="danger" @click="deleteRow(scope.$index, documentsdata)">Delete</el-button>
+            <el-button size="mini" @click="detail(scope.$index, scope.row)">detail</el-button>
+            <el-button size="mini" type="danger" @click="deleteRow(scope.$index, documentsdata)">Del</el-button>
           </el-button-group>
         </template>
-      </el-editable-column>
-    </el-editable>
+      </vxe-table-column>
+      <!-- <vxe-table-column type="index" title="序号" width="80"></vxe-table-column>
+      <vxe-table-column field="name" title="名字"></vxe-table-column>
+      <vxe-table-column field="sex" title="性别"></vxe-table-column>
+      <vxe-table-column field="address" title="地址"></vxe-table-column> -->
+    </vxe-table>
+
     <el-pagination background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -80,14 +81,14 @@
       :page-sizes="[10, 50, 100, 200]"
       :page-size="pageSize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="total" style="float: right; margin:10px">
+      :total="usermailboxdata.total" style="float: right; margin:10px">
     </el-pagination>
 
-    <el-dialog title="添加document" :visible.sync="dialogFormVisible" center>
+    <el-dialog title="添加user document" :visible.sync="dialogFormVisible" center>
       <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
         <el-form-item label="DOCTYPE" prop="dtid">
           <template >
-            <el-select v-model="ruleForm2.value1" clearable>
+            <el-select v-model="ruleForm2.dtid2" clearable>
               <el-option
                 v-for="item in doctypedata.doctypes"
                 :key="item.ID"
@@ -99,9 +100,9 @@
         </el-form-item>
         <el-form-item label="ACCESSCONTEXT" prop="acid">
           <template>
-            <el-select v-model="ruleForm2.value2" clearable>
+            <el-select v-model="ruleForm2.acid2" clearable>
               <el-option
-                v-for="item in accesscontextdata"
+                v-for="item in accesscontextdata.accesscontexts"
                 :key="item.ID"
                 :label="item.Name"
                 :value="item.ID">
@@ -111,9 +112,9 @@
         </el-form-item>
         <el-form-item label="GROUP" prop="gid">
           <template>
-            <el-select v-model="ruleForm2.value3" value-key="ID" clearable>
+            <el-select v-model="ruleForm2.gid2" value-key="ID" clearable>
               <el-option
-                v-for="item in groupdata"
+                v-for="item in groupdata.groups"
                 :key="item.ID"
                 :label="item.Name"
                 :value="item.ID">
@@ -128,21 +129,19 @@
           <el-input v-model.number="ruleForm2.docdata" auto-complete="off" placeholder="输入名称"></el-input>
         </el-form-item>
       </el-form>
-      <!-- 插入测试 -->
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false; resetForm('ruleForm2')">取 消</el-button>
         <el-button type="primary" @click="submitForm('ruleForm2')">确 定</el-button>
       </div>
     </el-dialog>
-
   </div>
 </template>
 
 <script type="text/javascript">
-/* eslint-disable */
+  /* eslint-disable */
   const axios = require('axios');
   export default { // 这里需要将模块引出，可在其他地方使用
-    name: 'documents',
+    name: 'userhaveprocessed',
       data() {
         var checkName = (rule, value, callback) => {
           if (value === '') {
@@ -176,6 +175,18 @@
           }
         };
         return {
+          unreaddata: [
+            {
+              ID:1,
+              Value:true,
+              Name:'true'
+            },
+            {
+              ID:0,
+              Value:false,
+              Name:'false'
+            },
+          ],
           total: 50,
           currentPage: 1,
           pageSize: 10,
@@ -184,10 +195,10 @@
           /*插入form方法*/
           /*设定规则指向*/
           ruleForm2: {
-            name:'',
-            pass: '',
-            num: '',
-            delivery: false,
+            // name:'',
+            // pass: '',
+            // num: '',
+            // delivery: false,
           },
           rules2: {
             typename: [
@@ -214,7 +225,8 @@
           isCollapse: true,
           bannerHeight:200,
 
-          clientHeight:'',
+          clientHeight:'600px',
+          screenWidth: document.body.clientWidth,
           // calleft:0
           posts:[],
           numbers:0,
@@ -230,21 +242,31 @@
             resource: '',
             desc: ''
           },
-          documentsdata:[
+          usermailboxdata:[
             {
-              Id:1,
-              AcId:1,
-              DocstateId:1,
-              GroupId:1,
-              Title:'documents title',
-              Data:'数据',
-              Path:'path',
-              Ctime:'2019-02-09',
+              "Group": 7,
+              "Message": {
+                "ID": 2,
+                "DocType": {
+                  "ID": 3,
+                  "Name": "初始测试doctype"
+                },
+                "DocID": 2,
+                "DocEvent": 21,
+                "Title": "初始测试title",
+                "Data": "no comments"
+              },
+              "Unread": true,
+              "Ctime": "2019-03-09T17:10:19Z"
             }
+          ],
+          userdata:[
+            {ID:1,FirstName:"秦",LastName:'晓川1',Email:'xc-qin1@163.com',Active:true},
+            {ID:2,FirstName:"秦",LastName:'晓川2',Email:'xc-qin2@163.com',Active:true}
           ],
           accesscontextdata: [
             {
-              Id:1,
+              ID:1,
               Name:'我是accesscontext',
             }
           ],
@@ -253,33 +275,75 @@
             {ID:2,Name:"合同"}
           ],
           doctypedata:[
-            {
-              page: 1,
-              total: 3,
-              doctypes:
-              {
-                ID: 1,
-                Name: "draw"
-              }
-            }
+            {ID:1,Name:"图纸"},
+            {ID:2,Name:"合同"}
           ],
           groupdata:[
             {ID:1,Name:"秦晓川",GroupType:"S"},
             {ID:2,Name:"校核组",GroupType:"G"}
           ],
-          value1:'',
-          value2:'',
-          value3:'',
+          // dtid2:'',
+          // acid2:'',
+          // gid2:'',
+          uid:'',
+          unreadvalue:'false',
+          // dtid:'',
+          // acid:'',
+          // message:''
         };
       },
       mounted:function () {
-        this.documents(3,this.currentPage);
-        this.accesscontext(this.currentPage);
+        // 动态设置背景图的高度为浏览器可视区域高度
+        // 首先在Virtual DOM渲染数据时，设置下背景图的高度．
+        this.clientHeight = `${document.documentElement.clientHeight}px`;
+        console.log(this.clientHeight)
+        // 然后监听window的resize事件．在浏览器窗口变化时再设置下背景图高度．
+        const that = this;
+        window.onresize = function temp() {
+          that.clientHeight = `${document.documentElement.clientHeight}px`;
+        };
+        console.log(that.clientHeight)
+        // const that = this
+        window.onresize = () => {
+            return (() => {
+                window.screenWidth = document.body.clientWidth
+                that.screenWidth = window.screenWidth
+            })()
+        }
+        // this.documents(3,this.currentPage);
+        // this.usermailbox(this.currentPage);
+        this.user(this.currentPage);
         this.group(this.currentPage);
-        this.docstate(this.currentPage);
+        // this.docstate(this.currentPage);
         this.doctype(this.currentPage);
+        this.accesscontext(this.currentPage);
+        this.usermailbox2(this.currentPage)
+      },
+      watch:{
+        screenWidth(val){
+          // 为了避免频繁触发resize函数导致页面卡顿，使用定时器
+          if(!this.timer){
+            // 一旦监听到的screenWidth值改变，就将其重新赋给data里的screenWidth
+            this.screenWidth = val
+            this.timer = true
+            let that = this
+            setTimeout(function(){
+              // 打印screenWidth变化的值
+              console.log(that.screenWidth)
+              that.timer = false
+            },400)
+          }
+        }
       },
       methods:{
+        detail(index, row){
+          // console.log(row.ID);
+          // console.log(row.DocType.ID);
+          this.$router.push({
+            path: '/flow/documentdetail2',
+            query: {docid: row.Message.DocID,dtid:row.Message.DocType.ID}
+          })
+        },
         submitForm(formName) {
           this.$refs[formName].validate((valid) => {
             if (valid) {
@@ -287,22 +351,16 @@
                 method: "POST",//请求方式
                 url: "/flowdoc",//请求地址
                 params:{
-                  // acid:this.ruleForm2.AcId,
+                  // form:this.ruleForm2,
                   // dsid:this.ruleForm2.DocstateId,
-                  dtid:this.ruleForm2.value1,
+                  dtid:this.ruleForm2.dtid2,
                   // dtid:this.ruleForm2.DoctypeId,
-                  acid:this.ruleForm2.value2,
-                  // gid:this.ruleForm2.GroupId,
-                  gid:this.ruleForm2.value3,
+                  acid:this.ruleForm2.acid2,
+                  // // gid:this.ruleForm2.GroupId,
+                  gid:this.ruleForm2.gid2,
                   docname:this.ruleForm2.docname,
                   docdata:this.ruleForm2.docdata,
-                  // path:this.ruleForm2.Path
-                  // ctime:row.Ctime
                 },
-                // data: {
-                  // name:this.ruleForm2.typename,
-                  // "thirdapp_id":1//请求参数
-                // }
               })
               .then((response) => {
                 if (response != "err") {
@@ -348,15 +406,12 @@
             }
           }); 
         },
-
         resetForm(formName) {
           this.$refs[formName].resetFields();
         },
-
         changeWidthL(key, keyPath) {
           console.log(key, keyPath);
         },
-
         handleOpen(key, keyPath) {
           console.log(key, keyPath);
         },
@@ -429,17 +484,18 @@
                 console.log(error);
               });
         },
-        documents(dtid,currentPage){
+        usermailbox2(currentPage){
           axios({
             method: 'get',
-            url: '/flowdoclist',//2.get通过params选项
+            url: '/flowusermailbox2',//2.get通过params选项
             params:{
               page:currentPage,
               limit:this.pageSize,
-              dtid:dtid
+              // uid:this.uid,
+              unread:this.unreadvalue
             }
           })
-          .then(response => (this.documentsdata = response.data))
+          .then(response => (this.usermailboxdata = response.data))
           .catch(function (error) {
             console.log(error);
           });
@@ -448,9 +504,9 @@
           axios({
             method: 'get',
             url: '/flowtypelist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            // params:{
+            //   page:currentPage
+            // }
           })
           .then(response => (this.doctypedata = response.data))
           .catch(function (error) {
@@ -461,9 +517,9 @@
           axios({
             method: 'get',
             url: '/flowstatelist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            // params:{
+            //   page:currentPage
+            // }
           })
           .then(response => (this.docstatedata = response.data))
           .catch(function (error) {
@@ -474,11 +530,24 @@
           axios({
             method: 'get',
             url: '/flowaccesscontextlist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            // params:{
+            //   page:currentPage
+            // }
           })
           .then(response => (this.accesscontextdata = response.data))
+          .catch(function (error) {
+            console.log(error);
+          });
+        },
+        user(currentPage){
+          axios({
+            method: 'get',
+            url: '/flowuserlist',//2.get通过params选项
+            // params:{
+            //   page:currentPage
+            // }
+          })
+          .then(response => (this.userdata = response.data))
           .catch(function (error) {
             console.log(error);
           });
@@ -487,9 +556,9 @@
           axios({
             method: 'get',
             url: '/flowgrouplist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            // params:{
+            //   page:currentPage
+            // }
           })
           .then(response => (this.groupdata = response.data))
           .catch(function (error) {
@@ -529,21 +598,21 @@
         },
         handleSizeChange: function (size) {
           this.pageSize = size;
-          this.documents(3,this.currentPage)
+          // this.usermailbox(3,this.currentPage)
         },
         handleCurrentChange: function(currentPage){
           this.currentPage = currentPage;
-          this.documents(currentPage);
+          this.usermailbox(currentPage);
         },
         formatter:function(row, column){
-          var date = row.Ctime;
-          // console.log(date)
-          if (date === undefined) {
+          // var date = row;
+          // console.log(row.cellValue)
+          if (row === undefined) {
             return "";
           }
           // return util.formatDate.format(new Date(date), 'yyyy-MM-dd');
           // this.$moment().format('YYYY-MM-DD HH:mm:ss')
-          return this.$moment(date).format("YYYY-MM-DD HH:mm");
+          return this.$moment(row.cellValue).subtract(8,'hour').format("YYYY-MM-DD HH:mm");
           // https://blog.csdn.net/ysq0317/article/details/81089962
           // vue的话，在moment.js的官网里，是给了安装方法的
           // cnpm install moment --save   
@@ -551,29 +620,66 @@
           // import moment from 'moment'//导入文件
           // Vue.prototype.$moment = moment;//赋值使用
         },
-        getColumnLabel (value) {
-          let selectItem = this.accesscontextdata.find(item => item.ID === value)
-          return selectItem ? selectItem.Name : null
-        },
-        getColumnLabel2 (value) {
-          let selectItem = this.docstatedata.find(item => item.ID === value)
-          return selectItem ? selectItem.Name : null
-        },
-        getColumnLabel3 (value) {
-          let selectItem = this.groupdata.find(item => item.ID === value)
-          return selectItem ? selectItem.Name : null
-        }
-        // attr5ChangeEvent (scope) {
-        //   let list = this.$refs.editable.getRecords()
-        //   this.attr5Options = this.typeOptions.filter(item => !list.some(row => row.attr5 === item.label))
-        //   this.$refs.editable.updateStatus(scope)
+        // getColumnLabel (value) {
+        //   let selectItem = this.accesscontextdata.find(item => item.ID === value)
+        //   return selectItem ? selectItem.Name : null
         // },
+        // getColumnLabel2 (value) {
+        //   let selectItem = this.doctypedata.doctypes.find(item => item.ID === value)
+        //   return selectItem ? selectItem.Name : null
+        // },
+        // getColumnLabel3 (value) {
+        //   let selectItem = this.docstatedata.find(item => item.ID === value)
+        //   return selectItem ? selectItem.Name : null
+        // },
+        getColumnLabel (value) {
+          let selectItem = this.groupdata.groups.find(item => item.ID === value)
+          return selectItem ? selectItem.Name : null
+        },
+        changeuserValue(value) {
+          // console.log(value);
+          this.uid = value;
+          // console.log(this.unreadvalue);
+          if (this.unreadvalue!==''){
+            this.usermailbox(this.currentPage);
+          }
+          // let obj = {};
+          // obj = this.options.find((item)=>{
+          //     return item.value === value;
+          // });
+          // console.log(obj.label);
+        },
+        changeunreadValue(value) {
+          // console.log(value);
+          this.unreadvalue = value;
+          if (this.uid!==''){
+            this.usermailbox(this.currentPage);
+          }
+          // let obj = {};
+          // obj = this.options.find((item)=>{
+          //     return item.value === value;
+          // });
+          // console.log(obj.label);
+        }
       }
   };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+  .demo-table-expand {
+    font-size: 0;
+  }
+  .demo-table-expand label {
+    width: 90px;
+    color: #99a9bf;
+  }
+  .demo-table-expand .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 100%;
+  }
+
   #vue{
     color: green;
     font-size: 28px;

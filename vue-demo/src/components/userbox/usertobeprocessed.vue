@@ -1,7 +1,9 @@
+<!-- 02 用户待处理事务 -->
 <template>
   <div>
+    <!-- <vxe-toolbar> -->
     <el-button-group style="float: left; margin:10px">
-      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insertAt({name: `New last ${Date.now()}`, flag: true, createDate: Date.now()}, -1)">新增</el-button>
+      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click.native="dialogFormVisible = true">添加</el-button>
       <el-button type="info" size="small" @click="$refs.editable.revert()">放弃更改</el-button>
       <el-button type="info" size="small" icon="el-icon-delete" @click="$refs.editable.clear()">清空数据</el-button>
     </el-button-group>
@@ -9,60 +11,69 @@
       <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
       <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
     </el-button-group>
+    <!-- </vxe-toolbar> -->
 
-    <el-editable ref="editable"
-      :data.sync="grouproledata.grouproles" border style="width: 100%" stripe>
-      <!-- <el-editable-column prop="Id" label="ID" align="center"></el-editable-column> -->
-      <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
-      <el-editable-column prop="AcId" label="ACCESSCONTEXT" :editRender="{type: 'default'}" align="center">
+    <vxe-toolbar>
+      <!-- <template v-slot:buttons>
+        <vxe-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click.native="dialogFormVisible = true">添加</vxe-button>
+        <vxe-button @click="insertEvent(tableData[2])">在第3行插入并激活 Sex 单元格</vxe-button>
+        <vxe-button @click="insertEvent(-1)">在最后行插入</vxe-button>
+        <vxe-button @click="getInsertEvent">获取新增</vxe-button>
+      </template> -->
+    </vxe-toolbar>
+
+    <vxe-table stripe border ref="xTable" :data="usermailboxdata.notification">
+      <vxe-table-column type="expand" width="50" align="center">
+        <template slot-scope="props">
+          <el-form label-position="left" inline class="demo-table-expand">
+            <el-form-item label="DATA">
+              <span>{{ props.row.Message.Data }}</span>
+            </el-form-item>
+            <el-form-item label="DocType">
+              <span>{{ props.row.Message.DocType.Name }}</span>
+            </el-form-item>
+            <el-form-item label="Ctime">
+              <span>{{ props.row.Ctime | dateformat }}</span>
+            </el-form-item>
+          </el-form>
+        </template>
+      </vxe-table-column>
+      <vxe-table-column title="序号" type="index" show-overflow-tooltip width="50" align="center"></vxe-table-column>
+      <vxe-table-column title="DOCTYPE" field="Message.DocType.Name" :editRender="{type: 'default'}" align="center">
+      </vxe-table-column>
+      <vxe-table-column title="DOC" field="Message.Title" :editRender="{type: 'default'}" align="center">
+      </vxe-table-column>
+      <vxe-table-column title="GROUP" field="Group" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
-          <el-select v-model="scope.row.AcId" clearable>
+          <el-select v-model="scope.row.Group" clearable>
             <el-option
-              v-for="item in accesscontextdata.accesscontexts"
+              v-for="item in groupdata.groups"
               :key="item.ID"
               :label="item.Name"
               :value="item.ID">
             </el-option>
           </el-select>
         </template>
-        <template slot-scope="scope">{{ getColumnLabel(scope.row.AcId) }}</template>
-      </el-editable-column>
-      <el-editable-column prop="GroupId" label="Group" :editRender="{type: 'default'}" align="center">
-        <template slot="edit" slot-scope="scope">
-          <el-select v-model="scope.row.GroupId" clearable>
-            <el-option
-              v-for="item in groupdata.groups"
-              :key="item.Name"
-              :label="item.Name"
-              :value="item.ID">
-            </el-option>
-          </el-select>
-        </template>
-        <template slot-scope="scope">{{ getColumnLabel2(scope.row.GroupId) }}</template>
-      </el-editable-column>
-      <el-editable-column prop="RoleId" label="Role" :editRender="{type: 'default'}" align="center">
-        <template slot="edit" slot-scope="scope">
-          <el-select v-model="scope.row.RoleId" clearable>
-            <el-option
-              v-for="item in roledata.roles"
-              :key="item.Name"
-              :label="item.Name"
-              :value="item.ID">
-            </el-option>
-          </el-select>
-        </template>
-        <template slot-scope="scope">{{ getColumnLabel3(scope.row.RoleId) }}</template>
-      </el-editable-column>
-
-      <el-editable-column  label="操作" align="center">
+        <template slot-scope="scope">{{ getColumnLabel(scope.row.Group) }}</template>
+      </vxe-table-column>
+      <vxe-table-column title="CTIME" field="Ctime" size="mini" :formatter="formatter" align="center">
+      </vxe-table-column>
+      <vxe-table-column title="Unread" field="Unread" size="mini" align="center">
+      </vxe-table-column>
+      <vxe-table-column  title="操作" align="center">
         <template slot-scope="scope">
           <el-button-group>
-            <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
-            <el-button size="mini" type="danger" @click="deleteRow(scope.$index, grouproledata)">Delete</el-button>
+            <el-button size="mini" @click="detail(scope.$index, scope.row)">detail</el-button>
+            <el-button size="mini" type="danger" @click="deleteRow(scope.$index, documentsdata)">Del</el-button>
           </el-button-group>
         </template>
-      </el-editable-column>
-    </el-editable>
+      </vxe-table-column>
+      <!-- <vxe-table-column type="index" title="序号" width="80"></vxe-table-column>
+      <vxe-table-column field="name" title="名字"></vxe-table-column>
+      <vxe-table-column field="sex" title="性别"></vxe-table-column>
+      <vxe-table-column field="address" title="地址"></vxe-table-column> -->
+    </vxe-table>
+
     <el-pagination background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -70,31 +81,68 @@
       :page-sizes="[10, 50, 100, 200]"
       :page-size="pageSize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="grouproledata.total" style="float: right; margin:10px">
+      :total="usermailboxdata.total" style="float: right; margin:10px">
     </el-pagination>
 
-    <el-dialog title="定义doctype" :visible.sync="dialogFormVisible" center>
-    <!-- 插入测试 -->
+    <el-dialog title="添加user document" :visible.sync="dialogFormVisible" center>
       <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="名称" prop="typename">
-          <el-input v-model.number="ruleForm2.typename" auto-complete="off" placeholder="输入名称"></el-input>
+        <el-form-item label="DOCTYPE" prop="dtid">
+          <template >
+            <el-select v-model="ruleForm2.dtid2" clearable>
+              <el-option
+                v-for="item in doctypedata.doctypes"
+                :key="item.ID"
+                :label="item.Name"
+                :value="item.ID">
+              </el-option>
+            </el-select>
+          </template>
+        </el-form-item>
+        <el-form-item label="ACCESSCONTEXT" prop="acid">
+          <template>
+            <el-select v-model="ruleForm2.acid2" clearable>
+              <el-option
+                v-for="item in accesscontextdata.accesscontexts"
+                :key="item.ID"
+                :label="item.Name"
+                :value="item.ID">
+              </el-option>
+            </el-select>
+          </template>
+        </el-form-item>
+        <el-form-item label="GROUP" prop="gid">
+          <template>
+            <el-select v-model="ruleForm2.gid2" value-key="ID" clearable>
+              <el-option
+                v-for="item in groupdata.groups"
+                :key="item.ID"
+                :label="item.Name"
+                :value="item.ID">
+              </el-option>
+            </el-select>
+          </template>
+        </el-form-item>
+        <el-form-item label="TITLE" prop="docname" class="transparentIcon" style='width: 320px;'>
+          <el-input v-model.number="ruleForm2.docname" auto-complete="off" placeholder="输入名称"></el-input>
+        </el-form-item>
+        <el-form-item label="DATA" prop="docdata" class="transparentIcon" style='width: 320px;'>
+          <el-input v-model.number="ruleForm2.docdata" auto-complete="off" placeholder="输入名称"></el-input>
         </el-form-item>
       </el-form>
-      <!-- 插入测试 -->
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false; resetForm('ruleForm2')">取 消</el-button>
         <el-button type="primary" @click="submitForm('ruleForm2')">确 定</el-button>
       </div>
     </el-dialog>
-
   </div>
 </template>
+<router-view :message-id='messageID'></router-view>
 
 <script type="text/javascript">
-/* eslint-disable */
+  /* eslint-disable */
   const axios = require('axios');
   export default { // 这里需要将模块引出，可在其他地方使用
-    name: 'groupRole',
+    name: 'usertobeprocessed',
       data() {
         var checkName = (rule, value, callback) => {
           if (value === '') {
@@ -128,6 +176,18 @@
           }
         };
         return {
+          unreaddata: [
+            {
+              ID:1,
+              Value:true,
+              Name:'true'
+            },
+            {
+              ID:0,
+              Value:false,
+              Name:'false'
+            },
+          ],
           total: 50,
           currentPage: 1,
           pageSize: 10,
@@ -136,10 +196,10 @@
           /*插入form方法*/
           /*设定规则指向*/
           ruleForm2: {
-            name:'',
-            pass: '',
-            num: '',
-            delivery: false,
+            // name:'',
+            // pass: '',
+            // num: '',
+            // delivery: false,
           },
           rules2: {
             typename: [
@@ -182,60 +242,95 @@
             resource: '',
             desc: ''
           },
-          search: '',
-          grouproledata:[
+          usermailboxdata:[
             {
-              Id:1,
-              AcId:1,
-              GroupId:1,
-              RoleId:1
+              "Group": 7,
+              "Message": {
+                "ID": 2,
+                "DocType": {
+                  "ID": 3,
+                  "Name": "初始测试doctype"
+                },
+                "DocID": 2,
+                "DocEvent": 21,
+                "Title": "初始测试title",
+                "Data": "no comments"
+              },
+              "Unread": true,
+              "Ctime": "2019-03-09T17:10:19Z"
             }
           ],
-          accesscontextdata:[
+          userdata:[
+            {ID:1,FirstName:"秦",LastName:'晓川1',Email:'xc-qin1@163.com',Active:true},
+            {ID:2,FirstName:"秦",LastName:'晓川2',Email:'xc-qin2@163.com',Active:true}
+          ],
+          accesscontextdata: [
             {
               ID:1,
-              Name:'context'
+              Name:'我是accesscontext',
             }
+          ],
+          docstatedata:[
+            {ID:1,Name:"图纸"},
+            {ID:2,Name:"合同"}
+          ],
+          doctypedata:[
+            {ID:1,Name:"图纸"},
+            {ID:2,Name:"合同"}
           ],
           groupdata:[
-            {
-              ID:1,
-              Name:'审查组'
-            }
+            {ID:1,Name:"秦晓川",GroupType:"S"},
+            {ID:2,Name:"校核组",GroupType:"G"}
           ],
-          roledata:[
-            {
-              ID:1,
-              Name:'审查角色'
-            }
-          ],
+          // dtid2:'',
+          // acid2:'',
+          // gid2:'',
+          uid:'',
+          unreadvalue:'true',
+          // dtid:'',
+          // acid:'',
+          messageID:''
         };
       },
       mounted:function () {
-        this.grouprole(this.currentPage);
+        // this.documents(3,this.currentPage);
+        // this.usermailbox(this.currentPage);
+        this.user(this.currentPage);
         this.group(this.currentPage);
+        // this.docstate(this.currentPage);
+        this.doctype(this.currentPage);
         this.accesscontext(this.currentPage);
-        this.role(this.currentPage);
+        this.usermailbox2(this.currentPage)
       },
       methods:{
+        detail(index, row){
+          // console.log(row.ID);
+          // console.log(row.DocType.ID);
+          this.messageId=row.Message.ID;
+          // console.log(this.messageId);
+          this.$router.push({
+            path: '/flow/documentdetail2',
+            query: {docid: row.Message.DocID,dtid:row.Message.DocType.ID,messageid:row.Message.ID}
+            //这里用params，下面的页面要取得参数就用$route.params
+          })
+        },
         submitForm(formName) {
           this.$refs[formName].validate((valid) => {
             if (valid) {
               axios({
-                // headers: {
-                //   'X-Requested-With': 'XMLHttpRequest',
-                //   'Content-Type': 'application/json; charset=UTF-8',
-                //   'Access-Control-Allow-Origin': '*'
-                // },//设置跨域请求头
                 method: "POST",//请求方式
-                url: "/flowtype",//请求地址
+                url: "/flowdoc",//请求地址
                 params:{
-                  name:this.ruleForm2.typename,
+                  // form:this.ruleForm2,
+                  // dsid:this.ruleForm2.DocstateId,
+                  dtid:this.ruleForm2.dtid2,
+                  // dtid:this.ruleForm2.DoctypeId,
+                  acid:this.ruleForm2.acid2,
+                  // // gid:this.ruleForm2.GroupId,
+                  gid:this.ruleForm2.gid2,
+                  docname:this.ruleForm2.docname,
+                  docdata:this.ruleForm2.docdata,
                 },
-                data: {
-                  name:this.ruleForm2.typename,
-                  // "thirdapp_id":1//请求参数
-                }
               })
               .then((response) => {
                 if (response != "err") {
@@ -264,7 +359,7 @@
               //       message: '提交成功' 
               //     });
               //     //刷新表格
-              //     this.flowtypelist();
+              //     this.documents(3,this.currentPage);
               //     this.dialogFormVisible = false;                 
               //   } else {
               //     //写入失败！
@@ -281,15 +376,12 @@
             }
           }); 
         },
-
         resetForm(formName) {
           this.$refs[formName].resetFields();
         },
-
         changeWidthL(key, keyPath) {
           console.log(key, keyPath);
         },
-
         handleOpen(key, keyPath) {
           console.log(key, keyPath);
         },
@@ -297,22 +389,25 @@
           console.log(key, keyPath);
         },
         deleteRow(index, rows) {//删除改行
-          //先删除数据库
-          //再删除前端行
           rows.splice(index, 1);
         },
-        addRow(grouproledata,event){
-          grouproledata.push({ ID:''})
+        addRow(documentsdata,event){
+          documentsdata.push({ Id:'',Group:''})
         },
         handleSubmit(index, row) {
-          console.log(row);
+          // console.log(row);
               axios({
                 method: "POST",//请求方式
-                url: "/flowgrouprole",//请求地址
+                url: "/flowdocument",//请求地址
                 params:{
                   acid:row.AcId,
+                  // dsid:row.DocstateId,
+                  dtid:row.DoctypeId,
                   gid:row.GroupId,
-                  roleid:row.RoleId,
+                  title:row.Title,
+                  data:row.Data,
+                  path:row.Path
+                  // ctime:row.Ctime
                 },
                 // data: {
                 //   dtid:row.DoctypeId,
@@ -348,7 +443,7 @@
               //       message: '提交成功' 
               //     });
               //     //刷新表格
-              //     this.workflow(currentPage);
+              //     this.user(currentPage);
               //     this.dialogFormVisible = false;                 
               //   } else {
               //     //写入失败！
@@ -359,16 +454,44 @@
                 console.log(error);
               });
         },
-        grouprole(currentPage){
+        usermailbox2(currentPage){
           axios({
             method: 'get',
-            url: '/flowgrouprolelist',//2.get通过params选项
+            url: '/flowusermailbox2',//2.get通过params选项
             params:{
               page:currentPage,
-              limit:this.pageSize
+              limit:this.pageSize,
+              // uid:this.uid,
+              unread:this.unreadvalue
             }
           })
-          .then(response => (this.grouproledata = response.data))
+          .then(response => (this.usermailboxdata = response.data))
+          .catch(function (error) {
+            console.log(error);
+          });
+        },
+        doctype(currentPage){
+          axios({
+            method: 'get',
+            url: '/flowtypelist',//2.get通过params选项
+            // params:{
+            //   page:currentPage
+            // }
+          })
+          .then(response => (this.doctypedata = response.data))
+          .catch(function (error) {
+            console.log(error);
+          });
+        },
+        docstate(currentPage){
+          axios({
+            method: 'get',
+            url: '/flowstatelist',//2.get通过params选项
+            // params:{
+            //   page:currentPage
+            // }
+          })
+          .then(response => (this.docstatedata = response.data))
           .catch(function (error) {
             console.log(error);
           });
@@ -386,6 +509,19 @@
             console.log(error);
           });
         },
+        user(currentPage){
+          axios({
+            method: 'get',
+            url: '/flowuserlist',//2.get通过params选项
+            // params:{
+            //   page:currentPage
+            // }
+          })
+          .then(response => (this.userdata = response.data))
+          .catch(function (error) {
+            console.log(error);
+          });
+        },
         group(currentPage){
           axios({
             method: 'get',
@@ -395,19 +531,6 @@
             // }
           })
           .then(response => (this.groupdata = response.data))
-          .catch(function (error) {
-            console.log(error);
-          });
-        },
-        role(currentPage){
-          axios({
-            method: 'get',
-            url: '/flowrolelist',//2.get通过params选项
-            // params:{
-            //   page:currentPage
-            // }
-          })
-          .then(response => (this.roledata = response.data))
           .catch(function (error) {
             console.log(error);
           });
@@ -439,77 +562,74 @@
             this.isCollapse=true
           }
         },
-        skip(a){
-          this.$router.push(a)
-        },
-        jump(select){
-          console.log(select);
-          let routeUrl = this.$router.resolve({
-            path: "/onlyoffice",
-            // query: {id:96}
-          });
-          switch (select) {
-            case ("onlyoffice"):
-              routeUrl = this.$router.resolve({
-                path: "/onlyoffice",
-                // query: {id:96}
-              });
-              window.open(routeUrl .href);
-              break;
-            case ("project"):
-              routeUrl = this.$router.resolve({
-                path: "/project",
-                // query: {id:96}
-              });
-              window.open(routeUrl .href);
-              break;
-            case ("design"):
-              routeUrl = this.$router.resolve({
-                path: "/design",
-                // query: {id:96}
-              });
-              window.open(routeUrl .href);
-              break;
-            default:
-              routeUrl = this.$router.resolve({
-                path: "/index",
-                // query: {id:96}
-              });
-              window.open(routeUrl .href);
-              break;
-          }
-          //this.$router.push({path: '/cart?goodsId=12'})
-          //this.$router.go(-2)
-          //后退两步
-          // let routeUrl = this.$router.resolve({
-          //   path: "/onlyoffice",
-          //   query: {id:96}
-          // });
-          // window.open(routeUrl .href, '_blank');
-          // window.open(routeUrl .href);
-        },
         toNext: function(index) {
           sessionStorage.ticketName =this.sortList[index].list;
           this.$router.push('/mine/tiketOrder');
         },
         handleSizeChange: function (size) {
           this.pageSize = size;
+          // this.usermailbox(3,this.currentPage)
         },
         handleCurrentChange: function(currentPage){
           this.currentPage = currentPage;
-          this.flowtypelist(currentPage);
+          this.usermailbox2(currentPage);
         },
+        formatter:function(row, column){
+          // var date = row;
+          // console.log(row.cellValue)
+          if (row === undefined) {
+            return "";
+          }
+          // return util.formatDate.format(new Date(date), 'yyyy-MM-dd');
+          // this.$moment().format('YYYY-MM-DD HH:mm:ss')
+          return this.$moment(row.cellValue).subtract(8,'hour').format("YYYY-MM-DD HH:mm");
+          // https://blog.csdn.net/ysq0317/article/details/81089962
+          // vue的话，在moment.js的官网里，是给了安装方法的
+          // cnpm install moment --save   
+          // 然后再入口文件 main.js中导入并使用
+          // import moment from 'moment'//导入文件
+          // Vue.prototype.$moment = moment;//赋值使用
+        },
+        // getColumnLabel (value) {
+        //   let selectItem = this.accesscontextdata.find(item => item.ID === value)
+        //   return selectItem ? selectItem.Name : null
+        // },
+        // getColumnLabel2 (value) {
+        //   let selectItem = this.doctypedata.doctypes.find(item => item.ID === value)
+        //   return selectItem ? selectItem.Name : null
+        // },
+        // getColumnLabel3 (value) {
+        //   let selectItem = this.docstatedata.find(item => item.ID === value)
+        //   return selectItem ? selectItem.Name : null
+        // },
         getColumnLabel (value) {
-          let selectItem = this.accesscontextdata.accesscontexts.find(item => item.ID === value)
-          return selectItem ? selectItem.Name : null
-        },
-        getColumnLabel2 (value) {
           let selectItem = this.groupdata.groups.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
         },
-        getColumnLabel3 (value) {
-          let selectItem = this.roledata.roles.find(item => item.ID === value)
-          return selectItem ? selectItem.Name : null
+        changeuserValue(value) {
+          // console.log(value);
+          this.uid = value;
+          // console.log(this.unreadvalue);
+          if (this.unreadvalue!==''){
+            this.usermailbox(this.currentPage);
+          }
+          // let obj = {};
+          // obj = this.options.find((item)=>{
+          //     return item.value === value;
+          // });
+          // console.log(obj.label);
+        },
+        changeunreadValue(value) {
+          // console.log(value);
+          this.unreadvalue = value;
+          if (this.uid!==''){
+            this.usermailbox(this.currentPage);
+          }
+          // let obj = {};
+          // obj = this.options.find((item)=>{
+          //     return item.value === value;
+          // });
+          // console.log(obj.label);
         }
       }
   };
@@ -517,6 +637,19 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+  .demo-table-expand {
+    font-size: 0;
+  }
+  .demo-table-expand label {
+    width: 90px;
+    color: #99a9bf;
+  }
+  .demo-table-expand .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 100%;
+  }
+
   #vue{
     color: green;
     font-size: 28px;

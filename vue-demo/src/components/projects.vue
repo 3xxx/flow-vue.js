@@ -185,7 +185,7 @@
                 //   'Access-Control-Allow-Origin': '*'
                 // },//设置跨域请求头
                 method: "POST",//请求方式
-                url: "/api/flowtype",//请求地址
+                url: "/flowtype",//请求地址
                 params:{
                   name:this.ruleForm2.typename,
                 },
@@ -194,23 +194,40 @@
                   // "thirdapp_id":1//请求参数
                 }
               })
-              // .then(response => (this.posts = response.data.articles))
-              .then(function (response) {
-                console.log(response);
-                if (response=="err") {
+              .then((response) => {
+                if (response != "err") {
+                  // this.$Message.info('用户名或密码错误，请送心')
                   //提交成功做的动作
                   this.$message({
                     type: 'success',
                     message: '提交成功' 
                   });
                   //刷新表格
-                  this.flowtypelist();
-                  this.dialogFormVisible = false;                 
+                  // this.docaction(currentPage);
+                  this.dialogFormVisible = false;
                 } else {
+                  // console.log(response.data)
                   //写入失败！
                   this.$message.error('写入失败！');
                 }
               })
+              // .then(response => (this.posts = response.data.articles))
+              // .then(function (response) {
+              //   console.log(response);
+              //   if (response=="err") {
+              //     //提交成功做的动作
+              //     this.$message({
+              //       type: 'success',
+              //       message: '提交成功' 
+              //     });
+              //     //刷新表格
+              //     this.flowtypelist();
+              //     this.dialogFormVisible = false;                 
+              //   } else {
+              //     //写入失败！
+              //     this.$message.error('写入失败！');
+              //   }
+              // })
               .catch(function (error) {
                 console.log(error);
               });
@@ -252,7 +269,7 @@
           console.log(row);
               axios({
                 method: "POST",//请求方式
-                url: "/api/flowstate",//请求地址
+                url: "/flowstate",//请求地址
                 params:{
                   name:row.Name,
                 },
@@ -263,23 +280,40 @@
                 //   dsid2:row.ToStateId
                 // }
               })
-              // .then(response => (this.posts = response.data.articles))
-              .then(function (response) {
-                console.log(response);
-                if (response=="err") {
+              .then((response) => {
+                if (response != "err") {
+                  // this.$Message.info('用户名或密码错误，请送心')
                   //提交成功做的动作
                   this.$message({
                     type: 'success',
                     message: '提交成功' 
                   });
                   //刷新表格
-                  this.projects(currentPage);
-                  this.dialogFormVisible = false;                 
+                  // this.docaction(currentPage);
+                  this.dialogFormVisible = false;
                 } else {
+                  // console.log(response.data)
                   //写入失败！
                   this.$message.error('写入失败！');
                 }
               })
+              // .then(response => (this.posts = response.data.articles))
+              // .then(function (response) {
+              //   console.log(response);
+              //   if (response=="err") {
+              //     //提交成功做的动作
+              //     this.$message({
+              //       type: 'success',
+              //       message: '提交成功' 
+              //     });
+              //     //刷新表格
+              //     this.projects(currentPage);
+              //     this.dialogFormVisible = false;                 
+              //   } else {
+              //     //写入失败！
+              //     this.$message.error('写入失败！');
+              //   }
+              // })
               .catch(function (error) {
                 console.log(error);
               });

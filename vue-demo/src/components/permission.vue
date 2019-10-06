@@ -17,11 +17,12 @@
     <el-editable ref="editable"
       :data.sync="permissiondata" border style="width: 100%" stripe>
       <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
+
       <el-editable-column prop="RoleID" label="RoleName" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.RoleID" clearable>
             <el-option
-              v-for="item in roledata"
+              v-for="item in roledata.roles"
               :key="item.ID"
               :label="item.Name"
               :value="item.ID">
@@ -93,7 +94,7 @@
           <template>
             <el-select v-model="ruleForm2.roleid2" clearable>
               <el-option
-                v-for="item in roledata"
+                v-for="item in roledata.roles"
                 :key="item.ID"
                 :label="item.Name"
                 :value="item.ID">
@@ -105,7 +106,7 @@
           <template>
             <el-select v-model="ruleForm2.daid2" clearable>
               <el-option
-                v-for="item in docactiondata"
+                v-for="item in docactiondata.docactions"
                 :key="item.ID"
                 :label="item.Name"
                 :value="item.ID">
@@ -274,30 +275,47 @@
                 //   'Access-Control-Allow-Origin': '*'
                 // },//设置跨域请求头
                 method: "POST",//请求方式
-                url: "/api/flowpermission",//请求地址
+                url: "/flowpermission",//请求地址
                 params:{
                   dtid:this.ruleForm2.dtid2,
                   roleid:this.ruleForm2.roleid2,
                   daid:this.ruleForm2.daid2,
                 },
               })
-              // .then(response => (this.posts = response.data.articles))
-              .then(function (response) {
-                console.log(response);
-                if (response=="err") {
+              .then((response) => {
+                if (response != "err") {
+                  // this.$Message.info('用户名或密码错误，请送心')
                   //提交成功做的动作
                   this.$message({
                     type: 'success',
                     message: '提交成功' 
                   });
                   //刷新表格
-                  this.flowtypelist();
-                  this.dialogFormVisible = false;                 
+                  // this.docaction(currentPage);
+                  this.dialogFormVisible = false;
                 } else {
+                  // console.log(response.data)
                   //写入失败！
                   this.$message.error('写入失败！');
                 }
               })
+              // .then(response => (this.posts = response.data.articles))
+              // .then(function (response) {
+              //   console.log(response);
+              //   if (response=="err") {
+              //     //提交成功做的动作
+              //     this.$message({
+              //       type: 'success',
+              //       message: '提交成功' 
+              //     });
+              //     //刷新表格
+              //     this.flowtypelist();
+              //     this.dialogFormVisible = false;                 
+              //   } else {
+              //     //写入失败！
+              //     this.$message.error('写入失败！');
+              //   }
+              // })
               .catch(function (error) {
                 console.log(error);
               });
@@ -334,7 +352,7 @@
           console.log(row);
               axios({
                 method: "POST",//请求方式
-                url: "/api/flowpermission",//请求地址
+                url: "/flowpermission",//请求地址
                 params:{
                   name:row.Name,
                   dtid:row.DoctypeId,
@@ -347,23 +365,40 @@
                 //   dsid2:row.ToStateId
                 // }
               })
-              // .then(response => (this.posts = response.data.articles))
-              .then(function (response) {
-                console.log(response);
-                if (response=="err") {
+              .then((response) => {
+                if (response != "err") {
+                  // this.$Message.info('用户名或密码错误，请送心')
                   //提交成功做的动作
                   this.$message({
                     type: 'success',
                     message: '提交成功' 
                   });
                   //刷新表格
-                  this.workflow(currentPage);
-                  this.dialogFormVisible = false;                 
+                  // this.docaction(currentPage);
+                  this.dialogFormVisible = false;
                 } else {
+                  // console.log(response.data)
                   //写入失败！
                   this.$message.error('写入失败！');
                 }
               })
+              // .then(response => (this.posts = response.data.articles))
+              // .then(function (response) {
+              //   console.log(response);
+              //   if (response=="err") {
+              //     //提交成功做的动作
+              //     this.$message({
+              //       type: 'success',
+              //       message: '提交成功' 
+              //     });
+              //     //刷新表格
+              //     this.workflow(currentPage);
+              //     this.dialogFormVisible = false;                 
+              //   } else {
+              //     //写入失败！
+              //     this.$message.error('写入失败！');
+              //   }
+              // })
               .catch(function (error) {
                 console.log(error);
               });
@@ -371,7 +406,7 @@
         permission(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowrolepermissionlist',//2.get通过params选项
+            url: '/flowrolepermissionlist',//2.get通过params选项
             params:{
               page:currentPage
             }
@@ -384,10 +419,10 @@
         role(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowrolelist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            url: '/flowrolelist',//2.get通过params选项
+            // params:{
+            //   page:currentPage
+            // }
           })
           .then(response => (this.roledata = response.data))
           .catch(function (error) {
@@ -397,7 +432,7 @@
         doctype(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowtypelist',//2.get通过params选项
+            url: '/flowtypelist',//2.get通过params选项
             // params:{
             //   page:currentPage
             // }
@@ -410,10 +445,10 @@
         docaction(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowactionlist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            url: '/flowactionlist',//2.get通过params选项
+            // params:{
+            //   page:currentPage
+            // }
           })
           .then(response => (this.docactiondata = response.data))
           .catch(function (error) {
@@ -511,7 +546,7 @@
           // return row.address;
         },
         getColumnLabel (value) {
-          let selectItem = this.roledata.find(item => item.ID === value)
+          let selectItem = this.roledata.roles.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
         },
         getColumnLabel2 (value) {
@@ -519,7 +554,7 @@
           return selectItem ? selectItem.Name : null
         },
         getColumnLabel3 (value) {
-          let selectItem = this.accesscontextdata.find(item => item.ID === value)
+          let selectItem = this.accesscontextdata.accesscontexts.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
         },
       }

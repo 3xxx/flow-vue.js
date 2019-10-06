@@ -27,7 +27,7 @@
           </el-select>
           <el-select v-model="acvalue" placeholder="请选择accCTX" @change="changeacValue" clearable>
             <el-option
-              v-for="item in accesscontextdata"
+              v-for="item in accesscontextdata.accesscontexts"
               :key="item.ID"
               :label="item.Name"
               :value="item.ID">
@@ -37,7 +37,7 @@
       </el-button-group>
     </el-col>
 
-    <el-editable ref="editable" :data.sync="documentsdata" border style="width: 100%" stripe>
+    <el-editable ref="editable" :data.sync="documentsdata.docs" border style="width: 100%" stripe>
       <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
       <!-- <el-editable-column label="DOCTYPE" prop="DocType.ID" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
@@ -70,7 +70,7 @@
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.DocState.ID" clearable>
             <el-option
-              v-for="item in docstatedata"
+              v-for="item in docstatedata.docstates"
               :key="item.ID"
               :label="item.Name"
               :value="item.ID">
@@ -83,7 +83,7 @@
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.Group.ID" clearable>
             <el-option
-              v-for="item in groupdata"
+              v-for="item in groupdata.groups"
               :key="item.ID"
               :label="item.Name"
               :value="item.ID">
@@ -111,7 +111,7 @@
       :page-sizes="[10, 50, 100, 200]"
       :page-size="pageSize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="total" style="float: right; margin:10px">
+      :total="documentsdata.total" style="float: right; margin:10px">
     </el-pagination>
 
     <el-dialog title="添加document" :visible.sync="dialogFormVisible" center>
@@ -132,7 +132,7 @@
           <template>
             <el-select v-model="ruleForm2.acid2" clearable>
               <el-option
-                v-for="item in accesscontextdata"
+                v-for="item in accesscontextdata.accesscontexts"
                 :key="item.ID"
                 :label="item.Name"
                 :value="item.ID">
@@ -144,7 +144,7 @@
           <template>
             <el-select v-model="ruleForm2.gid2" value-key="ID" clearable>
               <el-option
-                v-for="item in groupdata"
+                v-for="item in groupdata.groups"
                 :key="item.ID"
                 :label="item.Name"
                 :value="item.ID">
@@ -333,7 +333,7 @@
           // console.log(row.ID);
           // console.log(row.DocType.ID);
           this.$router.push({
-            path: '/documentdetail',
+            path: '/flow/documentdetail',
             query: {docid: row.ID,dtid:row.DocType.ID}
           })
         },
@@ -342,7 +342,7 @@
             if (valid) {
               axios({
                 method: "POST",//请求方式
-                url: "/api/flowdoc",//请求地址
+                url: "/flowdoc",//请求地址
                 params:{
                   // form:this.ruleForm2,
                   // dsid:this.ruleForm2.DocstateId,
@@ -355,23 +355,40 @@
                   docdata:this.ruleForm2.docdata,
                 },
               })
-              // .then(response => (this.posts = response.data.articles))
-              .then(function (response) {
-                console.log(response);
-                if (response=="err") {
+              .then((response) => {
+                if (response != "err") {
+                  // this.$Message.info('用户名或密码错误，请送心')
                   //提交成功做的动作
                   this.$message({
                     type: 'success',
                     message: '提交成功' 
                   });
                   //刷新表格
-                  this.documents(3,this.currentPage);
-                  this.dialogFormVisible = false;                 
+                  // this.docaction(currentPage);
+                  this.dialogFormVisible = false;
                 } else {
+                  // console.log(response.data)
                   //写入失败！
                   this.$message.error('写入失败！');
                 }
               })
+              // .then(response => (this.posts = response.data.articles))
+              // .then(function (response) {
+              //   console.log(response.data.err);
+              //   if (response.data.err=="ok") {
+              //     //提交成功做的动作
+              //     this.$message({
+              //       type: 'success',
+              //       message: '提交成功' 
+              //     });
+              //     //刷新表格
+              //     this.documents(3,this.currentPage);
+              //     this.dialogFormVisible = false;                 
+              //   } else {
+              //     //写入失败！
+              //     this.$message.error('写入失败！');
+              //   }
+              // })
               .catch(function (error) {
                 console.log(error);
               });
@@ -404,7 +421,7 @@
           console.log(row);
               axios({
                 method: "POST",//请求方式
-                url: "/api/flowdocument",//请求地址
+                url: "/flowdocument",//请求地址
                 params:{
                   acid:row.AcId,
                   // dsid:row.DocstateId,
@@ -446,7 +463,7 @@
         documents(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowdocumentlist',//2.get通过params选项
+            url: '/flowdocumentlist',//2.get通过params选项
             params:{
               page:currentPage,
               limit:this.pageSize,
@@ -462,10 +479,10 @@
         doctype(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowtypelist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            url: '/flowtypelist',//2.get通过params选项
+            // params:{
+            //   page:currentPage
+            // }
           })
           .then(response => (this.doctypedata = response.data))
           .catch(function (error) {
@@ -475,10 +492,10 @@
         docstate(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowstatelist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            url: '/flowstatelist',//2.get通过params选项
+            // params:{
+            //   page:currentPage
+            // }
           })
           .then(response => (this.docstatedata = response.data))
           .catch(function (error) {
@@ -488,10 +505,10 @@
         accesscontext(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowaccesscontextlist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            url: '/flowaccesscontextlist',//2.get通过params选项
+            // params:{
+            //   page:currentPage
+            // }
           })
           .then(response => (this.accesscontextdata = response.data))
           .catch(function (error) {
@@ -501,10 +518,10 @@
         group(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowgrouplist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            url: '/flowgrouplist',//2.get通过params选项
+            // params:{
+            //   page:currentPage
+            // }
           })
           .then(response => (this.groupdata = response.data))
           .catch(function (error) {
@@ -544,7 +561,7 @@
         },
         handleSizeChange: function (size) {
           this.pageSize = size;
-          this.documents(3,this.currentPage)
+          // this.documents(3,this.currentPage)
         },
         handleCurrentChange: function(currentPage){
           this.currentPage = currentPage;
@@ -567,7 +584,7 @@
           // Vue.prototype.$moment = moment;//赋值使用
         },
         getColumnLabel (value) {
-          let selectItem = this.accesscontextdata.find(item => item.ID === value)
+          let selectItem = this.accesscontextdata.accesscontexts.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
         },
         getColumnLabel2 (value) {
@@ -575,11 +592,11 @@
           return selectItem ? selectItem.Name : null
         },
         getColumnLabel3 (value) {
-          let selectItem = this.docstatedata.find(item => item.ID === value)
+          let selectItem = this.docstatedata.docstates.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
         },
         getColumnLabel4 (value) {
-          let selectItem = this.groupdata.find(item => item.ID === value)
+          let selectItem = this.groupdata.groups.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
         },
         changedtValue(value) {

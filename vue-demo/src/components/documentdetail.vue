@@ -12,25 +12,27 @@
       </el-button-group>
     </el-col>
 
-    <el-editable ref="editable"
-      :data.sync="documentdetaildata" border style="width: 100%" stripe>
+    <vxe-toolbar></vxe-toolbar>
+
+    <vxe-table stripe border ref="xTable"
+      :data.sync="documentdetaildata" style="width: 100%" :edit-config="{trigger: 'click', mode: 'cell'}">
       <!-- <el-table-column label="DocID" prop="Document.ID" align="center"></el-table-column> -->
       <!-- <el-table-column label="DocType" prop="Document.DocType.ID" align="center"></el-table-column> -->
-      <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
-      <el-editable-column label="DocState" prop="Document.DocState.Name" align="center"></el-editable-column>
-      <el-editable-column label="recip GROUPs" prop="value1" align="center">
+      <vxe-table-column title="序号" type="index" show-overflow-tooltip width="50"  align="center"></vxe-table-column>
+      <vxe-table-column title="DocState" field="Document.DocState.Name" align="center"></vxe-table-column>
+      <vxe-table-column title="recip GROUPs" field="value1" align="center">
         <template slot-scope="scope">
           <el-select v-model="value1" multiple clearable>
             <el-option
-              v-for="item in groupdata"
+              v-for="item in groupdata.groups"
               :key="item.ID"
               :label="item.Name"
               :value="item.ID">
             </el-option>
           </el-select>
         </template>
-      </el-editable-column>
-      <el-table-column label="ACTIONS" prop="value2" align="center">
+      </vxe-table-column>
+      <vxe-table-column label="ACTIONS" prop="value2" align="center">
         <template slot-scope="scope">
           <el-select v-model="value2" clearable>
             <el-option
@@ -41,18 +43,18 @@
             </el-option>
           </el-select>
         </template>
-      </el-table-column>
-      <el-editable-column label="TITLE" prop="Document.Title" align="center"></el-editable-column>
-      <el-editable-column label="PATH" prop="Document.Path" size="mini" align="center"></el-editable-column>
-      <el-editable-column label="CTIME" prop="Document.Ctime" size="mini" :formatter="formatter" align="center"></el-editable-column>
-      <el-editable-column label="Text" prop="Text" :editRender="{Name: 'ElInput'}" align="center"></el-editable-column> 
-      <el-editable-column  label="操作" align="center">
+      </vxe-table-column>
+      <vxe-table-column title="TITLE" field="Document.Title" align="center"></vxe-table-column>
+      <vxe-table-column title="PATH" field="Document.Path" size="mini" align="center"></vxe-table-column>
+      <vxe-table-column title="CTIME" field="Document.Ctime" size="mini" :formatter="formatter" align="center"></vxe-table-column>
+      <vxe-table-column title="Text" field="Text" :edit-render="{name: 'input'}" align="center"></vxe-table-column> 
+      <vxe-table-column  title="操作" align="center">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="handleSubmit(scope.$index, scope.row)">Apply</el-button>
           <!-- <el-button size="mini" type="danger" @click="deleteRow(scope.$index, documentdetaildata)">Delete</el-button> -->
         </template>
-      </el-editable-column>
-    </el-editable>
+      </vxe-table-column>
+    </vxe-table>
     <!-- <el-pagination background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -100,11 +102,49 @@
         </el-card>
       </el-timeline-item>
       </el-timeline> -->
-    </el-col>  
+    </el-col>
+    <el-col>
+      <div>
+        <textarea id="code" style="width: 50%;display:none;" rows="11">
+        st=>start: 开始|past
+        e=>end: 结束
+        
+        input=>inputoutput: 初设、招标文件；审图意见|past
+        design=>operation: 设计|past
+        check=>operation: 校核|past
+        countersign=>condition: 是否跨专业?|past
+        countersignYes=>operation: 专业会签|past
+        
+        review=>operation: 审查|current
+        auditcond=>condition: 是否核定
+        audit=>operation: 核定
+        approvalcond=>condition: 是否批准
+        approval=>operation: 批准
+        print=>inputoutput: 出版|future
+        
+        st->input->design->check->countersign
+        countersign(yes,right)->countersignYes->review
+        countersign(no,left)->review->auditcond
+        auditcond(yes)->audit->approvalcond
+        auditcond(no,right)->print
+        approvalcond(no,right)->print
+        approvalcond(yes)->approval->print->e
+        </textarea>
+      </div>
+    <div><button id="run" type="button" style="display:none;">Run</button></div>
+    <el-row type="flex" class="row-bg" justify="center">
+      <el-col :span="6">
+        <div class="grid-content">
+          <div class="grid-content" id="canvas" style="width: 50%;"></div>
+        </div>
+      </el-col> 
+    </el-row>   
+  </el-col>
   </div>
 </template>
 
 <script type="text/javascript">
+
 /* eslint-disable */
   const axios = require('axios');
   export default { // 这里需要将模块引出，可在其他地方使用
@@ -297,12 +337,39 @@
           ],
           value1:[],
           value2:'',
+          messageID:'',
+          messageid:'',
         };
       },
+      props:['messageId'],//这个来不及传值吧
       mounted:function () {
+        // 取到路由带过来的参数 ,要分清上个页面里用params还是query传值
+        // console.log(this.$route.params.messageid)
+        // console.log(this.$route.query.messageid)
+        this.messageID=this.$route.query.messageid
         this.docaction(this.currentPage);
         this.group(this.currentPage);
         this.documentdetail();
+        const s2 = document.createElement('script');
+        s2.type = 'text/javascript';
+        s2.src="/static/raphael-min.js"
+        document.body.appendChild(s2);
+        const s3 = document.createElement('script');
+        s3.type = 'text/javascript';
+        s3.src="/static/jquery.min.js"
+        document.body.appendChild(s3);
+        const s4 = document.createElement('script');
+        s4.type = 'text/javascript';
+        s4.src="/static/flowchart-latest.js"
+        document.body.appendChild(s4);
+        this.flowchart()
+      },
+      watch: {
+        // 监测路由变化,只要变化了就调用获取路由参数方法将数据存储本组件即可
+        // '$route': 'getParams',
+        messageId: function (newQuestion) {
+          this.projproducts(this.currentPage);
+        },
       },
       methods:{
         submitForm(formName) {
@@ -310,7 +377,7 @@
             if (valid) {
               axios({
                 method: "POST",//请求方式
-                url: "/api/flowdoc",//请求地址
+                url: "/flowdoc",//请求地址
                 params:{
                   // acid:this.ruleForm2.AcId,
                   // dsid:this.ruleForm2.DocstateId,
@@ -331,7 +398,7 @@
               })
               // .then(response => (this.posts = response.data.articles))
               .then(function (response) {
-                console.log(response);
+                // console.log(response);
                 if (response=="err") {
                   //提交成功做的动作
                   this.$message({
@@ -375,17 +442,17 @@
           documentsdata.push({ Id:'',Group:''})
         },
         handleSubmit(index, row) {
-          console.log(row);
               axios({
                 method: "POST",//请求方式
-                url: "/api/flownext",//请求地址
+                url: "/flownext",//请求地址
                 params:{
                   // docaction:row,
                   docid:row.Document.ID,
                   dtid:row.Document.DocType.ID,
                   daid:this.value2,
                   gid:this.value1,
-                  text:row.Text
+                  text:row.Text,
+                  messageid:this.messageID
                 },
                 // data: {
                 //   dtid:row.DoctypeId,
@@ -394,10 +461,9 @@
                 //   dsid2:row.ToStateId
                 // }
               })
-              // .then(response => (this.posts = response.data.articles))
-              .then(function (response) {
-                console.log(response);
-                if (response=="err") {
+              .then((response) => {
+                if (response != "err") {
+                  // this.$Message.info('用户名或密码错误，请送心')
                   //提交成功做的动作
                   this.$message({
                     type: 'success',
@@ -405,12 +471,30 @@
                   });
                   //刷新表格
                   this.documentdetail();
-                  this.dialogFormVisible = false;                 
+                  this.dialogFormVisible = false;
                 } else {
+                  // console.log(response.data)
                   //写入失败！
                   this.$message.error('写入失败！');
                 }
               })
+              // .then(response => (this.posts = response.data.articles))
+              // .then(function (response) {
+              //   console.log(response);
+              //   if (response=="err") {
+              //     //提交成功做的动作
+              //     this.$message({
+              //       type: 'success',
+              //       message: '提交成功' 
+              //     });
+              //     //刷新表格
+              //     this.documentdetail();
+              //     this.dialogFormVisible = false;                 
+              //   } else {
+              //     //写入失败！
+              //     this.$message.error('写入失败！');
+              //   }
+              // })
               .catch(function (error) {
                 console.log(error);
               });
@@ -420,7 +504,7 @@
           this.dtid = this.$route.query.dtid;
           axios({
             method: 'get',
-            url: '/api/flowdocumentdetail',//2.get通过params选项
+            url: '/flowdocumentdetail',//2.get通过params选项
             params:{
               docid:this.docid,
               dtid:this.dtid
@@ -434,10 +518,10 @@
         doctype(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowtypelist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            url: '/flowtypelist',//2.get通过params选项
+            // params:{
+            //   page:currentPage
+            // }
           })
           .then(response => (this.doctypedata = response.data))
           .catch(function (error) {
@@ -447,10 +531,10 @@
         docstate(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowstatelist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            url: '/flowstatelist',//2.get通过params选项
+            // params:{
+            //   page:currentPage
+            // }
           })
           .then(response => (this.docstatedata = response.data))
           .catch(function (error) {
@@ -460,10 +544,10 @@
         accesscontext(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowaccesscontextlist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            url: '/flowaccesscontextlist',//2.get通过params选项
+            // params:{
+            //   page:currentPage
+            // }
           })
           .then(response => (this.accesscontextdata = response.data))
           .catch(function (error) {
@@ -473,10 +557,10 @@
         group(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowgrouplist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            url: '/flowgrouplist',//2.get通过params选项
+            // params:{
+            //   page:currentPage
+            // }
           })
           .then(response => (this.groupdata = response.data))
           .catch(function (error) {
@@ -486,10 +570,10 @@
         docaction(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowactionlist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            url: '/flowactionlist',//2.get通过params选项
+            // params:{
+            //   page:currentPage
+            // }
           })
           .then(response => (this.docactiondata = response.data))
           .catch(function (error) {
@@ -536,14 +620,14 @@
           this.documents(currentPage);
         },
         formatter:function(row, column){
-          var date = row.Document.Ctime;
+          // var date = row.Document.Ctime;
           // console.log(date)
-          if (date === undefined) {
+          if (row === undefined) {
             return "";
           }
           // return util.formatDate.format(new Date(date), 'yyyy-MM-dd');
           // this.$moment().format('YYYY-MM-DD HH:mm:ss')
-          return this.$moment(date).format("YYYY-MM-DD HH:mm:ss");
+          return this.$moment(row.cellValue).subtract(8,'hour').format("YYYY-MM-DD HH:mm:ss");
           // https://blog.csdn.net/ysq0317/article/details/81089962
           // vue的话，在moment.js的官网里，是给了安装方法的
           // cnpm install moment --save   
@@ -552,19 +636,84 @@
           // Vue.prototype.$moment = moment;//赋值使用
         },
          getColumnLabel (value) {
-          let selectItem = this.groupdata.find(item => item.ID === value)
+          let selectItem = this.groupdata.groups.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
         },
         getColumnLabel2 (value) {
           let selectItem = this.documentdetaildata[0].Action.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
         },
+        flowchart (){
+          // window.onload = function () {
+          var btn = document.getElementById("run"),
+              cd = document.getElementById("code"),
+              chart;
+          // (btn.onclick = function () {
+            // console.log(cd)
+            // console.log(cd.value)
+              var code = cd.value;
+              if (chart) {
+                chart.clean();
+              }
+              chart = flowchart.parse(code);
+              chart.drawSVG('canvas', {
+                // 'x': 30,
+                // 'y': 50,
+                'line-width': 1,//3,
+                'maxWidth': 3,//ensures the flowcharts fits within a certian width
+                'line-length': 50,
+                'text-margin': 10,
+                'font-size': 14,
+                'font': 'normal',
+                'font-family': 'Helvetica',
+                'font-weight': 'normal',
+                'font-color': 'black',
+                'line-color': 'black',
+                'element-color': 'black',
+                'fill': 'white',
+                'yes-text': 'yes',
+                'no-text': 'no',
+                'arrow-end': 'block',
+                'scale': 1,
+                'symbols': {
+                  'start': {
+                    'font-color': 'red',
+                    'element-color': 'green',
+                    'fill': 'yellow'
+                  },
+                  'end':{
+                    'class': 'end-element'
+                  }
+                },
+                'flowstate' : {
+                  'past' : { 'fill' : '#CCCCCC', 'font-size' : 12},
+                  'current' : {'fill' : 'blue', 'font-color' : 'red', 'font-weight' : 'bold'},
+                  'future' : { 'fill' : '#FFFF99'},
+                  'request' : { 'fill' : 'blue'},
+                  'invalid': {'fill' : '#444444'},
+                  'approved' : { 'fill' : '#58C4A3', 'font-size' : 12, 'yes-text' : 'APPROVED', 'no-text' : 'n/a' },
+                  'rejected' : { 'fill' : '#C45879', 'font-size' : 12, 'yes-text' : 'n/a', 'no-text' : 'REJECTED' }
+                }
+              });
+            $('[id^=sub1]').click(function(){
+              alert('info here');
+            });
+          // })();
+          // };
+        // function myFunction(event, node) {
+        //   console.log("You just clicked this node:", node);
+        // } 
+        },
       }
   };
+
+        
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.end-element { fill : #FFCCFF; }
+
   #vue{
     color: green;
     font-size: 28px;

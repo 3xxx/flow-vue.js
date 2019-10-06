@@ -216,7 +216,7 @@
         };
       },
       mounted:function () {
-        this.doctype(this.currentPage);
+        // this.doctype(this.currentPage);
         // const that = this;
         // 获取浏览器可视区域高度
         // this.clientHeight = `${document.documentElement.clientHeight}`; //document.body.clientWidth;
@@ -350,7 +350,7 @@
         doctype(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowtypelist',//2.get通过params选项
+            url: '/flowtypelist',//2.get通过params选项
             params:{
               page:currentPage,
               limit:this.pageSize

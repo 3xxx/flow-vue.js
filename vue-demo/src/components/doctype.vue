@@ -19,28 +19,33 @@
     </el-col> -->
     <el-button-group style="float: left; margin:10px">
       <!-- <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insert({name: `New ${Date.now()}`, flag: true, createDate: Date.now()})">新增一行</el-button> -->
-      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insertAt({name: `New last ${Date.now()}`, flag: true, createDate: Date.now()}, -1)">新增</el-button>
-      <el-button type="info" size="small" @click="$refs.editable.revert()">放弃更改</el-button>
+      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="insertEvent(-1)">新增</el-button>
+      <!-- <vxe-button @click="insertEvent(-1)">在最后行插入</vxe-button> -->
+      <el-button type="info" size="small" icon="el-icon-back" @click="$refs.editable.revert()">放弃更改</el-button>
       <el-button type="info" size="small" icon="el-icon-delete" @click="$refs.editable.clear()">清空数据</el-button>
     </el-button-group>
     <el-button-group  style="float: right; margin:10px">
-      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
+      <el-button type="primary" icon="el-icon-search" size="small">搜索</el-button>
       <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
     </el-button-group>
 
-    <el-editable ref="editable" :data.sync="doctypedata.doctypes" border style="width: 100%" stripe>
-      <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center">
-      </el-editable-column>
-      <el-editable-column label="Name" prop="Name" :editRender="{name: 'ElInput'}" align="center"></el-editable-column>
-      <el-editable-column  label="操作" align="center">
+    <vxe-toolbar></vxe-toolbar>
+
+    <vxe-table border stripe ref="xTable" :data.sync="doctypedata.doctypes" style="width: 100%" :edit-config="{trigger: 'click', mode: 'cell'}"
+      @edit-actived="editActivedEvent"
+      @edit-closed="editClosedEvent">
+      <vxe-table-column title="序号" type="index" show-overflow-tooltip width="50"  align="center">
+      </vxe-table-column>
+      <vxe-table-column title="Name" field="Name" :edit-render="{name: 'input'}" align="center"></vxe-table-column>
+      <vxe-table-column  title="操作" align="center">
         <template slot-scope="scope">
           <el-button-group>
             <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
             <el-button size="mini" type="danger" @click="deleteRow(scope.$index, doctypedata)">Delete</el-button>
           </el-button-group>
         </template>
-      </el-editable-column>
-    </el-editable>
+      </vxe-table-column>
+    </vxe-table>
     <el-pagination background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -195,7 +200,7 @@
                 //   'Access-Control-Allow-Origin': '*'
                 // },//设置跨域请求头
                 method: "POST",//请求方式
-                url: "/api/flowtype",//请求地址
+                url: "/flowtype",//请求地址
                 params:{
                   name:this.ruleForm2.typename,
                 },
@@ -204,23 +209,40 @@
                   // "thirdapp_id":1//请求参数
                 // }
               })
-              // .then(response => (this.posts = response.data.articles))
-              .then(function (response) {
-                console.log(response);
-                if (response=="err") {
+              .then((response) => {
+                if (response != "err") {
+                  // this.$Message.info('用户名或密码错误，请送心')
                   //提交成功做的动作
                   this.$message({
                     type: 'success',
                     message: '提交成功' 
                   });
                   //刷新表格
-                  this.flowtypelist();
-                  this.dialogFormVisible = false;                 
+                  // this.docaction(currentPage);
+                  this.dialogFormVisible = false;
                 } else {
+                  // console.log(response.data)
                   //写入失败！
                   this.$message.error('写入失败！');
                 }
               })
+              // .then(response => (this.posts = response.data.articles))
+              // .then(function (response) {
+              //   console.log(response);
+              //   if (response=="err") {
+              //     //提交成功做的动作
+              //     this.$message({
+              //       type: 'success',
+              //       message: '提交成功' 
+              //     });
+              //     //刷新表格
+              //     this.flowtypelist();
+              //     this.dialogFormVisible = false;                 
+              //   } else {
+              //     //写入失败！
+              //     this.$message.error('写入失败！');
+              //   }
+              // })
               .catch(function (error) {
                 console.log(error);
               });
@@ -262,7 +284,7 @@
           console.log(row);
               axios({
                 method: "POST",//请求方式
-                url: "/api/flowtype",//请求地址
+                url: "/flowtype",//请求地址
                 params:{
                   name:row.Name,
                 },
@@ -273,23 +295,40 @@
                 //   dsid2:row.ToStateId
                 // }
               })
-              // .then(response => (this.posts = response.data.articles))
-              .then(function (response) {
-                console.log(response);
-                if (response=="err") {
+              .then((response) => {
+                if (response != "err") {
+                  // this.$Message.info('用户名或密码错误，请送心')
                   //提交成功做的动作
                   this.$message({
                     type: 'success',
                     message: '提交成功' 
                   });
                   //刷新表格
-                  this.doctype(currentPage);
-                  this.dialogFormVisible = false;                 
+                  // this.docaction(currentPage);
+                  this.dialogFormVisible = false;
                 } else {
+                  // console.log(response.data)
                   //写入失败！
                   this.$message.error('写入失败！');
                 }
               })
+              // .then(response => (this.posts = response.data.articles))
+              // .then(function (response) {
+              //   console.log(response);
+              //   if (response=="err") {
+              //     //提交成功做的动作
+              //     this.$message({
+              //       type: 'success',
+              //       message: '提交成功' 
+              //     });
+              //     //刷新表格
+              //     this.doctype(currentPage);
+              //     this.dialogFormVisible = false;                 
+              //   } else {
+              //     //写入失败！
+              //     this.$message.error('写入失败！');
+              //   }
+              // })
               .catch(function (error) {
                 console.log(error);
               });
@@ -309,7 +348,7 @@
         doctype(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowtypelist',//2.get通过params选项
+            url: '/flowtypelist',//2.get通过params选项
             params:{
               page:currentPage,
               limit:this.pageSize
@@ -406,6 +445,19 @@
         handleCurrentChange: function(currentPage){
           this.currentPage = currentPage;
           this.doctype(currentPage);
+        },
+        editActivedEvent ({ row, column }, event) {
+          console.log(`打开 ${column.title} 列编辑`)
+        },
+        editClosedEvent ({ row, column }, event) {
+          console.log(`关闭 ${column.title} 列编辑`)
+        },
+        insertEvent (row) {
+          let record = {
+            sex: '1'
+          }
+          this.$refs.xTable.insertAt(record, row)
+            .then(({ row }) => this.$refs.xTable.setActiveCell(row, 'sex'))
         },
 
         // addRow(tableData,event){//新增一行

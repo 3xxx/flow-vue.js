@@ -16,7 +16,7 @@
         <!-- <template> -->
           <el-select v-model="value" placeholder="请选择workflow" @change="changeValue" clearable>
             <el-option
-              v-for="item in workflowdata"
+              v-for="item in workflowdata.workflows"
               :key="item.ID"
               :label="item.Name"
               :value="item.ID">
@@ -50,7 +50,7 @@
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.DocState" clearable>
             <el-option
-              v-for="item in docstatedata"
+              v-for="item in docstatedata.docstates"
               :key="item.ID"
               :label="item.Name"
               :value="item.ID">
@@ -100,7 +100,7 @@
       :page-sizes="[10, 50, 100, 200]"
       :page-size="pageSize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="total" style="float: right; margin:10px">
+      :total="nodedata.total" style="float: right; margin:10px">
     </el-pagination>
 
     <el-dialog title="定义work_node" :visible.sync="dialogFormVisible" center>
@@ -123,7 +123,7 @@
         <el-form-item label="DocState" prop="dsid">
           <el-select v-model.number="ruleForm2.dsid" clearable>
             <el-option
-              v-for="item in docstatedata"
+              v-for="item in docstatedata.docstates"
               :key="item.ID"
               :label="item.Name"
               :value="item.ID">
@@ -133,7 +133,7 @@
         <el-form-item label="AccCtx" prop="acid">
           <el-select v-model.number="ruleForm2.acid" clearable>
             <el-option
-              v-for="item in accesscontextdata"
+              v-for="item in accesscontextdata.accesscontexts"
               :key="item.ID"
               :label="item.Name"
               :value="item.ID">
@@ -343,7 +343,7 @@
                 //   'Access-Control-Allow-Origin': '*'
                 // },//设置跨域请求头
                 method: "POST",//请求方式
-                url: "/api/flownode",//请求地址
+                url: "/flownode",//请求地址
                 params:{
                   name:this.ruleForm2.nodename,
                   dtid:this.ruleForm2.dtid,
@@ -356,23 +356,40 @@
                   // "thirdapp_id":1//请求参数
                 }
               })
-              // .then(response => (this.posts = response.data.articles))
-              .then(function (response) {
-                console.log(response);
-                if (response=="err") {
+              .then((response) => {
+                if (response != "err") {
+                  // this.$Message.info('用户名或密码错误，请送心')
                   //提交成功做的动作
                   this.$message({
                     type: 'success',
                     message: '提交成功' 
                   });
                   //刷新表格
-                  this.flowtypelist();
-                  this.dialogFormVisible = false;                 
+                  // this.docaction(currentPage);
+                  this.dialogFormVisible = false;
                 } else {
+                  // console.log(response.data)
                   //写入失败！
                   this.$message.error('写入失败！');
                 }
               })
+              // .then(response => (this.posts = response.data.articles))
+              // .then(function (response) {
+              //   console.log(response);
+              //   if (response=="err") {
+              //     //提交成功做的动作
+              //     this.$message({
+              //       type: 'success',
+              //       message: '提交成功' 
+              //     });
+              //     //刷新表格
+              //     this.flowtypelist();
+              //     this.dialogFormVisible = false;                 
+              //   } else {
+              //     //写入失败！
+              //     this.$message.error('写入失败！');
+              //   }
+              // })
               .catch(function (error) {
                 console.log(error);
               });
@@ -401,10 +418,11 @@
         workflow(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowworkflowlist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            url: '/flowworkflowlist',//2.get通过params选项
+            // params:{
+            //   page:currentPage,
+            //   limit:this.pageSize
+            // }
           })
           .then(response => (this.workflowdata = response.data))
           .catch(function (error) {
@@ -414,7 +432,7 @@
         node(currentPage){
           axios({
             method: 'get',
-            url: '/api/flownodelist',//2.get通过params选项
+            url: '/flownodelist',//2.get通过params选项
             params:{
               page:currentPage,
               workflowid:this.workflowid
@@ -433,10 +451,10 @@
         doctype(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowtypelist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            url: '/flowtypelist',//2.get通过params选项
+            // params:{
+            //   page:currentPage
+            // }
           })
           .then(response => (this.doctypedata = response.data))
           .catch(function (error) {
@@ -446,10 +464,10 @@
         docstate(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowstatelist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            url: '/flowstatelist',//2.get通过params选项
+            // params:{
+            //   page:currentPage
+            // }
           })
           .then(response => (this.docstatedata = response.data))
           .catch(function (error) {
@@ -459,10 +477,10 @@
         accesscontext(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowaccesscontextlist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            url: '/flowaccesscontextlist',//2.get通过params选项
+            // params:{
+            //   page:currentPage
+            // }
           })
           .then(response => (this.accesscontextdata = response.data))
           .catch(function (error) {
@@ -482,7 +500,7 @@
           console.log(row);
               axios({
                 method: "POST",//请求方式
-                url: "/api/flownode",//请求地址
+                url: "/flownode",//请求地址
                 params:{
                   name:row.Name,
                   dtid:row.DocType,
@@ -497,23 +515,40 @@
                 //   dsid2:row.ToStateId
                 // }
               })
-              // .then(response => (this.posts = response.data.articles))
-              .then(function (response) {
-                console.log(response);
-                if (response=="err") {
+              .then((response) => {
+                if (response != "err") {
+                  // this.$Message.info('用户名或密码错误，请送心')
                   //提交成功做的动作
                   this.$message({
                     type: 'success',
                     message: '提交成功' 
                   });
                   //刷新表格
-                  this.node(currentPage);
-                  this.dialogFormVisible = false;                 
+                  // this.docaction(currentPage);
+                  this.dialogFormVisible = false;
                 } else {
+                  // console.log(response.data)
                   //写入失败！
                   this.$message.error('写入失败！');
                 }
               })
+              // .then(response => (this.posts = response.data.articles))
+              // .then(function (response) {
+              //   console.log(response);
+              //   if (response=="err") {
+              //     //提交成功做的动作
+              //     this.$message({
+              //       type: 'success',
+              //       message: '提交成功' 
+              //     });
+              //     //刷新表格
+              //     this.node(currentPage);
+              //     this.dialogFormVisible = false;                 
+              //   } else {
+              //     //写入失败！
+              //     this.$message.error('写入失败！');
+              //   }
+              // })
               .catch(function (error) {
                 console.log(error);
               });
@@ -624,11 +659,11 @@
           return selectItem ? selectItem.Name : null
         },
         getColumnLabel2 (value) {
-          let selectItem = this.docstatedata.find(item => item.ID === value)
+          let selectItem = this.docstatedata.docstates.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
         },
         getColumnLabel3 (value) {
-          let selectItem = this.accesscontextdata.find(item => item.ID === value)
+          let selectItem = this.accesscontextdata.accesscontext.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
         },
         changeValue(value) {

@@ -609,7 +609,7 @@
           isCollapse: true,
           bannerHeight:200,
 
-          cmsindexHeight:'',
+          cmsindexHeight:200,
           // calleft:0
           posts:[],
           numbers:0,
@@ -799,12 +799,12 @@
           this.currentPage = currentPage;
           this.docstate(currentPage);
         },
-        changeFixed(cmsindexHeight){ //动态修改样式
-          // console.log(cmsindexHeight);
-          // console.log(this.$refs.cmsindex);
-          // console.log(this.$refs.cmsindex.$el.style.height);
-          this.$refs.cmsindex.$el.style.height = cmsindexHeight-20+'px';
-        },
+        // changeFixed(cmsindexHeight){ //动态修改样式
+        //   // console.log(cmsindexHeight);
+        //   // console.log(this.$refs.cmsindex);
+        //   // console.log(this.$refs.cmsindex.$el.style.height);
+        //   this.$refs.cmsindex.$el.style.height = cmsindexHeight-20+'px';
+        // },
       // setSize1: function() {
       //   var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
       //   this.screenWidth = width;

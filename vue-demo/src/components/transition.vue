@@ -30,7 +30,7 @@
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.FromStateId" clearable>
             <el-option
-              v-for="item in docstatedata"
+              v-for="item in docstatedata.docstates"
               :key="item.ID"
               :label="item.Name"
               :value="item.ID">
@@ -43,7 +43,7 @@
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.DocactionId" clearable>
             <el-option
-              v-for="item in docactiondata"
+              v-for="item in docactiondata.docactions"
               :key="item.ID"
               :label="item.Name"
               :value="item.ID">
@@ -56,7 +56,7 @@
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.ToStateId" clearable>
             <el-option
-              v-for="item in docstatedata"
+              v-for="item in docstatedata.docstates"
               :key="item.ID"
               :label="item.Name"
               :value="item.ID">
@@ -260,7 +260,7 @@
                 //   'Access-Control-Allow-Origin': '*'
                 // },//设置跨域请求头
                 method: "POST",//请求方式
-                url: "/api/flowtype",//请求地址
+                url: "/flowtype",//请求地址
                 params:{
                   name:this.ruleForm2.typename,
                 },
@@ -269,23 +269,40 @@
                   // "thirdapp_id":1//请求参数
                 }
               })
-              // .then(response => (this.posts = response.data.articles))
-              .then(function (response) {
-                console.log(response);
-                if (response=="err") {
+              .then((response) => {
+                if (response != "err") {
+                  // this.$Message.info('用户名或密码错误，请送心')
                   //提交成功做的动作
                   this.$message({
                     type: 'success',
                     message: '提交成功' 
                   });
                   //刷新表格
-                  this.flowtypelist();
-                  this.dialogFormVisible = false;                 
+                  // this.docaction(currentPage);
+                  this.dialogFormVisible = false;
                 } else {
+                  // console.log(response.data)
                   //写入失败！
                   this.$message.error('写入失败！');
                 }
               })
+              // .then(response => (this.posts = response.data.articles))
+              // .then(function (response) {
+              //   console.log(response);
+              //   if (response=="err") {
+              //     //提交成功做的动作
+              //     this.$message({
+              //       type: 'success',
+              //       message: '提交成功' 
+              //     });
+              //     //刷新表格
+              //     this.flowtypelist();
+              //     this.dialogFormVisible = false;                 
+              //   } else {
+              //     //写入失败！
+              //     this.$message.error('写入失败！');
+              //   }
+              // })
               .catch(function (error) {
                 console.log(error);
               });
@@ -314,7 +331,7 @@
         transition(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowtransitionlist',//2.get通过params选项
+            url: '/flowtransitionlist',//2.get通过params选项
             params:{
               page:currentPage,
               limit:this.pageSize
@@ -328,9 +345,10 @@
         doctype(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowtypelist',//2.get通过params选项
+            url: '/flowtypelist',//2.get通过params选项
             // params:{
-            //   page:currentPage
+            //   page:currentPage,
+            //   limit:this.pageSize
             // }
           })
           .then(response => (this.doctypedata = response.data))
@@ -341,10 +359,11 @@
         docstate(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowstatelist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            url: '/flowstatelist',//2.get通过params选项
+            // params:{
+            //   page:currentPage,
+            //   limit:this.pageSize
+            // }
           })
           .then(response => (this.docstatedata = response.data))
           .catch(function (error) {
@@ -354,10 +373,11 @@
         docaction(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowactionlist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            url: '/flowactionlist',//2.get通过params选项
+            // params:{
+            //   page:currentPage,
+            //   limit:this.pageSize
+            // }
           })
           .then(response => (this.docactiondata = response.data))
           .catch(function (error) {
@@ -372,11 +392,12 @@
         addRow(transitiondata,event){
           transitiondata.push({ Id:'',})
         },
+        //用这个
         handleSubmit(index, row) {
           console.log(row);
               axios({
                 method: "POST",//请求方式
-                url: "/api/flowtransition",//请求地址
+                url: "/flowtransition",//请求地址
                 params:{
                   dtid:row.DoctypeId,
                   dsid1:row.FromStateId,
@@ -391,9 +412,9 @@
                 // }
               })
               // .then(response => (this.posts = response.data.articles))
-              .then(function (response) {
-                console.log(response);
-                if (response=="err") {
+              .then((response) => {
+                if (response != "err") {
+                  // this.$Message.info('用户名或密码错误，请送心')
                   //提交成功做的动作
                   this.$message({
                     type: 'success',
@@ -401,12 +422,29 @@
                   });
                   //刷新表格
                   this.transition(currentPage);
-                  this.dialogFormVisible = false;                 
+                  this.dialogFormVisible = false;
                 } else {
+                  // console.log(response.data)
                   //写入失败！
                   this.$message.error('写入失败！');
                 }
               })
+              // .then(function (response) {//必须用箭头函数才支持message
+              //   console.log(response);
+              //   if (response!="err") {
+              //     //提交成功做的动作
+              //     this.$message({
+              //       type: 'success',
+              //       message: '提交成功' 
+              //     });
+              //     //刷新表格
+              //     this.transition(currentPage);
+              //     this.dialogFormVisible = false;                 
+              //   } else {
+              //     //写入失败！
+              //     this.$message.error('写入失败！');
+              //   }
+              // })
               .catch(function (error) {
                 console.log(error);
               });
@@ -458,16 +496,16 @@
           return selectItem ? selectItem.Name : null
         },
         getColumnLabel2 (value) {
-          let selectItem = this.docstatedata.find(item => item.ID === value)
+          let selectItem = this.docstatedata.docstates.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
         },
         getColumnLabel3 (value) {
-          let selectItem = this.docactiondata.find(item => item.ID === value)
+          let selectItem = this.docactiondata.docactions.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
         },
         
         getColumnLabel4 (value) {
-          let selectItem = this.docstatedata.find(item => item.ID === value)
+          let selectItem = this.docstatedata.docstates.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
         },
       }

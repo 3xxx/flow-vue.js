@@ -6,6 +6,7 @@
         <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect" background-color="#409EFF" text-color="#fff" active-text-color="#ffd04b">
           <el-menu-item index="cmsindex"><i class="el-icon-ali-shouye" style="margin-right: 15px;color: #fff;font-size: 35px;"></i>Home</el-menu-item>
           <el-menu-item index="projects"><i class="el-icon-ali-fenlei" style="margin-right: 15px;color: #fff;font-size: 35px;"></i><a href="https://zsj.itdos.com/project/25001" target="_blank">Projects</a></el-menu-item>
+          <el-menu-item index="project"><i class="el-icon-ali-fenlei" style="margin-right: 15px;color: #fff;font-size: 35px;"></i>Project</el-menu-item>
           <el-menu-item index="onlyoffice"><i class="el-icon-ali-changyonggoupiaorenbianji" style="margin-right: 15px;color: #fff;font-size: 35px;"></i><a href="https://zsj.itdos.com/onlyoffice" target="_blank">Onlyoffice</a></el-menu-item>
           
           <el-submenu index="2">
@@ -107,9 +108,9 @@
         };
         return {
           isCollapse: true,
-        searchCriteria: '',
-        clientHeight:'',
-        activeIndex: 'cmsindex',
+          searchCriteria: '',
+          clientHeight:'',
+          activeIndex: 'cmsindex',
 
           total: 50,
           currentPage: 1,

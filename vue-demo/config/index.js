@@ -6,12 +6,12 @@ const path = require('path')
 
 module.exports = {
   dev: {
-    // Paths
+    // Paths更新后要重新cnpm run dev!!!!!!!!!!!!!!!!!!!
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
         "/api": {
-            target: "https://bjys.itdos.com/v1/admin", //https://bjys.itdos.com/v1/admin---218.78.187.216/api/v1设置调用的接口域名和端口
+            target: "http://localhost/v1/admin", //https://bjys.itdos.com/v1/admin---218.78.187.216/api/v1设置调用的接口域名和端口
             changeOrigin: true,
             pathRewrite: {
                 "^/api": "" //用'/api' 代替 'http://218.78.187.216/api/v1'
@@ -25,7 +25,7 @@ module.exports = {
             }
         },
         "/projapi": {
-            target: "https://zsj.itdos.com/v1/project", //https://bjys.itdos.com/v1/admin---218.78.187.216/api/v1设置调用的接口域名和端口
+            target: "http://127.0.0.1/v1/project", //https://bjys.itdos.com/v1/admin---218.78.187.216/api/v1设置调用的接口域名和端口
             changeOrigin: true,
             pathRewrite: {
                 "^/projapi": "" //用'/api' 代替 'http://218.78.187.216/api/v1'
@@ -66,7 +66,8 @@ module.exports = {
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-
+    // 修改后
+    // assetsPublicPath: './',
     /**
      * Source Maps
      */

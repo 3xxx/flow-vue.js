@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-button-group style="float: left; margin:10px">
-      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click.native="dialogFormVisible = true">添加m</el-button>
+      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click.native="dialogFormVisible = true">添加</el-button>
       <el-button type="info" size="small" @click="$refs.editable.revert()">放弃更改</el-button>
       <el-button type="info" size="small" icon="el-icon-delete" @click="$refs.editable.clear()">清空数据</el-button>
     </el-button-group>
@@ -10,11 +10,13 @@
       <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
     </el-button-group>
 
+    <vxe-toolbar></vxe-toolbar>
+
     <el-col>
       <el-button-group style="float: left; margin:10px">
         <el-select v-model="uid" placeholder="请选择user" @change="changeuserValue" clearable>
           <el-option
-            v-for="item in userdata"
+            v-for="item in userdata.users"
             :key="item.ID"
             :label="item.FirstName+item.LastName"
             :value="item.ID">
@@ -31,38 +33,37 @@
       </el-button-group>
     </el-col>
 
-    <el-editable ref="editable" 
-      :data.sync="usermailboxdata" border style="width: 100%" stripe>
-      <el-editable-column type="expand">
+    <vxe-table stripe border ref="xTable" :data.sync="usermailboxdata.notification" style="width: 100%">
+      <vxe-table-column type="expand" width="50" align="center">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
             <el-form-item label="DATA">
               <span>{{ props.row.Message.Data }}</span>
             </el-form-item>
-            <el-form-item label="title">
-              <span>{{ props.row.Message.Title }}</span>
+            <el-form-item label="DocType">
+              <span>{{ props.row.Message.DocType.Name }}</span>
             </el-form-item>
             <el-form-item label="Ctime">
               <span>{{ props.row.Ctime | dateformat }}</span>
             </el-form-item>
           </el-form>
         </template>
-      </el-editable-column>
-      <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
-      <!-- <el-editable-column label="TITLE" prop="Title" align="center"></el-editable-column> -->
-      <el-editable-column label="DOCTYPE" prop="Message.DocType.Name" :editRender="{type: 'default'}" align="center">
-      </el-editable-column>
-      <el-editable-column label="DOC" prop="Message.DocID" :editRender="{type: 'default'}" align="center">
-      </el-editable-column>
-      <!-- <el-editable-column label="DATA" prop="Message.Data" :editRender="{type: 'default'}" align="center"> -->
-      </el-editable-column>
-      <!-- <el-editable-column label="title" prop="Message.Title" :editRender="{type: 'default'}" align="center"> -->
-      </el-editable-column>
-      <el-editable-column label="GROUP" prop="Group" :editRender="{type: 'default'}" align="center">
+      </vxe-table-column>
+      <vxe-table-column title="序号" type="index" show-overflow-tooltip width="50"  align="center"></vxe-table-column>
+      <!-- <vxe-table-column title="TITLE" field="Title" align="center"></vxe-table-column> -->
+      <vxe-table-column title="DOCTYPE" field="Message.DocType.Name" :editRender="{type: 'default'}" align="center">
+      </vxe-table-column>
+      <vxe-table-column title="DOC" field="Message.Title" :editRender="{type: 'default'}" align="center">
+      </vxe-table-column>
+      <!-- <vxe-table-column title="DATA" field="Message.Data" :editRender="{type: 'default'}" align="center"> -->
+      </vxe-table-column>
+      <!-- <vxe-table-column title="title" field="Message.Title" :editRender="{type: 'default'}" align="center"> -->
+      </vxe-table-column>
+      <vxe-table-column title="GROUP" field="Group" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.Group" clearable>
             <el-option
-              v-for="item in groupdata"
+              v-for="item in groupdata.groups"
               :key="item.ID"
               :label="item.Name"
               :value="item.ID">
@@ -70,20 +71,20 @@
           </el-select>
         </template>
         <template slot-scope="scope">{{ getColumnLabel(scope.row.Group) }}</template>
-      </el-editable-column>
-      <el-editable-column label="CTIME" prop="Ctime" size="mini" :formatter="formatter" align="center">
-      </el-editable-column>
-      <el-editable-column label="Unread" prop="Unread" size="mini" align="center">
-      </el-editable-column>
-      <el-editable-column  label="操作" align="center">
+      </vxe-table-column>
+      <vxe-table-column title="CTIME" field="Ctime" size="mini" :formatter="formatter" align="center">
+      </vxe-table-column>
+      <vxe-table-column title="Unread" field="Unread" size="mini" align="center">
+      </vxe-table-column>
+      <vxe-table-column  title="操作" align="center">
         <template slot-scope="scope">
           <el-button-group>
             <el-button size="mini" @click="detail(scope.$index, scope.row)">detail</el-button>
             <el-button size="mini" type="danger" @click="deleteRow(scope.$index, documentsdata)">Del</el-button>
           </el-button-group>
         </template>
-      </el-editable-column>
-    </el-editable>
+      </vxe-table-column>
+    </vxe-table>
     <el-pagination background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -91,10 +92,10 @@
       :page-sizes="[10, 50, 100, 200]"
       :page-size="pageSize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="total" style="float: right; margin:10px">
+      :total="usermailboxdata.total" style="float: right; margin:10px">
     </el-pagination>
 
-    <el-dialog title="添加document" :visible.sync="dialogFormVisible" center>
+    <el-dialog title="添加user document" :visible.sync="dialogFormVisible" center>
       <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
         <el-form-item label="DOCTYPE" prop="dtid">
           <template >
@@ -112,7 +113,7 @@
           <template>
             <el-select v-model="ruleForm2.acid2" clearable>
               <el-option
-                v-for="item in accesscontextdata"
+                v-for="item in accesscontextdata.accesscontexts"
                 :key="item.ID"
                 :label="item.Name"
                 :value="item.ID">
@@ -124,7 +125,7 @@
           <template>
             <el-select v-model="ruleForm2.gid2" value-key="ID" clearable>
               <el-option
-                v-for="item in groupdata"
+                v-for="item in groupdata.groups"
                 :key="item.ID"
                 :label="item.Name"
                 :value="item.ID">
@@ -307,14 +308,15 @@
         this.user(this.currentPage);
         this.group(this.currentPage);
         // this.docstate(this.currentPage);
-        // this.doctype(this.currentPage);
+        this.doctype(this.currentPage);
+        this.accesscontext(this.currentPage);
       },
       methods:{
         detail(index, row){
           // console.log(row.ID);
           // console.log(row.DocType.ID);
           this.$router.push({
-            path: '/documentdetail',
+            path: '/flow/documentdetail',
             query: {docid: row.Message.DocID,dtid:row.Message.DocType.ID}
           })
         },
@@ -323,7 +325,7 @@
             if (valid) {
               axios({
                 method: "POST",//请求方式
-                url: "/api/flowdoc",//请求地址
+                url: "/flowdoc",//请求地址
                 params:{
                   // form:this.ruleForm2,
                   // dsid:this.ruleForm2.DocstateId,
@@ -336,23 +338,40 @@
                   docdata:this.ruleForm2.docdata,
                 },
               })
-              // .then(response => (this.posts = response.data.articles))
-              .then(function (response) {
-                console.log(response);
-                if (response=="err") {
+              .then((response) => {
+                if (response != "err") {
+                  // this.$Message.info('用户名或密码错误，请送心')
                   //提交成功做的动作
                   this.$message({
                     type: 'success',
                     message: '提交成功' 
                   });
                   //刷新表格
-                  this.documents(3,this.currentPage);
-                  this.dialogFormVisible = false;                 
+                  // this.docaction(currentPage);
+                  this.dialogFormVisible = false;
                 } else {
+                  // console.log(response.data)
                   //写入失败！
                   this.$message.error('写入失败！');
                 }
               })
+              // .then(response => (this.posts = response.data.articles))
+              // .then(function (response) {
+              //   console.log(response);
+              //   if (response=="err") {
+              //     //提交成功做的动作
+              //     this.$message({
+              //       type: 'success',
+              //       message: '提交成功' 
+              //     });
+              //     //刷新表格
+              //     this.documents(3,this.currentPage);
+              //     this.dialogFormVisible = false;                 
+              //   } else {
+              //     //写入失败！
+              //     this.$message.error('写入失败！');
+              //   }
+              // })
               .catch(function (error) {
                 console.log(error);
               });
@@ -385,7 +404,7 @@
           console.log(row);
               axios({
                 method: "POST",//请求方式
-                url: "/api/flowdocument",//请求地址
+                url: "/flowdocument",//请求地址
                 params:{
                   acid:row.AcId,
                   // dsid:row.DocstateId,
@@ -403,23 +422,40 @@
                 //   dsid2:row.ToStateId
                 // }
               })
-              // .then(response => (this.posts = response.data.articles))
-              .then(function (response) {
-                console.log(response);
-                if (response=="err") {
+              .then((response) => {
+                if (response != "err") {
+                  // this.$Message.info('用户名或密码错误，请送心')
                   //提交成功做的动作
                   this.$message({
                     type: 'success',
                     message: '提交成功' 
                   });
                   //刷新表格
-                  this.user(currentPage);
-                  this.dialogFormVisible = false;                 
+                  // this.docaction(currentPage);
+                  this.dialogFormVisible = false;
                 } else {
+                  // console.log(response.data)
                   //写入失败！
                   this.$message.error('写入失败！');
                 }
               })
+              // .then(response => (this.posts = response.data.articles))
+              // .then(function (response) {
+              //   console.log(response);
+              //   if (response=="err") {
+              //     //提交成功做的动作
+              //     this.$message({
+              //       type: 'success',
+              //       message: '提交成功' 
+              //     });
+              //     //刷新表格
+              //     this.user(currentPage);
+              //     this.dialogFormVisible = false;                 
+              //   } else {
+              //     //写入失败！
+              //     this.$message.error('写入失败！');
+              //   }
+              // })
               .catch(function (error) {
                 console.log(error);
               });
@@ -427,7 +463,7 @@
         usermailbox(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowusermailbox',//2.get通过params选项
+            url: '/flowusermailbox',//2.get通过params选项
             params:{
               page:currentPage,
               limit:this.pageSize,
@@ -443,10 +479,10 @@
         doctype(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowtypelist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            url: '/flowtypelist',//2.get通过params选项
+            // params:{
+            //   page:currentPage
+            // }
           })
           .then(response => (this.doctypedata = response.data))
           .catch(function (error) {
@@ -456,10 +492,10 @@
         docstate(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowstatelist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            url: '/flowstatelist',//2.get通过params选项
+            // params:{
+            //   page:currentPage
+            // }
           })
           .then(response => (this.docstatedata = response.data))
           .catch(function (error) {
@@ -469,10 +505,10 @@
         accesscontext(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowaccesscontextlist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            url: '/flowaccesscontextlist',//2.get通过params选项
+            // params:{
+            //   page:currentPage
+            // }
           })
           .then(response => (this.accesscontextdata = response.data))
           .catch(function (error) {
@@ -482,10 +518,10 @@
         user(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowuserlist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            url: '/flowuserlist',//2.get通过params选项
+            // params:{
+            //   page:currentPage
+            // }
           })
           .then(response => (this.userdata = response.data))
           .catch(function (error) {
@@ -495,10 +531,10 @@
         group(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowgrouplist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
+            url: '/flowgrouplist',//2.get通过params选项
+            // params:{
+            //   page:currentPage
+            // }
           })
           .then(response => (this.groupdata = response.data))
           .catch(function (error) {
@@ -538,11 +574,11 @@
         },
         handleSizeChange: function (size) {
           this.pageSize = size;
-          this.documents(3,this.currentPage)
+          // this.usermailbox(3,this.currentPage)
         },
         handleCurrentChange: function(currentPage){
           this.currentPage = currentPage;
-          this.documents(currentPage);
+          this.usermailbox(currentPage);
         },
         formatter:function(row, column){
           var date = row.Ctime;
@@ -573,7 +609,7 @@
         //   return selectItem ? selectItem.Name : null
         // },
         getColumnLabel (value) {
-          let selectItem = this.groupdata.find(item => item.ID === value)
+          let selectItem = this.groupdata.groups.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
         },
         changeuserValue(value) {

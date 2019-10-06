@@ -14,7 +14,7 @@
     </el-button-group>
 
     <el-editable ref="editable"
-      :data.sync="roledata" border style="width: 100%" stripe>
+      :data.sync="roledata.roles" border style="width: 100%" stripe>
       <!-- <el-editable-column label="ID" prop="ID" align="center"></el-editable-column> -->
       <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
       <el-editable-column label="Name" prop="Name" :editRender="{Name: 'ElInput'}" align="center"></el-editable-column>
@@ -34,7 +34,7 @@
       :page-sizes="[10, 50, 100, 200]"
       :page-size="pageSize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="total" style="float: right; margin:10px">
+      :total="roledata.total" style="float: right; margin:10px">
     </el-pagination>
 
     <el-dialog title="定义doctype" :visible.sync="dialogFormVisible" center>
@@ -175,7 +175,7 @@
                 //   'Access-Control-Allow-Origin': '*'
                 // },//设置跨域请求头
                 method: "POST",//请求方式
-                url: "/api/flowtype",//请求地址
+                url: "/flowtype",//请求地址
                 params:{
                   name:this.ruleForm2.typename,
                 },
@@ -184,23 +184,40 @@
                   // "thirdapp_id":1//请求参数
                 }
               })
-              // .then(response => (this.posts = response.data.articles))
-              .then(function (response) {
-                console.log(response);
-                if (response=="err") {
+              .then((response) => {
+                if (response != "err") {
+                  // this.$Message.info('用户名或密码错误，请送心')
                   //提交成功做的动作
                   this.$message({
                     type: 'success',
                     message: '提交成功' 
                   });
                   //刷新表格
-                  this.flowtypelist();
-                  this.dialogFormVisible = false;                 
+                  // this.docaction(currentPage);
+                  this.dialogFormVisible = false;
                 } else {
+                  // console.log(response.data)
                   //写入失败！
                   this.$message.error('写入失败！');
                 }
               })
+              // .then(response => (this.posts = response.data.articles))
+              // .then(function (response) {
+              //   console.log(response);
+              //   if (response=="err") {
+              //     //提交成功做的动作
+              //     this.$message({
+              //       type: 'success',
+              //       message: '提交成功' 
+              //     });
+              //     //刷新表格
+              //     this.flowtypelist();
+              //     this.dialogFormVisible = false;                 
+              //   } else {
+              //     //写入失败！
+              //     this.$message.error('写入失败！');
+              //   }
+              // })
               .catch(function (error) {
                 console.log(error);
               });
@@ -236,7 +253,7 @@
           console.log(row);
               axios({
                 method: "POST",//请求方式
-                url: "/api/flowrole",//请求地址
+                url: "/flowrole",//请求地址
                 params:{
                   name:row.Name,
                 },
@@ -247,23 +264,40 @@
                 //   dsid2:row.ToStateId
                 // }
               })
-              // .then(response => (this.posts = response.data.articles))
-              .then(function (response) {
-                console.log(response);
-                if (response=="err") {
+              .then((response) => {
+                if (response != "err") {
+                  // this.$Message.info('用户名或密码错误，请送心')
                   //提交成功做的动作
                   this.$message({
                     type: 'success',
                     message: '提交成功' 
                   });
                   //刷新表格
-                  this.group(currentPage);
-                  this.dialogFormVisible = false;                 
+                  // this.docaction(currentPage);
+                  this.dialogFormVisible = false;
                 } else {
+                  // console.log(response.data)
                   //写入失败！
                   this.$message.error('写入失败！');
                 }
               })
+              // .then(response => (this.posts = response.data.articles))
+              // .then(function (response) {
+              //   console.log(response);
+              //   if (response=="err") {
+              //     //提交成功做的动作
+              //     this.$message({
+              //       type: 'success',
+              //       message: '提交成功' 
+              //     });
+              //     //刷新表格
+              //     this.group(currentPage);
+              //     this.dialogFormVisible = false;                 
+              //   } else {
+              //     //写入失败！
+              //     this.$message.error('写入失败！');
+              //   }
+              // })
               .catch(function (error) {
                 console.log(error);
               });
@@ -271,9 +305,10 @@
         role(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowrolelist',//2.get通过params选项
+            url: '/flowrolelist',//2.get通过params选项
             params:{
-              page:currentPage
+              page:currentPage,
+              limit:this.pageSiz
             }
           })
           .then(response => (this.roledata = response.data))

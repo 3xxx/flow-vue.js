@@ -31,7 +31,9 @@
         </template>
         <template slot-scope="scope">{{ getColumnLabel(scope.row.Group.GroupType) }}</template>
       </el-editable-column>
+
       <el-editable-column label="GrouName" prop="Group.Name" :editRender="{Name: 'ElInput'}" align="center"></el-editable-column>
+
       <el-editable-column label="Users" prop="Users[0].LastName" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.Users[0].ID" clearable>
@@ -264,7 +266,7 @@
                 //   'Access-Control-Allow-Origin': '*'
                 // },//设置跨域请求头
                 method: "POST",//请求方式
-                url: "/api/flowusergroup",//请求地址
+                url: "/flowusergroup",//请求地址
                 params:{
                   gid:this.ruleForm2.groupid2,
                   uid:this.ruleForm2.userid2
@@ -274,23 +276,40 @@
                   // "thirdapp_id":1//请求参数
                 // }
               })
-              // .then(response => (this.posts = response.data.articles))
-              .then(function (response) {
-                console.log(response);
-                if (response=="err") {
+              .then((response) => {
+                if (response != "err") {
+                  // this.$Message.info('用户名或密码错误，请送心')
                   //提交成功做的动作
                   this.$message({
                     type: 'success',
                     message: '提交成功' 
                   });
                   //刷新表格
-                  this.flowtypelist();
-                  this.dialogFormVisible = false;                 
+                  // this.docaction(currentPage);
+                  this.dialogFormVisible = false;
                 } else {
+                  // console.log(response.data)
                   //写入失败！
                   this.$message.error('写入失败！');
                 }
               })
+              // .then(response => (this.posts = response.data.articles))
+              // .then(function (response) {
+              //   console.log(response);
+              //   if (response=="err") {
+              //     //提交成功做的动作
+              //     this.$message({
+              //       type: 'success',
+              //       message: '提交成功' 
+              //     });
+              //     //刷新表格
+              //     this.flowtypelist();
+              //     this.dialogFormVisible = false;                 
+              //   } else {
+              //     //写入失败！
+              //     this.$message.error('写入失败！');
+              //   }
+              // })
               .catch(function (error) {
                 console.log(error);
               });
@@ -326,7 +345,7 @@
           console.log(row);
               axios({
                 method: "POST",//请求方式
-                url: "/api/flowusergroup",//请求地址
+                url: "/flowusergroup",//请求地址
                 params:{
                   firstname:row.FirstName,
                   lastname:row.LastName,
@@ -340,23 +359,40 @@
                 //   dsid2:row.ToStateId
                 // }
               })
-              // .then(response => (this.posts = response.data.articles))
-              .then(function (response) {
-                console.log(response);
-                if (response=="err") {
+              .then((response) => {
+                if (response != "err") {
+                  // this.$Message.info('用户名或密码错误，请送心')
                   //提交成功做的动作
                   this.$message({
                     type: 'success',
                     message: '提交成功' 
                   });
                   //刷新表格
-                  this.user(currentPage);
-                  this.dialogFormVisible = false;                 
+                  // this.docaction(currentPage);
+                  this.dialogFormVisible = false;
                 } else {
+                  // console.log(response.data)
                   //写入失败！
                   this.$message.error('写入失败！');
                 }
               })
+              // .then(response => (this.posts = response.data.articles))
+              // .then(function (response) {
+              //   console.log(response);
+              //   if (response=="err") {
+              //     //提交成功做的动作
+              //     this.$message({
+              //       type: 'success',
+              //       message: '提交成功' 
+              //     });
+              //     //刷新表格
+              //     this.user(currentPage);
+              //     this.dialogFormVisible = false;                 
+              //   } else {
+              //     //写入失败！
+              //     this.$message.error('写入失败！');
+              //   }
+              // })
               .catch(function (error) {
                 console.log(error);
               });
@@ -364,7 +400,7 @@
         usergroup(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowgroupuserslist',//2.get通过params选项
+            url: '/flowgroupuserslist',//2.get通过params选项
             params:{
               page:currentPage
             }
@@ -377,7 +413,7 @@
         group(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowgrouplist',//2.get通过params选项
+            url: '/flowgrouplist',//2.get通过params选项
             params:{
               page:currentPage
             }
@@ -390,7 +426,7 @@
         user(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowuserlist',//2.get通过params选项
+            url: '/flowuserlist',//2.get通过params选项
             params:{
               page:currentPage
             }

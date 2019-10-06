@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-button-group style="float: left; margin:10px">
-      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insertAt({name: `New last ${Date.now()}`, flag: true, createDate: Date.now()}, -1)">新增project</el-button>
+      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insertAt({name: `New last ${Date.now()}`, flag: true, createDate: Date.now()}, -1)">project</el-button>
       <el-button type="info" size="small" @click="$refs.editable.revert()">放弃更改</el-button>
       <el-button type="info" size="small" icon="el-icon-delete" @click="$refs.editable.clear()">清空数据</el-button>
     </el-button-group>
@@ -10,13 +10,12 @@
       <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
     </el-button-group>
 
-    <el-editable ref="editable" :data.sync="docstatedata" border style="width: 100%" stripe>
+    <el-editable ref="editable" :data.sync="productsdata.rows" border style="width: 100%" stripe>
       <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center">
       </el-editable-column>
-      <el-editable-column label="Name" prop="Name" :editRender="{Name: 'ElInput'}" align="center">
-        <!-- <template slot-scope="scope">
-          <el-input size="mini" v-model="scope.row.Name"></el-input>
-        </template> -->
+      <el-editable-column label="Code" prop="Code" :editRender="{Name: 'ElInput'}" align="center">
+      </el-editable-column> 
+      <el-editable-column label="Title" prop="Title" :editRender="{Name: 'ElInput'}" align="center">
       </el-editable-column>  
       <el-editable-column  label="操作" align="center">
         <template slot-scope="scope">
@@ -34,7 +33,7 @@
       :page-sizes="[10, 50, 100, 200]"
       :page-size="pageSize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="total" style="float: right; margin:10px">
+      :total="productsdata.total" style="float: right; margin:10px">
     </el-pagination>
 
     <el-dialog title="定义docstate" :visible.sync="dialogFormVisible" center>
@@ -55,7 +54,7 @@
 </template>
 
 <script type="text/javascript">
-/* eslint-disable */
+  /* eslint-disable */
   const axios = require('axios');
   export default { // 这里需要将模块引出，可在其他地方使用
     name: 'project',
@@ -147,15 +146,43 @@
             desc: ''
           },
 
-          docstatedata:[
-            {ID:1,Name:"图纸"},
-            {ID:2,Name:"合同"}
-          ],
+          productsdata:{
+            "rows": [
+              {
+                "Id": 341,
+                "Code": "确认",
+                "Title": "centos就centos呗",
+                "Label": "",
+              },
+            ],
+            "page": 0,
+            "total": 8
+          },
           search: '',
         };
       },
+      props:['treeId'],
+      // props: {
+      //   girls: {
+      //     type: Array,
+      //     required: true
+      //   },
+      //   treeId: {
+      //     type: String,
+      //     required: true
+      //   },
+      //   noticeGirl: {
+      //     type: String,
+      //     required: false
+      //   }
+      // },
       mounted:function () {
-        this.docstate(this.currentPage);
+        // this.projproducts(this.currentPage);
+      },
+      watch: {    // 如果 question 发生改变，这个函数就会运行
+        treeId: function (newQuestion) {
+          this.projproducts(this.currentPage);
+        }
       },
       methods:{
         submitForm(formName) {
@@ -168,7 +195,7 @@
                 //   'Access-Control-Allow-Origin': '*'
                 // },//设置跨域请求头
                 method: "POST",//请求方式
-                url: "/api/flowtype",//请求地址
+                url: "/flowtype",//请求地址
                 params:{
                   name:this.ruleForm2.typename,
                 },
@@ -177,23 +204,40 @@
                   // "thirdapp_id":1//请求参数
                 }
               })
-              // .then(response => (this.posts = response.data.articles))
-              .then(function (response) {
-                console.log(response);
-                if (response=="err") {
+              .then((response) => {
+                if (response != "err") {
+                  // this.$Message.info('用户名或密码错误，请送心')
                   //提交成功做的动作
                   this.$message({
                     type: 'success',
                     message: '提交成功' 
                   });
                   //刷新表格
-                  this.flowtypelist();
-                  this.dialogFormVisible = false;                 
+                  // this.docaction(currentPage);
+                  this.dialogFormVisible = false;
                 } else {
+                  // console.log(response.data)
                   //写入失败！
                   this.$message.error('写入失败！');
                 }
               })
+              // .then(response => (this.posts = response.data.articles))
+              // .then(function (response) {
+              //   console.log(response);
+              //   if (response=="err") {
+              //     //提交成功做的动作
+              //     this.$message({
+              //       type: 'success',
+              //       message: '提交成功' 
+              //     });
+              //     //刷新表格
+              //     this.flowtypelist();
+              //     this.dialogFormVisible = false;                 
+              //   } else {
+              //     //写入失败！
+              //     this.$message.error('写入失败！');
+              //   }
+              // })
               .catch(function (error) {
                 console.log(error);
               });
@@ -235,7 +279,7 @@
           console.log(row);
               axios({
                 method: "POST",//请求方式
-                url: "/api/flowstate",//请求地址
+                url: "/flowstate",//请求地址
                 params:{
                   name:row.Name,
                 },
@@ -246,36 +290,54 @@
                 //   dsid2:row.ToStateId
                 // }
               })
-              // .then(response => (this.posts = response.data.articles))
-              .then(function (response) {
-                console.log(response);
-                if (response=="err") {
+              .then((response) => {
+                if (response != "err") {
+                  // this.$Message.info('用户名或密码错误，请送心')
                   //提交成功做的动作
                   this.$message({
                     type: 'success',
                     message: '提交成功' 
                   });
                   //刷新表格
-                  this.docstate(currentPage);
-                  this.dialogFormVisible = false;                 
+                  // this.docaction(currentPage);
+                  this.dialogFormVisible = false;
                 } else {
+                  // console.log(response.data)
                   //写入失败！
                   this.$message.error('写入失败！');
                 }
               })
+              // .then(response => (this.posts = response.data.articles))
+              // .then(function (response) {
+              //   console.log(response);
+              //   if (response=="err") {
+              //     //提交成功做的动作
+              //     this.$message({
+              //       type: 'success',
+              //       message: '提交成功' 
+              //     });
+              //     //刷新表格
+              //     this.docstate(currentPage);
+              //     this.dialogFormVisible = false;                 
+              //   } else {
+              //     //写入失败！
+              //     this.$message.error('写入失败！');
+              //   }
+              // })
               .catch(function (error) {
                 console.log(error);
               });
         },
-        docstate(currentPage){
+        projproducts(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowstatelist',//2.get通过params选项
+            url: '/projapi/project/products/'+this.treeId,//2.get通过params选项
             params:{
-              page:currentPage
+              page:currentPage,
+              limit:this.pageSize
             }
           })
-          .then(response => (this.docstatedata = response.data))
+          .then(response => (this.productsdata = response.data))
           .catch(function (error) {
             console.log(error);
           });

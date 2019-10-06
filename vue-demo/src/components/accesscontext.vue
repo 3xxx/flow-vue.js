@@ -14,7 +14,7 @@
     </el-button-group>
 
     <el-editable ref="editable"
-      :data.sync="accesscontextdata" border style="width: 100%" stripe>
+      :data.sync="accesscontextdata.accesscontexts" border style="width: 100%" stripe>
       <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
       <el-editable-column label="Name" prop="Name" :editRender="{Name: 'ElInput'}" align="center">
       </el-editable-column>
@@ -46,7 +46,7 @@
       :page-sizes="[10, 50, 100, 200]"
       :page-size="pageSize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="total" style="float: right; margin:10px">
+      :total="accesscontextdata.total" style="float: right; margin:10px">
     </el-pagination>
 
     <el-dialog title="定义doctype" :visible.sync="dialogFormVisible" center>
@@ -194,7 +194,7 @@
                 //   'Access-Control-Allow-Origin': '*'
                 // },//设置跨域请求头
                 method: "POST",//请求方式
-                url: "/api/flowtype",//请求地址
+                url: "/flowtype",//请求地址/api/flowtype
                 params:{
                   name:this.ruleForm2.typename,
                 },
@@ -248,9 +248,10 @@
         accesscontext(currentPage){
           axios({
             method: 'get',
-            url: '/api/flowaccesscontextlist',//2.get通过params选项
+            url: '/flowaccesscontextlist',//2.get通过params选项/api
             params:{
-              page:currentPage
+              page:currentPage,
+              limit:this.pageSize
             }
           })
           .then(response => (this.accesscontextdata = response.data))
@@ -270,7 +271,7 @@
           console.log(row);
               axios({
                 method: "POST",//请求方式
-                url: "/api/flowaccesscontext",//请求地址
+                url: "/flowaccesscontext",//请求地址/api
                 params:{
                   name:row.Name,
                 },
@@ -314,19 +315,20 @@
               console.log(error);
             });
         },
-        accesscontext(currentPage){
-          axios({
-            method: 'get',
-            url: '/api/flowaccesscontextlist',//2.get通过params选项
-            params:{
-              page:currentPage
-            }
-          })
-          .then(response => (this.accesscontextdata = response.data))
-          .catch(function (error) {
-            console.log(error);
-          });
-        },
+        // accesscontext(currentPage){
+        //   axios({
+        //     method: 'get',
+        //     url: '/api/flowaccesscontextlist',//2.get通过params选项
+        //     params:{
+        //       page:currentPage,
+        //       limit:this.pageSize
+        //     }
+        //   })
+        //   .then(response => (this.accesscontextdata = response.data))
+        //   .catch(function (error) {
+        //     console.log(error);
+        //   });
+        // },
         //html剔除富文本标签，留下纯文本
         getSimpleText(html){
           var re1 = new RegExp("<.+?>","g");//匹配html标签的正则表达式，"g"是搜索匹配多个符合的内容
