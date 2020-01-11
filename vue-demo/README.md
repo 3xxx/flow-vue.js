@@ -67,3 +67,29 @@ D:\gowork\src\github.com\3xxx\vue-demo>cnpm run dev
         },
 
 
+上面配置proxytable没有用，在实际线上的时候没有用。
+应该在config——dev.env.js里设置本地请求前缀
+module.exports = merge(prodEnv, {
+  NODE_ENV: '"development"',
+  // API_ROOT: '"https://gcb.54lby.com/v1/admin"'  //本地请求前缀
+  API_ROOT: '"http://localhost/v1/admin"'  //本地请求前缀
+})
+在config——dev.env.js里设置线上请求前缀
+module.exports = merge(prodEnv, {
+  NODE_ENV: '"production"',
+  // API_ROOT: '"https://www.prov.com"'   //线上请求前缀
+  API_ROOT: '"https://gcb.54lby.com/v1/admin"'   //线上请求前缀
+})
+修改以上文件需要重新运行cnpm run dev命令生效。
+
+
+
+Install fail! Error: EBUSY: resource busy or locked
+接下来我就说说自己整理的解决方案，首先肯定要删除 node_modules依赖包。
+接下来↓
+1、如果你的项目里存在 package-lock.json 文件，删除它。并且删除 node_modules。然后再 npm install。
+2、第一步不行的话，运行 npm cache clean --force 或者 npm cache verify ，然后再 npm install / cnpm install。
+3、如果上面的都不行，就升级 npm， npm i -g npm，基本上是可以解决的
+最后npm run dev / cnpm run dev
+
+链接：https://www.jianshu.com/p/d2c68801dea7

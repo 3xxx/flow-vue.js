@@ -4,7 +4,8 @@
 <template>
   <div>
     <el-button-group style="float: left; margin:10px">
-      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insertAt({name: `New last ${Date.now()}`, flag: true, createDate: Date.now()}, -1)">新增</el-button>
+      <!-- <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insertAt({name: `New last ${Date.now()}`, flag: true, createDate: Date.now()}, -1)">新增</el-button> -->
+      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="insertEvent(-1)">新增</el-button>
       <el-button type="info" size="small" @click="$refs.editable.revert()">放弃更改</el-button>
       <el-button type="info" size="small" icon="el-icon-delete" @click="$refs.editable.clear()">清空数据</el-button>
     </el-button-group>
@@ -12,13 +13,16 @@
       <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
       <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
     </el-button-group>
+    <vxe-toolbar></vxe-toolbar>
 
-    <el-editable ref="editable"
-      :data.sync="accesscontextdata.accesscontexts" border style="width: 100%" stripe>
-      <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
-      <el-editable-column label="Name" prop="Name" :editRender="{Name: 'ElInput'}" align="center">
-      </el-editable-column>
-      <el-editable-column prop="Active" label="ACTIVE" :formatter="formatter" :editRender="{type: 'default'}" align="center">
+    <vxe-table ref="xTable"
+      :data.sync="accesscontextdata.accesscontexts" border style="width: 100%" stripe :edit-config="{trigger: 'click', mode: 'cell'}"
+      @edit-actived="editActivedEvent"
+      @edit-closed="editClosedEvent">
+      <vxe-table-column title="序号" type="index" show-overflow-tooltip width="50"  align="center"></vxe-table-column>
+      <vxe-table-column title="Name" field="Name" :edit-render="{name: 'input'}" align="center">
+      </vxe-table-column>
+      <vxe-table-column field="Active" title="ACTIVE" :formatter="formatter" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.Active" clearable>
             <el-option
@@ -29,16 +33,17 @@
             </el-option>
           </el-select>
         </template>
-      </el-editable-column>
-      <el-editable-column label="操作" align="center">
+        <template slot-scope="scope">{{ getColumnLabel(scope.row.Active,accesscontextactivedata) }}</template>
+      </vxe-table-column>
+      <vxe-table-column title="操作" align="center">
         <template slot-scope="scope">
           <el-button-group>
           <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
           <el-button size="mini" type="danger" @click="deleteRow(scope.$index, workflowdata)">Delete</el-button>
           </el-button-group>
         </template>
-      </el-editable-column>
-    </el-editable>
+      </vxe-table-column>
+    </vxe-table>
     <el-pagination background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -68,6 +73,7 @@
 
 <script type="text/javascript">
 /* eslint-disable */
+import XEUtils from 'xe-utils'
   const axios = require('axios');
   export default { // 这里需要将模块引出，可在其他地方使用
     name: 'accesscontext',
@@ -268,34 +274,23 @@
           accesscontextdata.push({ Id:'',Name:''})
         },
         handleSubmit(index, row) {
-          console.log(row);
               axios({
                 method: "POST",//请求方式
                 url: "/flowaccesscontext",//请求地址/api
                 params:{
                   name:row.Name,
                 },
-                // data: {
-                //   dtid:row.DoctypeId,
-                //   dsid1:row.FromStateId,
-                //   daid:row.DocactionId,
-                //   dsid2:row.ToStateId
-                // }
               })
-              // .then(response => (this.posts = response.data.articles))
-              .then(function (response) {
-                console.log(response);
-                if (response=="err") {
-                  //提交成功做的动作
+              .then((response) => {
+                if (response != "err") {
                   this.$message({
                     type: 'success',
                     message: '提交成功' 
                   });
                   //刷新表格
-                  this.accesscontext(currentPage);
-                  this.dialogFormVisible = false;                 
+                  this.accesscontext(this.currentPage);
+                  this.dialogFormVisible = false;
                 } else {
-                  //写入失败！
                   this.$message.error('写入失败！');
                 }
               })
@@ -419,6 +414,23 @@
         formatter(row, column) {
           // return row.address;
           return String(row.Active);
+        },
+        getColumnLabel (value, list, valueProp = 'Value', labelField = 'Name') {
+          let item = XEUtils.find(list, item => item[valueProp] === value)
+              return item ? item[labelField] : null
+        },
+        editActivedEvent ({ row, column }, event) {
+          console.log(`打开 ${column.title} 列编辑`)
+        },
+        editClosedEvent ({ row, column }, event) {
+          console.log(`关闭 ${column.title} 列编辑`)
+        },
+        insertEvent (row) {
+          let record = {
+            sex: '1'
+          }
+          this.$refs.xTable.insertAt(record, row)
+            .then(({ row }) => this.$refs.xTable.setActiveCell(row, 'sex'))
         }
       }
   };

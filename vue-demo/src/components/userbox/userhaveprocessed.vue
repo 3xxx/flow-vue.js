@@ -1,7 +1,6 @@
 <!-- 03 用户已处理页面 -->
 <template>
   <div>
-    <!-- <vxe-toolbar> -->
     <el-button-group style="float: left; margin:10px">
       <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click.native="dialogFormVisible = true">添加</el-button>
       <el-button type="info" size="small" @click="$refs.editable.revert()">放弃更改</el-button>
@@ -11,16 +10,8 @@
       <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
       <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
     </el-button-group>
-    <!-- </vxe-toolbar> -->
 
-    <vxe-toolbar>
-      <!-- <template v-slot:buttons>
-        <vxe-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click.native="dialogFormVisible = true">添加</vxe-button>
-        <vxe-button @click="insertEvent(tableData[2])">在第3行插入并激活 Sex 单元格</vxe-button>
-        <vxe-button @click="insertEvent(-1)">在最后行插入</vxe-button>
-        <vxe-button @click="getInsertEvent">获取新增</vxe-button>
-      </template> -->
-    </vxe-toolbar>
+    <vxe-toolbar></vxe-toolbar>
 
     <vxe-table border stripe :data="usermailboxdata.notification">
       <vxe-table-column type="expand" width="50" align="center">
@@ -39,9 +30,9 @@
         </template>
       </vxe-table-column>
       <vxe-table-column title="序号" type="index" show-overflow-tooltip width="50" align="center"></vxe-table-column>
-      <vxe-table-column title="DOCTYPE" field="Message.DocType.Name" :editRender="{type: 'default'}" align="center">
+      <!-- <vxe-table-column title="DOCTYPE" field="Message.DocType.Name" :editRender="{type: 'default'}" align="center"> -->
       </vxe-table-column>
-      <vxe-table-column title="DOC" field="Message.Title" :editRender="{type: 'default'}" align="center">
+      <vxe-table-column title="DOC文档名" field="Message.Title" :editRender="{type: 'default'}" align="center">
       </vxe-table-column>
       <vxe-table-column title="GROUP" field="Group" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">

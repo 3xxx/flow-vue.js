@@ -1,5 +1,7 @@
 <template>
   <div>
+    <vxe-toolbar>
+      <template v-slot:buttons>
     <el-button-group style="float: left; margin:10px">
       <!-- <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insertAt({name: `New last ${Date.now()}`, flag: true, createDate: Date.now()}, -1)">新增</el-button> -->
       <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click.native="dialogFormVisible = true">添加m</el-button>
@@ -10,8 +12,8 @@
       <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
       <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
     </el-button-group>
-
-    <el-col>
+    
+    <!-- <el-col> -->
       <el-button-group style="float: left; margin:10px">
         <!-- <template> -->
           <el-select v-model="value" placeholder="请选择workflow" @change="changeValue" clearable>
@@ -24,16 +26,20 @@
           </el-select>
         <!-- </template> -->
       </el-button-group>
-    </el-col>
+    <!-- </el-col> -->
+    </template>
+    </vxe-toolbar>
 
-    <el-editable ref="editable"
-      :data.sync="nodedata" border style="width: 100%" stripe>
+    <vxe-table ref="xTable"
+      :data.sync="nodedata" border style="width: 100%" stripe :edit-config="{trigger: 'click', mode: 'cell'}"
+      @edit-actived="editActivedEvent"
+      @edit-closed="editClosedEvent">
       <!-- <el-table-column label="ID" prop="ID" align="center"></el-table-column> -->
-      <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center">
-      </el-editable-column>
-      <el-editable-column label="NAME" prop="Name" :editRender="{Name: 'ElInput'}" align="center">
-      </el-editable-column> 
-      <el-editable-column prop="DocType" label="DOCTYPE" :editRender="{type: 'default'}" align="center">
+      <vxe-table-column title="序号" type="index" show-overflow-tooltip width="50"  align="center">
+      </vxe-table-column>
+      <vxe-table-column title="NAME" field="Name" :edit-render="{name: 'input'}" align="center">
+      </vxe-table-column> 
+      <vxe-table-column field="DocType" title="DOCTYPE" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.DocType" clearable>
             <el-option
@@ -45,8 +51,8 @@
           </el-select>
         </template>
         <template slot-scope="scope">{{ getColumnLabel(scope.row.DocType) }}</template>
-      </el-editable-column>
-      <el-editable-column prop="DocState" label="DOCSTATE" :editRender="{type: 'default'}" align="center">
+      </vxe-table-column>
+      <vxe-table-column field="DocState" title="DOCSTATE" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.DocState" clearable>
             <el-option
@@ -58,8 +64,9 @@
           </el-select>
         </template>
         <template slot-scope="scope">{{ getColumnLabel2(scope.row.DocState) }}</template>
-      </el-editable-column>
-      <!-- <el-editable-column  prop="AccCtx" label="ACCESSCONTEXT" :editRender="{type: 'default'}" align="center">
+      </vxe-table-column>
+
+      <!-- 因为acid这个无法显示，所以不能在行中添加或修改！！！<vxe-table-column field="AccCtx" title="ACCESSCONTEXT" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.AccCtx" clearable>
             <el-option
@@ -71,28 +78,30 @@
           </el-select>
         </template>
         <template slot-scope="scope">{{ getColumnLabel3(scope.row.AccCtx) }}</template>
-      </el-editable-column> -->
-      <el-editable-column prop="NodeType" label="NODETYPE" :editRender="{type: 'default'}" align="center">
+      </vxe-table-column> -->
+
+      <vxe-table-column field="NodeType" title="NODETYPE" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.NodeType" clearable>
             <el-option
               v-for="item in nodetypedata"
               :key="item.ID"
               :label="item.Name"
-              :value="item.Name"><!-- 传值 -->
+              :value="item.Value"><!-- 传值 -->
             </el-option>
           </el-select>
         </template>
-      </el-editable-column>
-      <el-editable-column label="操作" align="center">
+        <!-- <template slot-scope="scope">{{ getColumnLabel4(scope.row.NodeType,nodetypedata) }}</template> -->
+      </vxe-table-column>
+      <vxe-table-column title="操作" align="center">
         <template slot-scope="scope">
           <el-button-group>
             <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
             <el-button size="mini" type="danger" @click="deleteRow(scope.$index, nodedata)">Delete</el-button>
           </el-button-group>
         </template>
-      </el-editable-column>
-    </el-editable>
+      </vxe-table-column>
+    </vxe-table>
     <el-pagination background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -162,7 +171,8 @@
 </template>
 
 <script type="text/javascript">
-/* eslint-disable */
+  /* eslint-disable */
+  import XEUtils from 'xe-utils'
   const axios = require('axios');
   export default { // 这里需要将模块引出，可在其他地方使用
     name: 'node',
@@ -297,27 +307,33 @@
           nodetypedata: [
             {
               ID:1,
-              Name:'begin'
+              Name:'begin',
+              Value:'begin'
             },
             {
               ID:2,
-              Name:'end'
+              Name:'end',
+              Value:'end'
             },
             {
               ID:3,
-              Name:'linear'
+              Name:'linear',
+              Value:'linear'
             },
             {
               ID:4,
-              Name:'branch'
+              Name:'branch',
+              Value:'branch'
             },
             {
               ID:5,
-              Name:'joinany'
+              Name:'joinany',
+              Value:'joinany'
             },
             {
               ID:6,
-              Name:'joinall'
+              Name:'joinall',
+              Value:'joinall'
             },
           ],
           search: '',
@@ -327,15 +343,13 @@
       },
       mounted:function () {
         this.workflow(this.currentPage);
-        // this.node(this.currentPage);
+        this.node(this.currentPage);
         this.doctype(this.currentPage);
         this.docstate(this.currentPage);
         this.accesscontext(this.currentPage);
       },
       methods:{
         submitForm(formName) {
-          this.$refs[formName].validate((valid) => {
-            if (valid) {
               axios({
                 // headers: {
                 //   'X-Requested-With': 'XMLHttpRequest',
@@ -351,10 +365,9 @@
                   acid:this.ruleForm2.acid,
                   nodetype:this.ruleForm2.nodetype,
                 },
-                data: {
-                  name:this.ruleForm2.typename,
-                  // "thirdapp_id":1//请求参数
-                }
+                // data: {
+                //   name:this.ruleForm2.typename,
+                // }
               })
               .then((response) => {
                 if (response != "err") {
@@ -373,32 +386,9 @@
                   this.$message.error('写入失败！');
                 }
               })
-              // .then(response => (this.posts = response.data.articles))
-              // .then(function (response) {
-              //   console.log(response);
-              //   if (response=="err") {
-              //     //提交成功做的动作
-              //     this.$message({
-              //       type: 'success',
-              //       message: '提交成功' 
-              //     });
-              //     //刷新表格
-              //     this.flowtypelist();
-              //     this.dialogFormVisible = false;                 
-              //   } else {
-              //     //写入失败！
-              //     this.$message.error('写入失败！');
-              //   }
-              // })
               .catch(function (error) {
                 console.log(error);
               });
-
-            } else {
-              console.log('error submit!!');
-              return false;
-            }
-          }); 
         },
 
         resetForm(formName) {
@@ -419,10 +409,6 @@
           axios({
             method: 'get',
             url: '/flowworkflowlist',//2.get通过params选项
-            // params:{
-            //   page:currentPage,
-            //   limit:this.pageSize
-            // }
           })
           .then(response => (this.workflowdata = response.data))
           .catch(function (error) {
@@ -439,11 +425,6 @@
             }
           })
           .then(response => (this.nodedata = response.data))
-          // .then(function(response){
-          //   console.log(response.data)
-          //   this.nodedata = response.data;
-          //   console.log(this.nodedata)
-          // })
           .catch(function (error) {
             console.log(error);
           });
@@ -496,6 +477,7 @@
         addRow(nodedata,event){
           nodedata.push({ ID:'',})
         },
+        //用这个
         handleSubmit(index, row) {
           console.log(row);
               axios({
@@ -508,12 +490,6 @@
                   acid:row.AccessContext,
                   nodetype:row.NodeType
                 },
-                // data: {
-                //   dtid:row.DoctypeId,
-                //   dsid1:row.FromStateId,
-                //   daid:row.DocactionId,
-                //   dsid2:row.ToStateId
-                // }
               })
               .then((response) => {
                 if (response != "err") {
@@ -524,7 +500,7 @@
                     message: '提交成功' 
                   });
                   //刷新表格
-                  // this.docaction(currentPage);
+                  this.node(this.currentPage);
                   this.dialogFormVisible = false;
                 } else {
                   // console.log(response.data)
@@ -532,23 +508,6 @@
                   this.$message.error('写入失败！');
                 }
               })
-              // .then(response => (this.posts = response.data.articles))
-              // .then(function (response) {
-              //   console.log(response);
-              //   if (response=="err") {
-              //     //提交成功做的动作
-              //     this.$message({
-              //       type: 'success',
-              //       message: '提交成功' 
-              //     });
-              //     //刷新表格
-              //     this.node(currentPage);
-              //     this.dialogFormVisible = false;                 
-              //   } else {
-              //     //写入失败！
-              //     this.$message.error('写入失败！');
-              //   }
-              // })
               .catch(function (error) {
                 console.log(error);
               });
@@ -659,12 +618,17 @@
           return selectItem ? selectItem.Name : null
         },
         getColumnLabel2 (value) {
+          console.log(value)
           let selectItem = this.docstatedata.docstates.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
         },
         getColumnLabel3 (value) {
           let selectItem = this.accesscontextdata.accesscontext.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
+        },
+        getColumnLabel4 (value, list, valueProp = 'Value', labelField = 'Name') {
+          let item = XEUtils.find(list, item => item[valueProp] === value)
+              return item ? item[labelField] : null
         },
         changeValue(value) {
           // console.log(value);
@@ -675,6 +639,19 @@
           //     return item.value === value;
           // });
           // console.log(obj.label);
+        },
+        editActivedEvent ({ row, column }, event) {
+          console.log(`打开 ${column.title} 列编辑`)
+        },
+        editClosedEvent ({ row, column }, event) {
+          console.log(`关闭 ${column.title} 列编辑`)
+        },
+        insertEvent (row) {
+          let record = {
+            sex: '1'
+          }
+          this.$refs.xTable.insertAt(record, row)
+            .then(({ row }) => this.$refs.xTable.setActiveCell(row, 'sex'))
         }
       }
   };

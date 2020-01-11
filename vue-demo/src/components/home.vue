@@ -229,9 +229,6 @@
           case 'c':
             this.$router.push('/flow/chatme')
             break;
-          // case 'docaction':
-          //   this.$router.push('/docaction')
-          //   break;
         }
       },
       changeFixed(clientHeight){ //动态修改样式

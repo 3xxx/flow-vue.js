@@ -75,6 +75,8 @@
 
 <script type="text/javascript">
 /* eslint-disable */
+  // var baseUrl = process.env.API_ROOT;
+  // alert(baseUrl)
   const axios = require('axios');
   export default { // 这里需要将模块引出，可在其他地方使用
     name: 'doctype',
@@ -281,7 +283,7 @@
           doctypedata.push({ ID:'', Name: ''})
         },
         handleSubmit(index, row) {
-          console.log(row);
+          console.log(row.Name);
               axios({
                 method: "POST",//请求方式
                 url: "/flowtype",//请求地址

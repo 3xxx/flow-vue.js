@@ -1,18 +1,17 @@
 <template>
   <div>
-    <el-button-group style="float: left; margin:10px">
-      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click.native="dialogFormVisible = true">添加</el-button>
-      <el-button type="info" size="small" @click="$refs.editable.revert()">放弃更改</el-button>
-      <el-button type="info" size="small" icon="el-icon-delete" @click="$refs.editable.clear()">清空数据</el-button>
-    </el-button-group>
-    <el-button-group  style="float: right; margin:10px">
-      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
-      <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
-    </el-button-group>
+    <vxe-toolbar>
+      <template v-slot:buttons>
+        <el-button-group style="float: left; margin:10px">
+          <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click.native="dialogFormVisible = true">添加</el-button>
+          <el-button type="info" size="small" @click="$refs.editable.revert()">放弃更改</el-button>
+          <el-button type="info" size="small" icon="el-icon-delete" @click="$refs.editable.clear()">清空数据</el-button>
+        </el-button-group>
+        <el-button-group  style="float: right; margin:10px">
+          <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
+          <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
+        </el-button-group>
 
-    <vxe-toolbar></vxe-toolbar>
-
-    <el-col>
       <el-button-group style="float: left; margin:10px">
         <el-select v-model="uid" placeholder="请选择user" @change="changeuserValue" clearable>
           <el-option
@@ -31,20 +30,22 @@
           </el-option>
         </el-select>
       </el-button-group>
-    </el-col>
+      
+      </template>
+    </vxe-toolbar>
 
     <vxe-table stripe border ref="xTable" :data.sync="usermailboxdata.notification" style="width: 100%">
       <vxe-table-column type="expand" width="50" align="center">
-        <template slot-scope="props">
+        <template v-slot:content="{ row, rowIndex }">
           <el-form label-position="left" inline class="demo-table-expand">
             <el-form-item label="DATA">
-              <span>{{ props.row.Message.Data }}</span>
+              <span>{{ row.Message.Data }}</span>
             </el-form-item>
             <el-form-item label="DocType">
-              <span>{{ props.row.Message.DocType.Name }}</span>
+              <span>{{ row.Message.DocType.Name }}</span>
             </el-form-item>
             <el-form-item label="Ctime">
-              <span>{{ props.row.Ctime | dateformat }}</span>
+              <span>{{ row.Ctime | dateformat }}</span>
             </el-form-item>
           </el-form>
         </template>
@@ -72,7 +73,7 @@
         </template>
         <template slot-scope="scope">{{ getColumnLabel(scope.row.Group) }}</template>
       </vxe-table-column>
-      <vxe-table-column title="CTIME" field="Ctime" size="mini" :formatter="formatter" align="center">
+      <vxe-table-column title="Ctime" field="Ctime" size="mini" :formatter="formatter" align="center">
       </vxe-table-column>
       <vxe-table-column title="Unread" field="Unread" size="mini" align="center">
       </vxe-table-column>
@@ -150,6 +151,7 @@
 
 <script type="text/javascript">
   /* eslint-disable */
+  import XEUtils from 'xe-utils';
   const axios = require('axios');
   export default { // 这里需要将模块引出，可在其他地方使用
     name: 'usermailbox',
@@ -580,22 +582,25 @@
           this.currentPage = currentPage;
           this.usermailbox(currentPage);
         },
-        formatter:function(row, column){
-          var date = row.Ctime;
-          // console.log(date)
-          if (date === undefined) {
-            return "";
-          }
-          // return util.formatDate.format(new Date(date), 'yyyy-MM-dd');
-          // this.$moment().format('YYYY-MM-DD HH:mm:ss')
-          return this.$moment(date).subtract(8,'hour').format("YYYY-MM-DD HH:mm");
-          // https://blog.csdn.net/ysq0317/article/details/81089962
-          // vue的话，在moment.js的官网里，是给了安装方法的
-          // cnpm install moment --save   
-          // 然后再入口文件 main.js中导入并使用
-          // import moment from 'moment'//导入文件
-          // Vue.prototype.$moment = moment;//赋值使用
-        },
+        formatter ({ cellValue, row, column }) {
+              return XEUtils.toDateString(cellValue, 'yyyy-MM-dd HH:ss:mm')
+            },
+        // formatter:function(row, column){
+        //   var date = row.Ctime;
+        //   console.log(date)
+        //   if (date === undefined) {
+        //     return "";
+        //   }
+        //   // return util.formatDate.format(new Date(date), 'yyyy-MM-dd');
+        //   // this.$moment().format('YYYY-MM-DD HH:mm:ss')
+        //   return this.$moment(date).subtract(8,'hour').format("YYYY-MM-DD HH:mm");
+        //   // https://blog.csdn.net/ysq0317/article/details/81089962
+        //   // vue的话，在moment.js的官网里，是给了安装方法的
+        //   // cnpm install moment --save   
+        //   // 然后再入口文件 main.js中导入并使用
+        //   // import moment from 'moment'//导入文件
+        //   // Vue.prototype.$moment = moment;//赋值使用
+        // },
         // getColumnLabel (value) {
         //   let selectItem = this.accesscontextdata.find(item => item.ID === value)
         //   return selectItem ? selectItem.Name : null

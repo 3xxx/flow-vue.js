@@ -13,9 +13,9 @@
     <el-editable ref="editable" :data.sync="productsdata.rows" border style="width: 100%" stripe>
       <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center">
       </el-editable-column>
-      <el-editable-column label="Code" prop="Code" :editRender="{Name: 'ElInput'}" align="center">
+      <el-editable-column label="Code" prop="Code" :edit-render="{name: 'input'}" align="center">
       </el-editable-column> 
-      <el-editable-column label="Title" prop="Title" :editRender="{Name: 'ElInput'}" align="center">
+      <el-editable-column label="Title" prop="Title" :edit-render="{name: 'input'}" align="center">
       </el-editable-column>  
       <el-editable-column  label="操作" align="center">
         <template slot-scope="scope">

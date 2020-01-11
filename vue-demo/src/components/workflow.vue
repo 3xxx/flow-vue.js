@@ -2,7 +2,8 @@
   <div>
     <el-button-group style="float: left; margin:10px">
       <!-- <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insert({name: `New ${Date.now()}`, flag: true, createDate: Date.now()})">新增一行</el-button> -->
-      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insertAt({name: `New last ${Date.now()}`, flag: true, createDate: Date.now()}, -1)">新增</el-button>
+      <!-- <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insertAt({name: `New last ${Date.now()}`, flag: true, createDate: Date.now()}, -1)">新增</el-button> -->
+      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="insertEvent(-1)">新增</el-button>
       <el-button type="info" size="small" @click="$refs.editable.revert()">放弃更改</el-button>
       <el-button type="info" size="small" icon="el-icon-delete" @click="$refs.editable.clear()">清空数据</el-button>
     </el-button-group>
@@ -10,12 +11,15 @@
       <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
       <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
     </el-button-group>
-    
-    <el-editable ref="editable" 
-      :data.sync="workflowdata.workflows" border style="width: 100%" stripe>
-      <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
-      <el-editable-column label="NAME" prop="Name" :editRender="{Name: 'ElInput'}" align="center"></el-editable-column>    
-      <el-editable-column prop="DocType.ID" label="DOCTYPE" :editRender="{type: 'default'}" align="center">
+    <vxe-toolbar></vxe-toolbar>
+    <vxe-table ref="xTable" 
+      :data.sync="workflowdata.workflows" border style="width: 100%" stripe :edit-config="{trigger: 'click', mode: 'cell'}"
+      @edit-actived="editActivedEvent"
+      @edit-closed="editClosedEvent">
+      <vxe-table-column title="序号" type="index" show-overflow-tooltip width="50"  align="center"></vxe-table-column>
+      <vxe-table-column title="NAME" field="Name" :edit-render="{name: 'input'}" align="center"></vxe-table-column>
+      
+      <vxe-table-column field="DocType.ID" title="DOCTYPE" :editRender="{name: 'input'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.DocType.ID" clearable>
             <el-option
@@ -27,8 +31,8 @@
           </el-select>
         </template>
         <template slot-scope="scope">{{ getColumnLabel(scope.row.DocType.ID) }}</template>
-      </el-editable-column>
-      <el-editable-column prop="BeginState.ID" label="BeginSTATE" :editRender="{type: 'default'}" align="center">
+      </vxe-table-column>
+      <vxe-table-column field="BeginState.ID" title="BeginSTATE" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.BeginState.ID" clearable>
             <el-option
@@ -40,8 +44,8 @@
           </el-select>
         </template>
         <template slot-scope="scope">{{ getColumnLabel2(scope.row.BeginState.ID) }}</template>
-      </el-editable-column>
-      <el-editable-column prop="Active" label="ACTIVE" :editRender="{type: 'default'}" align="center">
+      </vxe-table-column>
+      <vxe-table-column field="Active" title="ACTIVE" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.Active" clearable>
             <el-option
@@ -53,16 +57,16 @@
           </el-select>
         </template>
         <template slot-scope="scope">{{ getColumnLabel3(scope.row.Active) }}</template>
-      </el-editable-column>
-      <el-editable-column label="操作" align="center">
+      </vxe-table-column>
+      <vxe-table-column title="操作" align="center">
         <template slot-scope="scope">
           <el-button-group>
           	<el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
           	<el-button size="mini" type="danger" @click="deleteRow(scope.$index, workflowdata)">Delete</el-button>
           </el-button-group>
         </template>
-      </el-editable-column>
-    </el-editable>
+      </vxe-table-column>
+    </vxe-table>
     <el-pagination background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -528,6 +532,19 @@
         getColumnLabel3 (value) {
           let selectItem = this.workflowactivedata.find(item => item.Value === value)
           return selectItem ? selectItem.Name : null
+        },
+        editActivedEvent ({ row, column }, event) {
+          console.log(`打开 ${column.title} 列编辑`)
+        },
+        editClosedEvent ({ row, column }, event) {
+          console.log(`关闭 ${column.title} 列编辑`)
+        },
+        insertEvent (row) {
+          let record = {
+            sex: '1'
+          }
+          this.$refs.xTable.insertAt(record, row)
+            .then(({ row }) => this.$refs.xTable.setActiveCell(row, 'sex'))
         }
       }
   };

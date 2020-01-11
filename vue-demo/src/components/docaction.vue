@@ -2,7 +2,8 @@
   <div>
     <el-button-group style="float: left; margin:10px">
       <!-- <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insert({name: `New ${Date.now()}`, flag: true, createDate: Date.now()})">新增一行</el-button> -->
-      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insertAt({name: `New last ${Date.now()}`, flag: true, createDate: Date.now()}, -1)">新增</el-button>
+      <!-- <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insertAt({name: `New last ${Date.now()}`, flag: true, createDate: Date.now()}, -1)">新增</el-button> -->
+      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="insertEvent(-1)">新增</el-button>
       <el-button type="info" size="small" @click="$refs.editable.revert()">放弃更改</el-button>
       <el-button type="info" size="small" icon="el-icon-delete" @click="$refs.editable.clear()">清空数据</el-button>
     </el-button-group>
@@ -10,14 +11,38 @@
       <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
       <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
     </el-button-group>
+    <vxe-toolbar></vxe-toolbar>
 
-    <el-editable ref="editable"
-      :data.sync="docactiondata.docactions" border style="width: 100%" stripe>
-      <!-- <el-editable-column label="ID" prop="ID" align="center"></el-editable-column> -->
-      <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
-      <el-editable-column label="Name" prop="Name" :editRender="{name: 'ElInput'}" align="center">
-      </el-editable-column>
-      <el-editable-column prop="Reconfirm" label="Reconfirm" :editRender="{type: 'default'}" align="center">
+    <vxe-table
+          border
+          show-overflow
+          show-footer
+          ref="xTable"
+          class="vxe-table-element"
+          height="600"
+      :data.sync="docactiondata.docactions" style="width: 100%" stripe 
+      :edit-config="{trigger: 'click', mode: 'cell', showStatus: true}">
+      <!-- <vxe-table-column label="ID" prop="ID" align="center"></vxe-table-column> -->
+      <vxe-table-column type="checkbox" width="60"></vxe-table-column>
+      <vxe-table-column title="序号" type="index" show-overflow-tooltip width="50"  align="center"></vxe-table-column>
+      <vxe-table-column title="Name" field="Name" :edit-render="{name: 'input'}" align="center">
+      </vxe-table-column>
+
+      <!-- 保留<vxe-table-column field="sex" title="ElSelect" width="140" :edit-render="{type: 'default'}">
+        <template v-slot:edit="scope">
+          <el-select v-model="scope.row.sex" @change="$refs.xTable.updateStatus(scope)">
+            <el-option
+              v-for="item in sexList" 
+              :key="item.value" 
+              :label="item.label" 
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </template>
+        <template v-slot="{ row }">{{ getSelectLabel(row.sex, sexList) }}</template>
+      </vxe-table-column> -->
+
+      <vxe-table-column field="Reconfirm" title="Reconfirm" :editRender="{type: 'input'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.Reconfirm" clearable>
             <el-option
@@ -28,16 +53,17 @@
             </el-option>
           </el-select>
         </template>
-      </el-editable-column>
-      <el-editable-column  label="操作" align="center">
+        <template v-slot="{ row }">{{ getColumnLabel(row.Reconfirm,docactionactivedata) }}</template>
+      </vxe-table-column>
+      <vxe-table-column  title="操作" align="center">
         <template slot-scope="scope">
           <el-button-group>
             <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
             <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
           </el-button-group>
         </template>
-      </el-editable-column>
-    </el-editable>
+      </vxe-table-column>
+    </vxe-table>
     <el-pagination background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -67,6 +93,7 @@
 
 <script type="text/javascript">
 /* eslint-disable */
+  import XEUtils from 'xe-utils'
   const axios = require('axios');
   export default { // 这里需要将模块引出，可在其他地方使用
     name: 'docaction',
@@ -174,6 +201,21 @@
             },
           ],
           search: '',
+          sexList: [
+            {
+              label: "男",
+              spell: "nan",
+              val: "x",
+              value: "1",
+              value2: 1
+            },{
+              label: "女",
+              spell: "nv",
+              val: "o",
+              value: "0",
+              value2: 0
+            }
+          ],
         };
       },
       mounted:function () {
@@ -278,7 +320,7 @@
           docactiondata.push({ ID:'', Name: ''})
         },
         handleSubmit(index, row) {
-          console.log(row);
+          console.log(row.Name);
               axios({
                 method: "POST",//请求方式
                 url: "/flowaction",//请求地址/api
@@ -443,6 +485,28 @@
         handleCurrentChange: function(currentPage){
           this.currentPage = currentPage;
           this.docaction(currentPage);
+        },
+        getSelectLabel (value, list, valueProp = 'value', labelField = 'label') {
+              let item = XEUtils.find(list, item => item[valueProp] === value)
+              return item ? item[labelField] : null
+            },
+        getColumnLabel (value, list, valueProp = 'Value', labelField = 'Name') {
+          let item = XEUtils.find(list, item => item[valueProp] === value)
+              return item ? item[labelField] : null
+        },
+        editActivedEvent ({ row, column }, event) {
+          console.log(`打开 ${column.title} 列编辑`)
+        },
+        editClosedEvent ({ row, column }, event) {
+          console.log(`关闭 ${column.title} 列编辑`)
+        },
+        insertEvent (row) {
+          let record = {
+            sex: '1',
+            Reconfirm:'true'
+          }
+          this.$refs.xTable.insertAt(record, row)
+            .then(({ row }) => this.$refs.xTable.setActiveCell(row, 'sex'))
         }
       }
   };

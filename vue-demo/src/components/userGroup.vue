@@ -13,12 +13,15 @@
       <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
       <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
     </el-button-group>
+    <vxe-toolbar></vxe-toolbar>
 
-    <el-editable ref="editable"
-      :data.sync="usergroupdata" border style="width: 100%" stripe>
-      <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
-      <!-- <el-editable-column label="GroupType" prop="Group.GroupType" :editRender="{Name: 'ElInput'}" align="cente"></el-editable-column> -->
-      <el-editable-column prop="Group.GroupType" label="GroupType" :editRender="{type: 'default'}" align="center">
+    <vxe-table ref="xTable"
+      :data.sync="usergroupdata" border style="width: 100%" stripe :edit-config="{trigger: 'click', mode: 'cell'}"
+      @edit-actived="editActivedEvent"
+      @edit-closed="editClosedEvent">
+      <vxe-table-column title="序号" type="index" show-overflow-tooltip width="50"  align="center"></vxe-table-column>
+      <!-- <vxe-table-column label="GroupType" prop="Group.GroupType" :editRender="{Name: 'ElInput'}" align="cente"></vxe-table-column> -->
+      <vxe-table-column field="Group.GroupType" title="GroupType" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.Group.GroupType" clearable>
             <el-option
@@ -30,11 +33,11 @@
           </el-select>
         </template>
         <template slot-scope="scope">{{ getColumnLabel(scope.row.Group.GroupType) }}</template>
-      </el-editable-column>
+      </vxe-table-column>
 
-      <el-editable-column label="GrouName" prop="Group.Name" :editRender="{Name: 'ElInput'}" align="center"></el-editable-column>
+      <vxe-table-column title="GrouName" field="Group.Name" :edit-render="{name: 'input'}" align="center"></vxe-table-column>
 
-      <el-editable-column label="Users" prop="Users[0].LastName" :editRender="{type: 'default'}" align="center">
+      <vxe-table-column title="Users" field="Users[0].LastName" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.Users[0].ID" clearable>
             <el-option
@@ -46,16 +49,16 @@
           </el-select>
         </template>
         <!-- <template slot-scope="scope">{{ getColumnLabel2(scope.row.Users[0].LastName) }}</template> -->
-      </el-editable-column>
-      <el-editable-column  label="操作" align="center">
+      </vxe-table-column>
+      <vxe-table-column  title="操作" align="center">
         <template slot-scope="scope">
           <el-button-group>
             <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
             <el-button size="mini" type="danger" @click="deleteRow(scope.$index, usergroupdata)">Delete</el-button>
           </el-button-group>
         </template>
-      </el-editable-column>
-    </el-editable>
+      </vxe-table-column>
+    </vxe-table>
     <el-pagination background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -69,28 +72,29 @@
     <el-dialog title="添加usergroup" :visible.sync="dialogFormVisible" center>
       <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
         <el-form-item label="group" prop="groupid2">
-          <template >
+          <!-- <template > -->
             <el-select v-model="ruleForm2.groupid2" clearable>
               <el-option
-                v-for="item in groupdata"
+                v-for="item in groupdata.groups"
                 :key="item.ID"
                 :label="item.Name"
                 :value="item.ID">
               </el-option>
             </el-select>
-          </template>
+          <!-- </template> -->
         </el-form-item>
+
         <el-form-item label="users" prop="userid2">
-          <template>
-            <el-select v-model="ruleForm2.userid2" multiple clearable>
+          <!-- <template> -->
+            <el-select v-model="ruleForm2.userid2" multiple clearable placeholder="请选择">
               <el-option
-                v-for="item in userdata"
+                v-for="item in userdata.users"
                 :key="item.ID"
                 :label="item.FirstName+item.LastName"
                 :value="item.ID">
               </el-option>
             </el-select>
-          </template>
+          <!-- </template> -->
         </el-form-item>
       </el-form>
       <!-- 插入测试 -->
@@ -148,6 +152,8 @@
           /*插入form方法*/
           /*设定规则指向*/
           ruleForm2: {
+            groupid2:'',
+            userid2:'',
             name:'',
             pass: '',
             num: '',
@@ -472,7 +478,7 @@
         },
         handleCurrentChange: function(currentPage){
           this.currentPage = currentPage;
-          this.usersgroup(currentPage);
+          this.usergroup(currentPage);
         },
         getColumnLabel (value) {
           let selectItem = this.grouptypedata.find(item => item.Name === value)
@@ -482,6 +488,19 @@
           let selectItem = this.grouptypedata.find(item => item.Name === value)
           return selectItem ? selectItem.Name : null
         },
+        editActivedEvent ({ row, column }, event) {
+          console.log(`打开 ${column.title} 列编辑`)
+        },
+        editClosedEvent ({ row, column }, event) {
+          console.log(`关闭 ${column.title} 列编辑`)
+        },
+        insertEvent (row) {
+          let record = {
+            sex: '1'
+          }
+          this.$refs.xTable.insertAt(record, row)
+            .then(({ row }) => this.$refs.xTable.setActiveCell(row, 'sex'))
+        }
       }
   };
 </script>

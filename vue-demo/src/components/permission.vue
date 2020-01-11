@@ -13,12 +13,15 @@
       <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
       <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
     </el-button-group>
+    <vxe-toolbar></vxe-toolbar>
 
-    <el-editable ref="editable"
-      :data.sync="permissiondata" border style="width: 100%" stripe>
-      <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
+    <vxe-table ref="xTable"
+      :data.sync="permissiondata" border style="width: 100%" stripe :edit-config="{trigger: 'click', mode: 'cell'}"
+      @edit-actived="editActivedEvent"
+      @edit-closed="editClosedEvent">
+      <vxe-table-column title="序号" type="index" show-overflow-tooltip width="50"  align="center"></vxe-table-column>
 
-      <el-editable-column prop="RoleID" label="RoleName" :editRender="{type: 'default'}" align="center">
+      <vxe-table-column field="RoleID" title="RoleName" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.RoleID" clearable>
             <el-option
@@ -30,8 +33,8 @@
           </el-select>
         </template>
         <template slot-scope="scope">{{ getColumnLabel(scope.row.RoleID) }}</template>
-      </el-editable-column>
-      <el-editable-column prop="TypeAction.DocTypeID" label="Doctype" :editRender="{type: 'default'}" align="center">
+      </vxe-table-column>
+      <vxe-table-column field="TypeAction.DocTypeID" title="Doctype" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.TypeAction.DocTypeID" clearable>
             <el-option
@@ -43,8 +46,8 @@
           </el-select>
         </template>
         <template slot-scope="scope">{{ getColumnLabel2(scope.row.TypeAction.DocTypeID) }}</template>
-      </el-editable-column>
-      <el-editable-column prop="TypeAction.Actions[0].ID" label="Action" :formatter="formatter" :editRender="{type: 'default'}" align="center">
+      </vxe-table-column>
+      <vxe-table-column field="TypeAction.Actions[0].ID" title="Action" :formatter="formatter" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.TypeAction.Actions[0].ID" clearable>
             <el-option
@@ -56,16 +59,16 @@
           </el-select>
         </template>
         <!-- <template slot-scope="scope">{{ getColumnLabel3(scope.row.TypeAction.Actions[0].ID) }}</template> -->
-      </el-editable-column>
-      <el-editable-column  label="操作" align="center">
+      </vxe-table-column>
+      <vxe-table-column  title="操作" align="center">
         <template slot-scope="scope">
           <el-button-group>
             <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
             <el-button size="mini" type="danger" @click="deleteRow(scope.$index, permissiondata)">Delete</el-button>
           </el-button-group>
         </template>
-      </el-editable-column>
-    </el-editable>
+      </vxe-table-column>
+    </vxe-table>
     <el-pagination background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -557,6 +560,19 @@
           let selectItem = this.accesscontextdata.accesscontexts.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
         },
+        editActivedEvent ({ row, column }, event) {
+          console.log(`打开 ${column.title} 列编辑`)
+        },
+        editClosedEvent ({ row, column }, event) {
+          console.log(`关闭 ${column.title} 列编辑`)
+        },
+        insertEvent (row) {
+          let record = {
+            sex: '1'
+          }
+          this.$refs.xTable.insertAt(record, row)
+            .then(({ row }) => this.$refs.xTable.setActiveCell(row, 'sex'))
+        }
       }
   };
 </script>

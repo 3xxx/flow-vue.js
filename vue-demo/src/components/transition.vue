@@ -1,7 +1,8 @@
 <template>
   <div>
     <el-button-group style="float: left; margin:10px">
-      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insertAt({name: `New last ${Date.now()}`, flag: true, createDate: Date.now()}, -1)">新增</el-button>
+      <!-- <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="$refs.editable.insertAt({name: `New last ${Date.now()}`, flag: true, createDate: Date.now()}, -1)">新增</el-button> -->
+      <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="insertEvent(-1)">新增</el-button>
       <el-button type="info" size="small" @click="$refs.editable.revert()">放弃更改</el-button>
       <el-button type="info" size="small" icon="el-icon-delete" @click="$refs.editable.clear()">清空数据</el-button>
     </el-button-group>
@@ -9,11 +10,14 @@
       <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
       <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
     </el-button-group>
+    <vxe-toolbar></vxe-toolbar>
 
-    <el-editable ref="editable"
-      :data.sync="transitiondata.transitions" border style="width: 100%" stripe>
-      <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
-      <el-editable-column prop="DoctypeId" label="DOCTYPE" :editRender="{type: 'default'}" align="center">
+    <vxe-table ref="xTable"
+      :data.sync="transitiondata.transitions" border style="width: 100%" stripe :edit-config="{trigger: 'click', mode: 'cell'}"
+      @edit-actived="editActivedEvent"
+      @edit-closed="editClosedEvent">
+      <vxe-table-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></vxe-table-column>
+      <vxe-table-column field="DoctypeId" title="DOCTYPE" width="140" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.DoctypeId" clearable>
             <el-option
@@ -25,8 +29,8 @@
           </el-select>
         </template>
         <template slot-scope="scope">{{ getColumnLabel(scope.row.DoctypeId) }}</template>
-      </el-editable-column>
-      <el-editable-column prop="FromStateId" label="FromState" :editRender="{type: 'default'}" align="center">
+      </vxe-table-column>
+      <vxe-table-column field="FromStateId" title="FromState" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.FromStateId" clearable>
             <el-option
@@ -38,8 +42,8 @@
           </el-select>
         </template>
         <template slot-scope="scope">{{ getColumnLabel2(scope.row.FromStateId) }}</template>
-      </el-editable-column>
-      <el-editable-column  prop="DocactionId" label="DOCACTION" :editRender="{type: 'default'}" align="center">
+      </vxe-table-column>
+      <vxe-table-column  field="DocactionId" title="DOCACTION" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.DocactionId" clearable>
             <el-option
@@ -51,8 +55,8 @@
           </el-select>
         </template>
         <template slot-scope="scope">{{ getColumnLabel3(scope.row.DocactionId) }}</template>
-      </el-editable-column>
-      <el-editable-column prop="ToStateId" label="ToState" :editRender="{type: 'default'}" align="center">
+      </vxe-table-column>
+      <vxe-table-column field="ToStateId" title="ToState" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.ToStateId" clearable>
             <el-option
@@ -64,16 +68,16 @@
           </el-select>
         </template>
         <template slot-scope="scope">{{ getColumnLabel4(scope.row.ToStateId) }}</template>
-      </el-editable-column>
-      <el-editable-column label="操作" align="center">
+      </vxe-table-column>
+      <vxe-table-column title="操作" align="center">
         <template slot-scope="scope">
           <el-button-group>
           <el-button size="mini" @click="handleSubmit(scope.$index, scope.row)">Save</el-button>
           <el-button size="mini" type="danger" @click="deleteRow(scope.$index, transitiondata)">Delete</el-button>
           </el-button-group>
         </template>
-      </el-editable-column>
-    </el-editable>
+      </vxe-table-column>
+    </vxe-table>
     <el-pagination background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -103,6 +107,7 @@
 
 <script type="text/javascript">
 /* eslint-disable */
+  import XEUtils from 'xe-utils'
   const axios = require('axios');
   export default { // 这里需要将模块引出，可在其他地方使用
     name: 'transition',
@@ -211,11 +216,18 @@
             {
               page: 1,
               total: 3,
-              doctypes:
-              {
-                ID: 1,
-                Name: "draw"
-              }
+              doctypes:[
+                {
+                  ID: 7,
+                  Name: "draw",
+                  Value: "draw"
+                },
+                {
+                  ID: 3,
+                  Name: "check",
+                  Value: "check"
+                }
+              ]
             }
           ],
           docstatedata: [
@@ -421,7 +433,7 @@
                     message: '提交成功' 
                   });
                   //刷新表格
-                  this.transition(currentPage);
+                  this.transition(this.currentPage);
                   this.dialogFormVisible = false;
                 } else {
                   // console.log(response.data)
@@ -503,11 +515,23 @@
           let selectItem = this.docactiondata.docactions.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
         },
-        
         getColumnLabel4 (value) {
           let selectItem = this.docstatedata.docstates.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
         },
+        editActivedEvent ({ row, column }, event) {
+          console.log(`打开 ${column.title} 列编辑`)
+        },
+        editClosedEvent ({ row, column }, event) {
+          console.log(`关闭 ${column.title} 列编辑`)
+        },
+        insertEvent (row) {
+          let record = {
+            sex: '1'
+          }
+          this.$refs.xTable.insertAt(record, row)
+            .then(({ row }) => this.$refs.xTable.setActiveCell(row, 'sex'))
+        }
       }
   };
 </script>

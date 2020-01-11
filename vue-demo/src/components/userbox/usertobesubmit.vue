@@ -42,7 +42,7 @@
 
     <vxe-table stripe border ref="xTable" :data.sync="documentsdata.docs" style="width: 100%">
       <vxe-table-column title="序号" type="index" show-overflow-tooltip width="50"  align="center"></vxe-table-column>
-      <vxe-table-column title="TITLE" field="Title" align="center"></vxe-table-column>
+      <vxe-table-column title="TITLE文档名" field="Title" align="center"></vxe-table-column>
       <vxe-table-column title="DOCSTATE" field="DocState.ID" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.DocState.ID" clearable>

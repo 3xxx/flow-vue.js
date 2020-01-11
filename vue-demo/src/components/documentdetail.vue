@@ -19,7 +19,36 @@
       <!-- <el-table-column label="DocID" prop="Document.ID" align="center"></el-table-column> -->
       <!-- <el-table-column label="DocType" prop="Document.DocType.ID" align="center"></el-table-column> -->
       <vxe-table-column title="序号" type="index" show-overflow-tooltip width="50"  align="center"></vxe-table-column>
+      <vxe-table-column title="TITLE文档名" field="Document.Title" align="center"></vxe-table-column>
       <vxe-table-column title="DocState" field="Document.DocState.Name" align="center"></vxe-table-column>
+      <vxe-table-column title="成果" field="Document.Data" size="mini" align="center">
+        <!-- <template slot-scope="scope">
+          <a :href="'http://localhost/pdf?id='+scope.row.Document.Data" target="_blank" class="buttonText">{{scope.row.Document.Data}}</a>
+        </template> -->
+        <!-- <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click.native="dialogFormVisible = true">查看</el-button> -->
+        <template slot-scope="scope">
+          <el-button @click.native.prevent="showattachment(scope.$index, scope.row)" type="text" size="small">查看</el-button>
+        </template>
+        <!-- 这里是弹框，成果里附件列表 -->
+        <!-- <template v-slot="{row}">
+          <a href="'/pdf?id='+{{ row.Document.Data }}" target="_black">我是超链接：{{ row.Document.Data }}</a>
+        </template> -->
+      </vxe-table-column>
+      
+      <vxe-table-column title="CTIME" field="Document.Ctime" size="mini" :formatter="formatter" align="center"></vxe-table-column>
+
+      <vxe-table-column title="ACTIONS" field="value2" align="center">
+        <template slot-scope="scope">
+          <el-select v-model="value2" clearable>
+            <el-option
+              v-for="item in documentdetaildata[0].Action"
+              :key="item.ID"
+              :label="item.Name"
+              :value="item.ID">
+            </el-option>
+          </el-select>
+        </template>
+      </vxe-table-column>
       <vxe-table-column title="recip GROUPs" field="value1" align="center">
         <template slot-scope="scope">
           <el-select v-model="value1" multiple clearable>
@@ -32,22 +61,8 @@
           </el-select>
         </template>
       </vxe-table-column>
-      <vxe-table-column label="ACTIONS" prop="value2" align="center">
-        <template slot-scope="scope">
-          <el-select v-model="value2" clearable>
-            <el-option
-              v-for="item in documentdetaildata[0].Action"
-              :key="item.ID"
-              :label="item.Name"
-              :value="item.ID">
-            </el-option>
-          </el-select>
-        </template>
-      </vxe-table-column>
-      <vxe-table-column title="TITLE" field="Document.Title" align="center"></vxe-table-column>
-      <vxe-table-column title="PATH" field="Document.Path" size="mini" align="center"></vxe-table-column>
-      <vxe-table-column title="CTIME" field="Document.Ctime" size="mini" :formatter="formatter" align="center"></vxe-table-column>
-      <vxe-table-column title="Text" field="Text" :edit-render="{name: 'input'}" align="center"></vxe-table-column> 
+      <!-- <vxe-table-column title="PATH" field="Document.Path" size="mini" align="center"></vxe-table-column> -->
+      <vxe-table-column title="Text意见" field="Text" :edit-render="{name: 'input'}" align="center"></vxe-table-column> 
       <vxe-table-column  title="操作" align="center">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="handleSubmit(scope.$index, scope.row)">Apply</el-button>
@@ -55,22 +70,11 @@
         </template>
       </vxe-table-column>
     </vxe-table>
-    <!-- <el-pagination background
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="currentPage"
-      :page-sizes="[10, 50, 100, 200]"
-      :page-size="pageSize"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="total" style="float: right; margin:10px">
-    </el-pagination> -->
-  <!-- </div> -->
   <el-col :span="24" class="breadcrumb-container">
     <p></p>
   </el-col>
-    <!-- <template> -->
+
     <el-col :span="24" class="breadcrumb-container">
-    <!-- <div class="block"> :timestamp="activity.timestamp"-->
       <el-timeline :reverse="reverse">
         <el-timeline-item
           v-for="(item, index) in documentdetaildata[0].History"
@@ -82,29 +86,9 @@
           </el-card>
         </el-timeline-item>
       </el-timeline>
-      <!-- <el-timeline>
-      <el-timeline-item timestamp="2018/4/12" placement="top">
-        <el-card>
-          <h4>更新 Github 模板</h4>
-          <p>王小虎 提交于 2018/4/12 20:46</p>
-        </el-card>
-      </el-timeline-item>
-      <el-timeline-item timestamp="2018/4/3" placement="top">
-        <el-card>
-          <h4>更新 Github 模板</h4>
-          <p>王小虎 提交于 2018/4/3 20:46</p>
-        </el-card>
-      </el-timeline-item>
-      <el-timeline-item timestamp="2018/4/2" placement="top">
-        <el-card>
-          <h4>更新 Github 模板</h4>
-          <p>王小虎 提交于 2018/4/2 20:46</p>
-        </el-card>
-      </el-timeline-item>
-      </el-timeline> -->
     </el-col>
     <el-col>
-      <div>
+      <!-- <div>
         <textarea id="code" style="width: 50%;display:none;" rows="11">
         st=>start: 开始|past
         e=>end: 结束
@@ -130,8 +114,8 @@
         approvalcond(no,right)->print
         approvalcond(yes)->approval->print->e
         </textarea>
-      </div>
-    <div><button id="run" type="button" style="display:none;">Run</button></div>
+      </div> -->
+    <!-- <div><button id="run" type="button" style="display:none;">Run</button></div> -->
     <el-row type="flex" class="row-bg" justify="center">
       <el-col :span="6">
         <div class="grid-content">
@@ -140,6 +124,24 @@
       </el-col> 
     </el-row>   
   </el-col>
+
+    <el-dialog title="pdf附件列表" :visible.sync="dialogFormVisible" center>
+      <template>
+        <vxe-table stripe border ref="xTable"
+      :data.sync="pdfsdata" style="width: 100%" :edit-config="{trigger: 'click', mode: 'cell'}">
+        <!-- <el-table :data="pdfsdata" style="width: 100%"> -->
+          <vxe-table-column type="index" width="50" align="center"></vxe-table-column align="center">
+          <vxe-table-column field="Title" title="名称" width="180" align="center"></vxe-table-column>
+          <vxe-table-column field="Link" title="链接" width="180" align="center">
+            <template slot-scope="scope">
+              <a :href="'http://localhost/'+scope.row.Link" target="_blank" class="buttonText"><i class="el-icon-paperclip"></i></a>
+            </template>
+          </vxe-table-column>
+          <vxe-table-column field="FileSize" title="大小(kb)" align="center"></vxe-table-column>
+        </vxe-table>
+      </template>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -335,6 +337,17 @@
             {ID:1,Name:"提交设计"},
             {ID:2,Name:"提交校核"}
           ],
+          pdfsdata:[
+            {
+              "Id": 349,
+              "Title": "SL1205FT-586-02 SL02号工作井.PDF",
+              "Link": "attachment/20190728测试上传文件名修改/可行性研究/SL1205FT-586-02 SL02号工作井.PDF",
+              "FileSize": 2974,
+              "Downloads": 0,
+              "Created": "2019-07-28T02:00:06.8660349Z",
+              "Updated": "2019-07-28T02:00:06.8660349Z"
+            }
+          ],
           value1:[],
           value2:'',
           messageID:'',
@@ -343,13 +356,6 @@
       },
       props:['messageId'],//这个来不及传值吧
       mounted:function () {
-        // 取到路由带过来的参数 ,要分清上个页面里用params还是query传值
-        // console.log(this.$route.params.messageid)
-        // console.log(this.$route.query.messageid)
-        this.messageID=this.$route.query.messageid
-        this.docaction(this.currentPage);
-        this.group(this.currentPage);
-        this.documentdetail();
         const s2 = document.createElement('script');
         s2.type = 'text/javascript';
         s2.src="/static/raphael-min.js"
@@ -362,7 +368,15 @@
         s4.type = 'text/javascript';
         s4.src="/static/flowchart-latest.js"
         document.body.appendChild(s4);
-        this.flowchart()
+        // insertBefore(newItem,existingItem);
+        // 取到路由带过来的参数 ,要分清上个页面里用params还是query传值
+        // console.log(this.$route.params.messageid)
+        // console.log(this.$route.query.messageid)
+        this.messageID=this.$route.query.messageid;
+        this.docaction(this.currentPage);
+        this.group(this.currentPage);
+        this.documentdetail();
+        // this.flowchart();
       },
       watch: {
         // 监测路由变化,只要变化了就调用获取路由参数方法将数据存储本组件即可
@@ -500,17 +514,77 @@
               });
         },
         documentdetail(){
+          var that=this
           this.docid = this.$route.query.docid;
           this.dtid = this.$route.query.dtid;
           axios({
             method: 'get',
-            url: '/flowdocumentdetail',//2.get通过params选项
+            url: '/flowdocumentdetail',
             params:{
               docid:this.docid,
               dtid:this.dtid
             }
           })
-          .then(response => (this.documentdetaildata = response.data))
+          .then(function(response){
+            that.documentdetaildata = response.data;
+            axios.get('/liucheng', {
+              params: {
+                docstate: that.documentdetaildata[0].Document.DocState.Name
+              }
+            })
+            .then(function (response) {
+              console.log(response.data);
+              var code=response.data
+              var chart;
+              if (chart) {
+                chart.clean();
+              }
+              chart = flowchart.parse(code);
+              // console.log(chart)
+              chart.drawSVG('canvas', {
+                // 'x': 30,
+                // 'y': 50,
+                'line-width': 1,//3,
+                'maxWidth': 3,//ensures the flowcharts fits within a certian width
+                'line-length': 50,
+                'text-margin': 10,
+                'font-size': 14,
+                'font': 'normal',
+                'font-family': 'Helvetica',
+                'font-weight': 'normal',
+                'font-color': 'black',
+                'line-color': 'black',
+                'element-color': 'black',
+                'fill': 'white',
+                'yes-text': 'yes',
+                'no-text': 'no',
+                'arrow-end': 'block',
+                'scale': 1,
+                'symbols': {
+                  'start': {
+                    'font-color': 'red',
+                    'element-color': 'green',
+                    'fill': 'yellow'
+                  },
+                  'end':{
+                    'class': 'end-element'
+                  }
+                },
+                'flowstate' : {
+                  'past' : { 'fill' : '#CCCCCC', 'font-size' : 12},
+                  'current' : {'fill' : 'blue', 'font-color' : 'red', 'font-weight' : 'bold'},
+                  'future' : { 'fill' : '#FFFF99'},
+                  'request' : { 'fill' : 'blue'},
+                  'invalid': {'fill' : '#444444'},
+                  'approved' : { 'fill' : '#58C4A3', 'font-size' : 12, 'yes-text' : 'APPROVED', 'no-text' : 'n/a' },
+                  'rejected' : { 'fill' : '#C45879', 'font-size' : 12, 'yes-text' : 'n/a', 'no-text' : 'REJECTED' }
+                }
+              });
+            $('[id^=sub1]').click(function(){
+              alert('info here');
+            });
+            })
+          })
           .catch(function (error) {
             console.log(error);
           });
@@ -518,7 +592,7 @@
         doctype(currentPage){
           axios({
             method: 'get',
-            url: '/flowtypelist',//2.get通过params选项
+            url: '/flowtypelist',
             // params:{
             //   page:currentPage
             // }
@@ -635,7 +709,25 @@
           // import moment from 'moment'//导入文件
           // Vue.prototype.$moment = moment;//赋值使用
         },
-         getColumnLabel (value) {
+        attachmentformatter:function(row, column){
+          if (row === undefined) {
+            return "";
+          }
+          return '<a href="/pdf?id='+row.cellValue+'" title="打开pdf" target="_blank"><i class="fa fa-file-pdf-o"></i></a>';
+        },
+        showattachment:function(index, row){
+          // console.log(row.Document.Data)
+          axios({
+            method: 'get',
+            url: '/project/product/pdf/'+row.Document.Data,
+          })
+          .then(response => (this.pdfsdata = response.data))
+          .catch(function (error) {
+            console.log(error);
+          });
+          this.dialogFormVisible = true; 
+        },
+        getColumnLabel (value) {
           let selectItem = this.groupdata.groups.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
         },
@@ -643,76 +735,103 @@
           let selectItem = this.documentdetaildata[0].Action.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
         },
-        flowchart (){
-          // window.onload = function () {
-          var btn = document.getElementById("run"),
-              cd = document.getElementById("code"),
-              chart;
-          // (btn.onclick = function () {
-            // console.log(cd)
-            // console.log(cd.value)
-              var code = cd.value;
-              if (chart) {
-                chart.clean();
-              }
-              chart = flowchart.parse(code);
-              chart.drawSVG('canvas', {
-                // 'x': 30,
-                // 'y': 50,
-                'line-width': 1,//3,
-                'maxWidth': 3,//ensures the flowcharts fits within a certian width
-                'line-length': 50,
-                'text-margin': 10,
-                'font-size': 14,
-                'font': 'normal',
-                'font-family': 'Helvetica',
-                'font-weight': 'normal',
-                'font-color': 'black',
-                'line-color': 'black',
-                'element-color': 'black',
-                'fill': 'white',
-                'yes-text': 'yes',
-                'no-text': 'no',
-                'arrow-end': 'block',
-                'scale': 1,
-                'symbols': {
-                  'start': {
-                    'font-color': 'red',
-                    'element-color': 'green',
-                    'fill': 'yellow'
-                  },
-                  'end':{
-                    'class': 'end-element'
-                  }
-                },
-                'flowstate' : {
-                  'past' : { 'fill' : '#CCCCCC', 'font-size' : 12},
-                  'current' : {'fill' : 'blue', 'font-color' : 'red', 'font-weight' : 'bold'},
-                  'future' : { 'fill' : '#FFFF99'},
-                  'request' : { 'fill' : 'blue'},
-                  'invalid': {'fill' : '#444444'},
-                  'approved' : { 'fill' : '#58C4A3', 'font-size' : 12, 'yes-text' : 'APPROVED', 'no-text' : 'n/a' },
-                  'rejected' : { 'fill' : '#C45879', 'font-size' : 12, 'yes-text' : 'n/a', 'no-text' : 'REJECTED' }
-                }
-              });
-            $('[id^=sub1]').click(function(){
-              alert('info here');
-            });
-          // })();
-          // };
-        // function myFunction(event, node) {
-        //   console.log("You just clicked this node:", node);
-        // } 
-        },
+        // flowchart (){
+        //   axios.get('/liucheng', {
+        //     params: {
+        //       docstate: this.documentdetaildata[0].Document.DocState.Name
+        //     }
+        //   })
+        //   .then(function (response) {
+        //     console.log(response.data);
+        //     var code=response.data
+        //   // 'st=>start: 开始|past\n'+
+        //   // 'e=>end: 结束\n'+
+          
+        //   // 'input=>inputoutput: 初设、招标文件；审图意见|past\n'+
+        //   // 'design=>operation: 设计|past\n'+
+        //   // 'check=>operation: 校核|past\n'+
+        //   // 'countersign=>condition: 是否跨专业?|past\n'+
+        //   // 'countersignYes=>operation: 专业会签|past\n'+
+          
+        //   // 'review=>operation: 审查|current\n'+
+        //   // 'auditcond=>condition: 是否核定\n'+
+        //   // 'audit=>operation: 核定\n'+
+        //   // 'approvalcond=>condition: 是否批准\n'+
+        //   // 'approval=>operation: 批准\n'+
+        //   // 'print=>inputoutput: 出版|future\n'+
+          
+        //   // 'st->input->design->check->countersign\n'+
+        //   // 'countersign(yes,right)->countersignYes->review\n'+
+        //   // 'countersign(no,left)->review->auditcond\n'+
+        //   // 'auditcond(yes)->audit->approvalcond\n'+
+        //   // 'auditcond(no,right)->print\n'+
+        //   // 'approvalcond(no,right)->print\n'+
+        //   // 'approvalcond(yes)->approval->print->e\n'
+        //   //**********************************
+        //       var chart;
+        //       if (chart) {
+        //         chart.clean();
+        //       }
+        //       chart = flowchart.parse(code);
+        //       // console.log(chart)
+        //       chart.drawSVG('canvas', {
+        //         // 'x': 30,
+        //         // 'y': 50,
+        //         'line-width': 1,//3,
+        //         'maxWidth': 3,//ensures the flowcharts fits within a certian width
+        //         'line-length': 50,
+        //         'text-margin': 10,
+        //         'font-size': 14,
+        //         'font': 'normal',
+        //         'font-family': 'Helvetica',
+        //         'font-weight': 'normal',
+        //         'font-color': 'black',
+        //         'line-color': 'black',
+        //         'element-color': 'black',
+        //         'fill': 'white',
+        //         'yes-text': 'yes',
+        //         'no-text': 'no',
+        //         'arrow-end': 'block',
+        //         'scale': 1,
+        //         'symbols': {
+        //           'start': {
+        //             'font-color': 'red',
+        //             'element-color': 'green',
+        //             'fill': 'yellow'
+        //           },
+        //           'end':{
+        //             'class': 'end-element'
+        //           }
+        //         },
+        //         'flowstate' : {
+        //           'past' : { 'fill' : '#CCCCCC', 'font-size' : 12},
+        //           'current' : {'fill' : 'blue', 'font-color' : 'red', 'font-weight' : 'bold'},
+        //           'future' : { 'fill' : '#FFFF99'},
+        //           'request' : { 'fill' : 'blue'},
+        //           'invalid': {'fill' : '#444444'},
+        //           'approved' : { 'fill' : '#58C4A3', 'font-size' : 12, 'yes-text' : 'APPROVED', 'no-text' : 'n/a' },
+        //           'rejected' : { 'fill' : '#C45879', 'font-size' : 12, 'yes-text' : 'n/a', 'no-text' : 'REJECTED' }
+        //         }
+        //       });
+        //     $('[id^=sub1]').click(function(){
+        //       alert('info here');
+        //     });
+        //   })
+        //   .catch(function (error) {
+        //     console.log(error);
+        //   })
+        //   .finally(function () {
+        //     // always executed
+        //   });  
+        // },
       }
   };
-
-        
+  
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.end-element { fill : #FFCCFF; }
+  .end-element { fill : #FFCCFF; }
 
   #vue{
     color: green;
@@ -757,14 +876,14 @@
     padding:10px;
   }
   .breadcrumb-container .title {
-      width: 200px;
-      float: left;
-      color: #475669;
+    width: 200px;
+    float: left;
+    color: #475669;
     font-size: 13px;
-    }
+  }
   .breadcrumb-inner {
-      float: right;
-      font-size: 13px;
+    float: right;
+    font-size: 13px;
   }
   .el-breadcrumb__inner, .el-breadcrumb__inner a {
     font-weight: 400;

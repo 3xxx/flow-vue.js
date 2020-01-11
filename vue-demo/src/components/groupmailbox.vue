@@ -1,5 +1,7 @@
 <template>
   <div>
+    <vxe-toolbar>
+      <template v-slot:buttons>
     <el-button-group style="float: left; margin:10px">
       <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click.native="dialogFormVisible = true">添加m</el-button>
       <el-button type="info" size="small" @click="$refs.editable.revert()">放弃更改</el-button>
@@ -10,7 +12,7 @@
       <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
     </el-button-group>
 
-    <el-col>
+    <!-- <el-col> -->
       <el-button-group style="float: left; margin:10px">
           <el-select v-model="gid" placeholder="请选择group" @change="changegroupValue" clearable>
             <el-option
@@ -29,11 +31,15 @@
             </el-option>
           </el-select>
       </el-button-group>
-    </el-col>
+    <!-- </el-col> -->
+    </template>
+    </vxe-toolbar>
 
-    <el-editable ref="editable" 
-      :data.sync="groupmailboxdata.notification" border style="width: 100%" stripe>
-      <el-editable-column type="expand">
+    <vxe-table ref="xTable" 
+      :data.sync="groupmailboxdata.notification" border style="width: 100%" stripe :edit-config="{trigger: 'click', mode: 'cell'}"
+      @edit-actived="editActivedEvent"
+      @edit-closed="editClosedEvent">
+      <vxe-table-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
             <el-form-item label="DATA">
@@ -47,18 +53,18 @@
             </el-form-item>
           </el-form>
         </template>
-      </el-editable-column>
-      <el-editable-column label="序号" type="index" show-overflow-tooltip width="50"  align="center"></el-editable-column>
-      <!-- <el-editable-column label="TITLE" prop="Title" align="center"></el-editable-column> -->
-      <el-editable-column label="DOCTYPE" prop="Message.DocType.Name" :editRender="{type: 'default'}" align="center">
-      </el-editable-column>
-      <el-editable-column label="DOC" prop="Message.DocID" :editRender="{type: 'default'}" align="center">
-      </el-editable-column>
-      <!-- <el-editable-column label="DATA" prop="Message.Data" :editRender="{type: 'default'}" align="center"> -->
-      </el-editable-column>
-      <!-- <el-editable-column label="title" prop="Message.Title" :editRender="{type: 'default'}" align="center"> -->
-      </el-editable-column>
-      <el-editable-column label="GROUP" prop="Group" :editRender="{type: 'default'}" align="center">
+      </vxe-table-column>
+      <vxe-table-column title="序号" type="index" show-overflow-tooltip width="50"  align="center"></vxe-table-column>
+      <!-- <vxe-table-column title="TITLE" prop="Title" align="center"></vxe-table-column> -->
+      <vxe-table-column title="DOCTYPE" field="Message.DocType.Name" :editRender="{type: 'default'}" align="center">
+      </vxe-table-column>
+      <vxe-table-column title="DOC" field="Message.DocID" :editRender="{type: 'default'}" align="center">
+      </vxe-table-column>
+      <!-- <vxe-table-column title="DATA" field="Message.Data" :editRender="{type: 'default'}" align="center"> -->
+      </vxe-table-column>
+      <!-- <vxe-table-column title="title" field="Message.Title" :editRender="{type: 'default'}" align="center"> -->
+      </vxe-table-column>
+      <vxe-table-column title="GROUP" field="Group" :editRender="{type: 'default'}" align="center">
         <template slot="edit" slot-scope="scope">
           <el-select v-model="scope.row.Group" clearable>
             <el-option
@@ -70,20 +76,20 @@
           </el-select>
         </template>
         <template slot-scope="scope">{{ getColumnLabel(scope.row.Group) }}</template>
-      </el-editable-column>
-      <el-editable-column label="CTIME" prop="Ctime" size="mini" :formatter="formatter" align="center">
-      </el-editable-column>
-      <el-editable-column label="Unread" prop="Unread" size="mini" align="center">
-      </el-editable-column>
-      <el-editable-column  label="操作" align="center">
+      </vxe-table-column>
+      <vxe-table-column title="CTIME" field="Ctime" size="mini" :formatter="formatter" align="center">
+      </vxe-table-column>
+      <vxe-table-column title="Unread" field="Unread" size="mini" align="center">
+      </vxe-table-column>
+      <vxe-table-column  title="操作" align="center">
         <template slot-scope="scope">
           <el-button-group>
             <el-button size="mini" @click="detail(scope.$index, scope.row)">detail</el-button>
             <el-button size="mini" type="danger" @click="deleteRow(scope.$index, documentsdata)">Del</el-button>
           </el-button-group>
         </template>
-      </el-editable-column>
-    </el-editable>
+      </vxe-table-column>
+    </vxe-table>
     <el-pagination background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -95,7 +101,7 @@
     </el-pagination>
 
     <el-dialog title="添加group document" :visible.sync="dialogFormVisible" center>
-      <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
+      <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="150px" class="demo-ruleForm">
         <el-form-item label="DOCTYPE" prop="dtid">
           <template >
             <el-select v-model="ruleForm2.dtid2" clearable>
@@ -148,6 +154,7 @@
 </template>
 
 <script type="text/javascript">
+  import XEUtils from 'xe-utils';
   /* eslint-disable */
   const axios = require('axios');
   export default { // 这里需要将模块引出，可在其他地方使用
@@ -586,22 +593,9 @@
           this.currentPage = currentPage;
           this.groupmailbox(currentPage);
         },
-        formatter:function(row, column){
-          var date = row.Ctime;
-          // console.log(date)
-          if (date === undefined) {
-            return "";
-          }
-          // return util.formatDate.format(new Date(date), 'yyyy-MM-dd');
-          // this.$moment().format('YYYY-MM-DD HH:mm:ss')
-          return this.$moment(date).subtract(8,'hour').format("YYYY-MM-DD HH:mm");
-          // https://blog.csdn.net/ysq0317/article/details/81089962
-          // vue的话，在moment.js的官网里，是给了安装方法的
-          // cnpm install moment --save   
-          // 然后再入口文件 main.js中导入并使用
-          // import moment from 'moment'//导入文件
-          // Vue.prototype.$moment = moment;//赋值使用
-        },
+        formatter ({ cellValue, row, column }) {
+              return XEUtils.toDateString(cellValue, 'yyyy-MM-dd HH:ss:mm')
+            },
         getColumnLabel (value) {
           let selectItem = this.groupdata.groups.find(item => item.ID === value)
           return selectItem ? selectItem.Name : null
@@ -630,6 +624,19 @@
           //     return item.value === value;
           // });
           // console.log(obj.label);
+        },
+        editActivedEvent ({ row, column }, event) {
+          console.log(`打开 ${column.title} 列编辑`)
+        },
+        editClosedEvent ({ row, column }, event) {
+          console.log(`关闭 ${column.title} 列编辑`)
+        },
+        insertEvent (row) {
+          let record = {
+            sex: '1'
+          }
+          this.$refs.xTable.insertAt(record, row)
+            .then(({ row }) => this.$refs.xTable.setActiveCell(row, 'sex'))
         }
       }
   };

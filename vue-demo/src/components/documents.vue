@@ -14,7 +14,8 @@
       <el-button type="primary" icon="el-icon-circle-plus-outline" size="small">搜索</el-button>
       <el-button type="primary" icon="el-icon-refresh" size="small">刷新</el-button>
     </el-button-group>
-
+    <vxe-toolbar></vxe-toolbar>
+    
     <el-editable ref="editable"
       :data.sync="documentsdata" border style="width: 100%" stripe>
       <el-editable-column label="AccCtx" prop="AcId" size="mini" :editRender="{type: 'default'}" align="center">
@@ -56,11 +57,11 @@
         </template>
         <template slot-scope="scope">{{ getColumnLabel3(scope.row.GroupId) }}</template>
       </el-editable-column>
-      <el-editable-column label="TITLE" prop="Title" size="mini" :editRender="{Name: 'ElInput'}" align="center">
+      <el-editable-column label="TITLE" prop="Title" size="mini" :edit-render="{name: 'input'}" align="center">
       </el-editable-column>
-      <el-editable-column label="DATA" prop="Data" size="mini" :editRender="{Name: 'ElInput'}" align="center">
+      <el-editable-column label="DATA" prop="Data" size="mini" :edit-render="{name: 'input'}" align="center">
       </el-editable-column>
-      <el-editable-column label="PATH" prop="Path" size="mini" :editRender="{Name: 'ElInput'}" align="center">
+      <el-editable-column label="PATH" prop="Path" size="mini" :edit-render="{name: 'input'}" align="center">
       </el-editable-column>
       <el-editable-column label="CTIME" prop="Ctime" size="mini" :formatter="formatter">
       </el-editable-column>

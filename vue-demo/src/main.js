@@ -27,6 +27,8 @@ import moment from 'moment'//导入文件
 import 'xe-utils'
 import VXETable from 'vxe-table'
 import 'vxe-table/lib/index.css'
+import VXETablePluginElement from 'vxe-table-plugin-element'
+import 'vxe-table-plugin-element/dist/style.css'
 
 Vue.prototype.$moment = moment;//赋值使用
 Vue.filter('dateformat', function(dataStr, pattern = 'YYYY-MM-DD HH:mm:ss') {
@@ -55,6 +57,7 @@ Vue.config.productionTip = false;
 Vue.use(ElementUI);
 // Vue.use(VueElementExtends);
 Vue.use(VXETable);
+VXETable.use(VXETablePluginElement);
 Vue.use(VueAwesomeSwiper);/* , { default global options } */
 // Vue.use(Element, {
 //   size: Cookies.get('size') || 'medium', // set element-ui default size
