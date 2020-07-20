@@ -77,7 +77,7 @@ module.exports = merge(prodEnv, {
   API_ROOT: '"http://localhost/v1/admin"'  //本地请求前缀
 })
 ```
-在config——dev.env.js里设置线上请求前缀
+在config——prod.env.js里设置线上请求前缀
 ```
 module.exports = merge(prodEnv, {
   NODE_ENV: '"production"',
@@ -86,6 +86,7 @@ module.exports = merge(prodEnv, {
 })
 ```
 修改以上文件需要重新运行cnpm run dev命令生效。
+它这种所谓线上和本地，其实没那么智能，它认为打包就是线上，即使你打包了，放在本地，它也当做线上（用production里的地址），明白吧。
 
 Install fail! Error: EBUSY: resource busy or locked
 接下来我就说说自己整理的解决方案，首先肯定要删除 node_modules依赖包。
